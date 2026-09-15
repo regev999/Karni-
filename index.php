@@ -70,9 +70,8 @@ $rev      = static fn(string $f): string
         $row = $p['row'] ?? null;
         $col = $p['col'] ?? null;
         // Honour the design's row/column when the catalogue carries it, so gaps
-        // in a row stay where the designer put them.
-        // Carried as a custom property so the narrow layout can ignore it
-        // without needing !important.
+        // in a row stay where the designer put them. Carried as a custom
+        // property so the narrow layout can ignore it without needing !important.
         $style = ($row !== null && $col !== null && $row !== $prevRow && (int) $col !== 1)
             ? ' style="--col:' . (int) $col . '"' : '';
         $prevRow = $row;
@@ -111,16 +110,23 @@ $rev      = static fn(string $f): string
   <form class="lform" action="api/lead.php" method="post" novalidate>
     <p class="lform__hp" aria-hidden="true"><label>אל תמלאו שדה זה<input type="text" name="website" tabindex="-1" autocomplete="off"></label></p>
     <div class="lform__row">
-      <div class="field"><input id="f-name"  name="name"  type="text"  autocomplete="name"       placeholder="שם מלא" required></div>
-      <div class="field"><input id="f-sku"   name="sku"   type="text"  autocomplete="off"        placeholder="מק&quot;ט"></div>
-      <div class="field"><input id="f-phone" name="phone" type="tel"   autocomplete="tel"        placeholder="טלפון" required inputmode="tel"></div>
-      <div class="field"><input id="f-email" name="email" type="email" autocomplete="email"      placeholder="מייל"></div>
+      <div class="field"><input id="f-name"  name="name" aria-label="שם מלא" type="text"  autocomplete="name"       placeholder="שם מלא" required></div>
+      <div class="field"><input id="f-sku"   name="sku" aria-label="מק״ט" type="text"  autocomplete="off"        placeholder="מק&quot;ט"></div>
+      <div class="field"><input id="f-phone" name="phone" aria-label="טלפון" type="tel"   autocomplete="tel"        placeholder="טלפון" required inputmode="tel"></div>
+      <div class="field"><input id="f-email" name="email" aria-label="מייל" type="email" autocomplete="email"      placeholder="מייל"></div>
       <button class="send" type="submit">
         <span class="send__label">שלח</span>
         <span class="send__arrow" aria-hidden="true">&lt;</span>
       </button>
     </div>
-    <p class="lform__msg" role="status" aria-live="polite"></p>
+    <?php
+    // Normally filled in by fetch; this covers a submit without JavaScript.
+    // The code is looked up here rather than echoed back, so the URL cannot put
+    // arbitrary words on the page.
+    $noJs = lead_notice((string) ($_GET['lead'] ?? ''));
+    ?>
+    <p class="lform__msg<?= $noJs && ($_GET['lead'] ?? '') !== 'ok' ? ' is-bad' : '' ?>"
+       role="status" aria-live="polite"><?= e($noJs) ?></p>
   </form>
 
   <div class="foot__brand"><?= $logo ?></div>

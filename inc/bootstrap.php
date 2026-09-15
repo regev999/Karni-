@@ -34,6 +34,19 @@ function shekel(int|float|null $n): string
     return $n === null ? '' : (string) (int) round((float) $n);
 }
 
+/** Message for a ?lead= code, used when the form is submitted without JavaScript. */
+function lead_notice(string $code): string
+{
+    return [
+        'ok'     => 'תודה! קיבלנו את הפרטים ונחזור אליכם בהקדם.',
+        'name'   => 'נא למלא שם מלא.',
+        'phone'  => 'נא למלא מספר טלפון תקין.',
+        'email'  => 'כתובת המייל אינה תקינה.',
+        'rate'   => 'נשלח זה עתה, נסו שוב בעוד רגע.',
+        'failed' => 'השליחה נכשלה, נסו שוב או התקשרו אלינו.',
+    ][$code] ?? '';
+}
+
 function settings(): array
 {
     static $s = null;

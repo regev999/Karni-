@@ -3,11 +3,25 @@ declare(strict_types=1);
 require __DIR__ . '/../inc/bootstrap.php';
 require __DIR__ . '/../inc/notify.php';
 
-header('Content-Type: application/json; charset=utf-8');
+// The page posts this with fetch; a visitor without JavaScript gets a redirect
+// back to the form instead of a screenful of JSON.
+$wantsJson = str_contains((string) ($_SERVER['HTTP_ACCEPT'] ?? ''), 'application/json');
+
+/** Reply as JSON, or bounce back to the form with a notice code. */
+function reply(int $status, array $body, string $code = 'failed'): never
+{
+    global $wantsJson;
+    http_response_code($status);
+    if ($wantsJson) {
+        header('Content-Type: application/json; charset=utf-8');
+        exit(json_encode($body, JSON_UNESCAPED_UNICODE));
+    }
+    header('Location: ../?lead=' . rawurlencode($code) . '#lead', true, 303);
+    exit;
+}
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-    http_response_code(405);
-    exit(json_encode(['ok' => false, 'error' => 'method']));
+    reply(405, ['ok' => false, 'error' => 'method']);
 }
 
 $field = static fn(string $k, int $max = 200): string
@@ -15,7 +29,7 @@ $field = static fn(string $k, int $max = 200): string
 
 // Bots fill every field they can see; this one is hidden from people.
 if ($field('website') !== '') {
-    exit(json_encode(['ok' => true]));
+    reply(200, ['ok' => true, 'message' => 'תודה!'], 'ok');
 }
 
 $name  = $field('name', 80);
@@ -34,15 +48,13 @@ if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $errors['email'] = 'כתובת המייל אינה תקינה';
 }
 if ($errors) {
-    http_response_code(422);
-    exit(json_encode(['ok' => false, 'errors' => $errors], JSON_UNESCAPED_UNICODE));
+    reply(422, ['ok' => false, 'errors' => $errors], (string) array_key_first($errors));
 }
 
 // One submission per minute per address keeps a stuck "send" button from flooding.
 $stamp = DATA_DIR . '/.rate_' . sha1($_SERVER['REMOTE_ADDR'] ?? '');
 if (is_file($stamp) && time() - (int) filemtime($stamp) < 60) {
-    http_response_code(429);
-    exit(json_encode(['ok' => false, 'error' => 'נשלח זה עתה, נסו שוב בעוד רגע'], JSON_UNESCAPED_UNICODE));
+    reply(429, ['ok' => false, 'error' => 'נשלח זה עתה, נסו שוב בעוד רגע'], 'rate');
 }
 @touch($stamp);
 
@@ -66,9 +78,8 @@ $lead = [
 ];
 
 if (!lead_append($lead)) {
-    http_response_code(500);
-    exit(json_encode(['ok' => false, 'error' => 'שמירה נכשלה'], JSON_UNESCAPED_UNICODE));
+    reply(500, ['ok' => false, 'error' => 'שמירה נכשלה']);
 }
 notify_lead($lead);
 
-echo json_encode(['ok' => true, 'message' => 'תודה! קיבלנו את הפרטים ונחזור אליכם בהקדם.'], JSON_UNESCAPED_UNICODE);
+reply(200, ['ok' => true, 'message' => 'תודה! קיבלנו את הפרטים ונחזור אליכם בהקדם.'], 'ok');
