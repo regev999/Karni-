@@ -1,0 +1,11 @@
+# Runtime data: contains the admin password hash and customer details.
+/data/settings.php
+/data/leads.php
+/data/settings.json
+/data/leads.json
+/data/.rate_*
+/data/*.tmp
+
+# Tooling
+/node_modules/
+/tools/out/

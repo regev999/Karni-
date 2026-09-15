@@ -1,0 +1,370 @@
+/* ---------------------------------------------------------------------------
+   Karni Tchelet - showroom clearance landing page.
+
+   The design is a 1440px-wide Adobe XD artboard. Every length below is written
+   as `calc(<design px> * var(--u))`, so the numbers in this file are the numbers
+   in the design file and the whole page scales as one piece.
+   --------------------------------------------------------------------------- */
+
+:root {
+  --u: min(1.3333px, 100vw / 1440);   /* 1 design pixel; exact at 1440 and 1920 */
+  --cyan: #00aeef;
+  --cyan-rule: #00b8f1;
+  --ink: #2e2e2e;
+  --ink-soft: #383838;
+  --dark: #2a2a2a;
+  --grey: #f1f1f1;
+  --alef-lh: 1.3618;                  /* Alef hhea ascent+descent, so a line box == the design's text box */
+  --mont-lh: 1.219;                   /* same, for Montserrat */
+}
+
+/* --- fonts ---------------------------------------------------------------- */
+@font-face { font-family: Alef; font-weight: 400; font-style: normal; font-display: swap;
+  src: url(../fonts/Alef-400-hebrew.woff2) format('woff2');
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: Alef; font-weight: 400; font-style: normal; font-display: swap;
+  src: url(../fonts/Alef-400-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: Alef; font-weight: 700; font-style: normal; font-display: swap;
+  src: url(../fonts/Alef-700-hebrew.woff2) format('woff2');
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: Alef; font-weight: 700; font-style: normal; font-display: swap;
+  src: url(../fonts/Alef-700-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: Montserrat; font-weight: 100 900; font-style: normal; font-display: swap;
+  src: url(../fonts/Montserrat-var-latin.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: Montserrat; font-weight: 100 900; font-style: normal; font-display: swap;
+  src: url(../fonts/Montserrat-var-latin-ext.woff2) format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+/* --- base ----------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; overflow-x: clip; }
+
+body {
+  margin: 0 auto;
+  max-width: calc(1440 * var(--u));
+  background: #fff;
+  color: var(--ink);
+  font-family: Alef, 'Segoe UI', Arial, sans-serif;
+  line-height: var(--alef-lh);
+  overflow-x: hidden;
+}
+
+img, svg, picture { display: block; }
+a { color: inherit; }
+
+/* =========================================================================== */
+/* Hero                                                                        */
+/* =========================================================================== */
+.hero {
+  position: relative;
+  height: calc(900 * var(--u));
+  overflow: hidden;
+}
+.hero__bg, .hero__bg img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__bg img { object-fit: cover; object-position: center; }
+
+.hero > :not(.hero__bg) { position: absolute; margin: 0; white-space: nowrap; }
+/* Only a grouping box on mobile - must out-specify the rule above. */
+.hero > .hero__rate { position: static; }
+.hero__rate > * { position: absolute; margin: 0; white-space: nowrap; }
+
+.hero__logo  { top: calc(29 * var(--u));    right: calc(66 * var(--u));    width: calc(270.4 * var(--u)); color: #212121; }
+.hero__logo svg { width: 100%; height: auto; }
+
+.hero__kicker { top: calc(163.7 * var(--u)); right: calc(44.6 * var(--u));
+                font-size: calc(50 * var(--u)); letter-spacing: calc(12 * var(--u)); color: #0f0f0f; }
+.hero__upto   { top: calc(241.7 * var(--u)); right: calc(55.8 * var(--u));
+                font-size: calc(46 * var(--u)); font-weight: 700; letter-spacing: calc(2.27 * var(--u)); }
+.hero__pct    { top: calc(251.6 * var(--u)); left: calc(962 * var(--u));
+                width: calc(372.9 * var(--u)); height: calc(280.1 * var(--u)); }
+.hero__off    { top: calc(452.2 * var(--u)); right: calc(104.7 * var(--u));
+                font-size: calc(48 * var(--u)); font-weight: 700; letter-spacing: calc(2.41 * var(--u)); }
+
+.hero__title { position: static; font-size: calc(87 * var(--u)); font-weight: 700; }
+.hero__title span,
+.hero__sub span { position: absolute; display: block; white-space: nowrap; }
+.hero__title span:first-child { top: calc(510.2 * var(--u)); right: calc(60.65 * var(--u)); letter-spacing: calc(4.75 * var(--u)); }
+.hero__title span:last-child  { top: calc(580.2 * var(--u)); right: calc(55 * var(--u)); letter-spacing: calc(5.2 * var(--u)); }
+
+.hero__sub { position: static; font-size: calc(49 * var(--u)); letter-spacing: calc(9.8 * var(--u)); }
+.hero__sub span:first-child { top: calc(718.5 * var(--u)); right: calc(58 * var(--u)); }
+.hero__sub span:last-child  { top: calc(771.5 * var(--u)); right: calc(57 * var(--u)); }
+
+/* =========================================================================== */
+/* How it works                                                                */
+/* =========================================================================== */
+.steps { position: relative; height: calc(890 * var(--u)); background: #fff; }
+.steps__list { margin: 0; padding: 0; list-style: none; }
+.step { position: static; }
+.step > * { position: absolute; margin: 0; }
+
+.step__disc {
+  left: calc(355 * var(--u));
+  width: calc(226.7 * var(--u)); height: calc(226.7 * var(--u));
+  border-radius: 50%; background: var(--cyan);
+}
+.step__num   { left: calc(446 * var(--u)); width: calc(650.2 * var(--u)); height: auto; }
+.step__title { left: calc(596.8 * var(--u)); font-size: calc(40 * var(--u)); font-weight: 700; color: var(--ink);
+               letter-spacing: calc(-1.53 * var(--u)); }
+.step__text  { left: calc(596.8 * var(--u)); font-size: calc(29 * var(--u)); color: var(--ink-soft);
+               line-height: calc(35 * var(--u)); letter-spacing: calc(-0.4 * var(--u)); }
+.step__text span { display: block; }
+
+.step--1 .step__disc { top: calc(70 * var(--u)); }
+.step--2 .step__disc { top: calc(332.4 * var(--u)); }
+.step--3 .step__disc { top: calc(594.9 * var(--u)); }
+.step--1 .step__num  { top: calc(108.8 * var(--u)); }
+.step--2 .step__num  { top: calc(379.5 * var(--u)); }
+.step--3 .step__num  { top: calc(649.5 * var(--u)); }
+.step--1 .step__title { top: calc(97.2 * var(--u)); }
+.step--2 .step__title { top: calc(371.3 * var(--u)); }
+.step--3 .step__title { top: calc(642.9 * var(--u)); }
+.step--1 .step__text  { top: calc(154.05 * var(--u)); }
+.step--2 .step__text  { top: calc(428.15 * var(--u)); }
+.step--3 .step__text  { top: calc(699.75 * var(--u)); }
+
+/* =========================================================================== */
+/* Product grid                                                                */
+/* =========================================================================== */
+.catalog { background: var(--grey); padding: calc(91 * var(--u)) 0 calc(122 * var(--u)); }
+.catalog__empty { margin: 0 auto; max-width: calc(800 * var(--u)); text-align: center;
+                  font-size: calc(30 * var(--u)); color: var(--ink-soft); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, calc(304 * var(--u)));
+  gap: calc(40 * var(--u));
+  justify-content: center;
+}
+
+.card {
+  position: relative;
+  grid-column-start: var(--col, auto);   /* keeps the design's gaps within a row */
+  width: calc(304 * var(--u));
+  height: calc(291 * var(--u));
+  background: #fff;
+  box-shadow: 0 calc(1 * var(--u)) calc(5 * var(--u)) rgba(0, 0, 0, .09);
+  font-family: Montserrat, Alef, Arial, sans-serif;
+  color: var(--ink-soft);
+}
+.card--light { color: #fff; }
+.card__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.card__name, .card__sku, .card__old, .card__new {
+  position: absolute;
+  left: calc(12.1 * var(--u));
+  direction: ltr;
+  line-height: var(--mont-lh);
+  white-space: nowrap;
+}
+.card__name { top: calc(187.61 * var(--u)); font-size: calc(19 * var(--u)); }
+.card__sku  { top: calc(211.41 * var(--u)); font-size: calc(19 * var(--u)); }
+.card__old  { top: calc(231.41 * var(--u)); font-size: calc(19 * var(--u)); }
+.card__new  { top: calc(251.4 * var(--u)); font-size: calc(29 * var(--u)); font-weight: 600; }
+.card__old i { font-style: normal; font-size: calc(14 * var(--u)); }
+.card__new i { font-style: normal; font-size: calc(16 * var(--u)); }
+
+/* The struck-through "before" price: one fixed red stroke, as in the design. */
+.card__old s {
+  position: absolute;
+  left: calc(12.83 * var(--u));
+  top: calc(8.05 * var(--u));
+  width: calc(48.65 * var(--u));
+  height: calc(12.12 * var(--u));
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48.65 12.12'%3E%3Cpath d='M48.65 0 0 12.12' stroke='%23ff0000' stroke-width='1' fill='none'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+}
+
+/* =========================================================================== */
+/* Lead prompt                                                                 */
+/* =========================================================================== */
+.lead { position: relative; z-index: 2; height: calc(501.3 * var(--u)); background: #fff; }
+.lead > :not(.lead__dolly) { position: absolute; margin: 0; white-space: nowrap; }
+
+/* The photo carries its own backdrop, matched to the three bands it crosses. */
+.lead__dolly { position: absolute; z-index: 3; pointer-events: none;
+               left: calc(31.2 * var(--u)); top: calc(-267.8 * var(--u));
+               width: calc(699 * var(--u)); height: calc(1046.5 * var(--u)); }
+.lead__title { top: calc(126.3 * var(--u)); right: calc(82.6 * var(--u));
+               font-size: calc(76 * var(--u)); font-weight: 700; color: var(--cyan); }
+.lead__sub   { top: calc(220.2 * var(--u)); right: calc(84.4 * var(--u));
+               font-size: calc(43 * var(--u)); color: #080808; }
+.lead__chevron { top: calc(346.9 * var(--u)); right: calc(73.1 * var(--u));
+                 width: calc(67.6 * var(--u)); height: calc(43.2 * var(--u)); }
+
+/* =========================================================================== */
+/* Footer: lead form, brand, contact                                           */
+/* =========================================================================== */
+.foot { position: relative; z-index: 1; height: calc(453.4 * var(--u)); background: var(--dark); color: #fff; }
+
+.lform__hp { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0;
+             overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.lform__row > * { position: absolute; }
+
+/* Anchored from the bottom: in the design all four rules sit on one line, and
+   only the label above them shifts a hair from field to field. */
+.field { width: calc(230 * var(--u)); bottom: calc(258 * var(--u)); }
+.field input {
+  width: 100%;
+  padding: 0 0 calc(25.24 * var(--u));
+  border: 0;
+  border-bottom: calc(3 * var(--u)) solid #fff;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  font: 700 calc(35 * var(--u)) / var(--alef-lh) Alef, Arial, sans-serif;
+  letter-spacing: calc(3.1 * var(--u));
+  text-align: right;
+}
+.field input::placeholder { color: #fff; opacity: 1; }
+.field input:focus { outline: none; border-bottom-color: var(--cyan); }
+.field input:focus::placeholder { opacity: .5; }
+.field.is-bad input { border-bottom-color: #ff6b6b; }
+
+.lform__row .field:nth-of-type(1) { right: calc(53 * var(--u)); }
+.lform__row .field:nth-of-type(2) { right: calc(316.4 * var(--u)); }
+.lform__row .field:nth-of-type(3) { right: calc(579.2 * var(--u)); }
+.lform__row .field:nth-of-type(4) { right: calc(845.2 * var(--u)); }
+.lform__row .field:nth-of-type(2) input { padding-bottom: calc(21.64 * var(--u)); }
+.lform__row .field:nth-of-type(3) input,
+.lform__row .field:nth-of-type(4) input { font-size: calc(34 * var(--u)); padding-bottom: calc(22.3 * var(--u)); }
+
+.send {
+  top: calc(122.7 * var(--u)); right: calc(1094.8 * var(--u));
+  display: flex; align-items: center; justify-content: center; gap: calc(14 * var(--u));
+  width: calc(252.1 * var(--u)); height: calc(71.2 * var(--u));
+  border: 0; border-radius: calc(35.6 * var(--u));
+  background: var(--cyan); color: #fff; cursor: pointer;
+  font: 700 calc(40 * var(--u)) / 1 Alef, Arial, sans-serif;
+  transition: background .18s ease, transform .18s ease;
+}
+.send:hover { background: #00c0ff; }
+.send:active { transform: translateY(calc(1 * var(--u))); }
+.send[disabled] { opacity: .6; cursor: progress; }
+.send__arrow { direction: ltr; unicode-bidi: isolate; }
+
+.lform__msg {
+  position: absolute; top: calc(210 * var(--u)); right: calc(53 * var(--u));
+  margin: 0; font-size: calc(24 * var(--u)); color: var(--cyan); min-height: 1em;
+}
+.lform__msg.is-bad { color: #ff8b8b; }
+
+.foot__brand { position: absolute; top: calc(315.9 * var(--u)); left: calc(54.1 * var(--u));
+               width: calc(316.1 * var(--u)); color: #fff; }
+.foot__brand svg { width: 100%; height: auto; }
+
+.foot__contact { position: absolute; top: calc(323.5 * var(--u)); right: calc(53 * var(--u));
+                 font-style: normal; font-size: calc(33 * var(--u)); text-align: right; }
+.foot__contact a { text-decoration: none; }
+.foot__contact a:hover { text-decoration: underline; }
+.foot__contact span { display: block; }
+
+.card.is-pickable { cursor: pointer; transition: box-shadow .18s ease, transform .18s ease; }
+.card.is-pickable:hover,
+.card.is-pickable:focus-visible {
+  box-shadow: 0 calc(6 * var(--u)) calc(20 * var(--u)) rgba(0, 0, 0, .16);
+  transform: translateY(calc(-2 * var(--u)));
+  outline: none;
+}
+
+/* ===========================================================================
+   Narrow screens.
+
+   The design is a desktop artboard, so below 900px the absolute layout is
+   dropped for ordinary flow. The product card keeps its own --u, which means
+   it stays exactly in proportion at any column width.
+   =========================================================================== */
+@media (max-width: 899px) {
+  :root { --u: 1px; }
+  body { max-width: none; }
+
+  /* --- hero --- */
+  .hero {
+    height: auto; min-height: 78vh;
+    /* Column flex: the cross axis is the inline axis, so in RTL "start" is the right. */
+    display: flex; flex-direction: column; align-items: flex-start;
+    padding: 22px 22px 34px; text-align: right;
+  }
+  .hero__bg img { object-position: 78% center; }
+  .hero > :not(.hero__bg) { position: relative; z-index: 1; top: auto; right: auto; left: auto;
+                            white-space: normal; }
+  .hero__logo { width: min(200px, 52vw); margin-bottom: auto; }
+  .hero__title span, .hero__sub span { top: auto; right: auto; }
+  .hero__kicker { margin: 26px 0 0; font-size: clamp(19px, 5.4vw, 30px); letter-spacing: .2em; }
+  .hero > .hero__rate { position: static; display: flex; align-items: center; gap: 10px; margin: 10px 0 4px; }
+  .hero__rate > * { position: static; }
+  .hero__upto, .hero__off { font-size: clamp(17px, 4.4vw, 26px); letter-spacing: .04em; }
+  .hero__pct { width: clamp(120px, 34vw, 190px); height: auto; }
+  .hero__title { font-size: clamp(38px, 11vw, 62px); line-height: 1.02; margin: 6px 0 12px; }
+  .hero__title span, .hero__sub span { position: static; letter-spacing: 0; }
+  .hero__sub { font-size: clamp(18px, 4.8vw, 26px); letter-spacing: .12em; line-height: 1.3; }
+
+  /* --- steps --- */
+  .steps { height: auto; padding: 44px 22px 48px; overflow: hidden; }
+  /* Stacked on narrow screens: the numeral's rule then runs above the copy
+     instead of through it. */
+  .step { position: relative; padding: 116px 0 0; margin-bottom: 26px; }
+  .step > * { position: absolute; }
+  .step__title, .step__text { position: static; letter-spacing: 0; }
+  .step--1 .step__disc, .step--2 .step__disc, .step--3 .step__disc {
+    left: 0; top: 0; width: 100px; height: 100px;
+  }
+  .step--1 .step__num, .step--2 .step__num, .step--3 .step__num {
+    left: 40px; top: 20px; width: min(288px, 76vw);
+  }
+  /* The numeral's rule runs under the copy, so the copy needs its own layer.
+     Desktop pins these by step class, which out-specifies a bare class here. */
+  .step--1 .step__title, .step--2 .step__title, .step--3 .step__title,
+  .step--1 .step__text,  .step--2 .step__text,  .step--3 .step__text {
+    position: relative; z-index: 1; top: auto; left: auto;
+  }
+  .step__title { font-size: clamp(19px, 5vw, 26px); line-height: 1.25; }
+  .step__text  { font-size: clamp(15px, 4vw, 19px); line-height: 1.35; margin-top: 4px; }
+  .step__text span { display: block; }
+
+  /* --- product grid --- */
+  .catalog { padding: 36px 0 44px; }
+  .grid {
+    --gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap);
+    padding: 0 20px;
+  }
+  /* aspect-ratio keeps the card's own box exact; cqw then scales everything
+     inside it off the card's real width (304 design px == 100cqw). */
+  .card { container-type: inline-size; --u: 0.328947cqw;
+          grid-column-start: auto;
+          width: 100%; height: auto; aspect-ratio: 304 / 291; }
+  .catalog__empty { max-width: none; padding: 0 22px; font-size: 18px; }
+
+  /* --- lead prompt --- */
+  .lead { height: auto; padding: 46px 22px 40px; text-align: right; }
+  .lead > :not(.lead__dolly) { position: static; white-space: normal; }
+  .lead__dolly { display: none; }             /* its backdrop is painted for the desktop bands */
+  .lead__title { font-size: clamp(28px, 7.6vw, 46px); line-height: 1.15; }
+  .lead__sub { font-size: clamp(16px, 4.4vw, 24px); margin-top: 8px; }
+  .lead__chevron { width: 44px; height: 28px; margin: 22px 0 0 auto; }
+
+  /* --- footer --- */
+  .foot { height: auto; padding: 34px 22px 30px; }
+  .lform__row { display: flex; flex-direction: column; gap: 18px; }
+  .lform__row > * { position: static; }
+  .field { width: 100%; bottom: auto; }
+  .field input,
+  .lform__row .field:nth-of-type(3) input,
+  .lform__row .field:nth-of-type(4) input {
+    font-size: 20px; padding-bottom: 8px; letter-spacing: .06em;
+    border-bottom-width: 2px;
+  }
+  .send { width: 100%; height: 56px; font-size: 24px; border-radius: 28px; margin-top: 6px; }
+  .lform__msg { position: static; margin-top: 14px; font-size: 16px; }
+  .foot__brand { position: static; width: min(230px, 62vw); margin: 34px 0 0; }
+  .foot__contact { position: static; margin-top: 18px; font-size: 18px; }
+}
+
+@media (max-width: 559px) {
+  .grid { grid-template-columns: 1fr; }
+}

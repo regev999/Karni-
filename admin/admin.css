@@ -1,0 +1,84 @@
+:root {
+  --cyan: #00aeef;
+  --ink: #2e2e2e;
+  --line: #e2e6ea;
+  --bg: #f4f6f8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 Alef, 'Segoe UI', Arial, sans-serif;
+}
+@font-face { font-family: Alef; font-weight: 400; src: url(../assets/fonts/Alef-400-hebrew.woff2) format('woff2');
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; font-display: swap; }
+@font-face { font-family: Alef; font-weight: 700; src: url(../assets/fonts/Alef-700-hebrew.woff2) format('woff2');
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; font-display: swap; }
+
+.bar {
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  padding: 14px 24px; background: #fff; border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 10;
+}
+.bar__brand { font-size: 17px; }
+.bar__nav { display: flex; gap: 6px; flex-wrap: wrap; margin-inline-start: auto; }
+.bar__nav a { padding: 7px 14px; border-radius: 8px; color: #5a6672; text-decoration: none; }
+.bar__nav a:hover { background: var(--bg); }
+.bar__nav a.is-on { background: var(--cyan); color: #fff; }
+.bar__out { color: #b34 !important; }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 24px 20px 72px; }
+h1 { font-size: 26px; margin: 0 0 18px; }
+h2 { font-size: 18px; margin: 0 0 10px; }
+.muted { color: #7b8895; font-weight: 400; font-size: 14px; }
+code { background: #eef1f4; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+
+.card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin: 0 0 20px; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 20px; }
+.cols .card { margin: 0; }
+
+label { display: block; margin: 0 0 14px; font-weight: 700; }
+label small { display: block; font-weight: 400; color: #7b8895; margin-top: 4px; }
+input[type=text], input[type=password], input[type=email], input:not([type]) {
+  display: block; width: 100%; margin-top: 6px; padding: 9px 11px;
+  border: 1px solid var(--line); border-radius: 8px; font: inherit; background: #fff;
+}
+input:focus { outline: 2px solid var(--cyan); outline-offset: -1px; border-color: var(--cyan); }
+
+.btn {
+  display: inline-block; padding: 10px 22px; border: 0; border-radius: 999px;
+  background: var(--cyan); color: #fff; font: 700 15px Alef, Arial, sans-serif;
+  cursor: pointer; text-decoration: none;
+}
+.btn:hover { background: #00c0ff; }
+.btn--danger { background: #d9534f; }
+.btn--danger:hover { background: #e2645f; }
+.danger { border-color: #f3c9c7; background: #fff8f8; }
+
+.filebtn {
+  display: inline-block; padding: 10px 22px; border: 2px dashed var(--cyan);
+  border-radius: 10px; color: #0a7ca8; cursor: pointer; margin-bottom: 10px;
+}
+.filebtn input { display: none; }
+.filelist { margin: 0 0 12px; font-size: 13px; color: #5a6672; max-height: 120px; overflow: auto; }
+.drop.is-over { outline: 3px dashed var(--cyan); outline-offset: 4px; }
+
+.note { padding: 10px 14px; border-radius: 10px; margin: 0 0 12px; background: #e6f7ef; color: #14603f; }
+.note--bad { background: #fdecea; color: #8a231d; }
+
+.tablebar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+.tablebar h1, .tablebar h2 { margin: 0; margin-inline-end: auto; }
+.search { width: 260px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+
+.grid-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.grid-table th, .grid-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; }
+.grid-table th { font-size: 13px; color: #7b8895; position: sticky; top: 60px; background: #fff; }
+.grid-table input:not([type=checkbox]) { margin: 0; padding: 6px 8px; }
+.grid-table .mid { text-align: center; }
+.grid-table .nowrap { white-space: nowrap; font-size: 13px; color: #7b8895; }
+.thumb img { width: 56px; height: 54px; object-fit: contain; background: #f6f6f6; border-radius: 6px; }
+.noimg { display: inline-block; width: 56px; height: 54px; line-height: 54px; text-align: center;
+         background: #f6f6f6; border-radius: 6px; color: #aab4bd; font-size: 12px; }
+.wa { margin-inline-start: 8px; font-size: 12px; color: #1a8f4c; }
+
+.login { max-width: 400px; margin: 60px auto; }
+.login h1 { font-size: 22px; }
