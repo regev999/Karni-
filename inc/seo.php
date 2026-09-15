@@ -312,8 +312,10 @@ function seo_refresh_static(): void
 
     // While the site is blocked the sitemap is still written, so it is ready the
     // moment the switch is turned off; robots.txt is what keeps crawlers away.
+    // ASCII only: this file is read by machines, and a comment is not worth an
+    // encoding question.
     $txt = $blocked
-        ? "# הגדרת \"חסימת אינדוקס\" באזור הניהול דולקת.\n"
+        ? "# Blocked from search on purpose. Turn off the indexing block in /admin/settings.php.\n"
           . "User-agent: *\n"
           . "Disallow: /\n"
         : "User-agent: *\n"
