@@ -6,6 +6,10 @@
 /data/.rate_*
 /data/*.tmp
 
+# Written by the site itself from the current host and catalogue.
+/robots.txt
+/sitemap.xml
+
 # Tooling
 /node_modules/
 /tools/out/

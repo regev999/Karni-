@@ -180,6 +180,9 @@ function sheet_to_products(array $rows): array
         'sku'          => ['מקט', 'מק״ט', 'מק"ט', 'מק\'\'ט', 'קוד', 'sku', 'code', 'catalog', 'catalogue'],
         'price_before' => ['מחיר לפני הנחה', 'מחיר לפני', 'מחיר מקורי', 'מחיר קטלוגי', 'לפני', 'price before', 'was', 'old price', 'list price'],
         'price_after'  => ['מחיר אחרי הנחה', 'מחיר אחרי', 'מחיר מבצע', 'מחיר סופי', 'אחרי', 'price after', 'now', 'new price', 'sale price'],
+        // Optional, and the one column that decides whether a product page has
+        // anything of its own to say to a search engine.
+        'description'  => ['תיאור', 'תאור', 'תיאור מוצר', 'פירוט', 'הערות', 'description', 'details', 'about', 'summary'],
     ];
     $norm = static fn(string $s): string => preg_replace('/[\s"\x{05F4}\x{05F3}\'`.\-_]+/u', '', mb_strtolower($s));
 
@@ -232,6 +235,7 @@ function sheet_to_products(array $rows): array
             'sku'          => $sku,
             'price_before' => $money($get('price_before')),
             'price_after'  => $money($get('price_after')),
+            'description'  => mb_substr(trim($get('description')), 0, 600),
         ];
     }
     return $out;

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>og</title>
+<style>
+  @font-face { font-family: Alef; font-weight: 400; src: url(../assets/fonts/Alef-400-hebrew.woff2) format('woff2'); }
+  @font-face { font-family: Alef; font-weight: 700; src: url(../assets/fonts/Alef-700-hebrew.woff2) format('woff2'); }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1200px; height: 630px; overflow: hidden; font-family: Alef, Arial, sans-serif; }
+
+  .card { position: relative; width: 1200px; height: 630px; background: #1b1b1b; }
+  .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  /* Darkened towards the bottom, where the wording sits. */
+  .veil { position: absolute; inset: 0;
+          background: linear-gradient(180deg, rgba(14,18,22,.72) 0%, rgba(12,16,20,.78) 50%, rgba(8,12,16,.9) 100%); }
+
+  .body { position: absolute; inset: 0; display: flex; flex-direction: column;
+          align-items: center; justify-content: center; gap: 26px; padding: 44px 60px; }
+  /* The artboard's logo and percentage mark are drawn in dark ink; on a photo
+     they only read in white, and these two files are pure shape. */
+  .logo { width: 290px; filter: brightness(0) invert(1); }
+  .logo svg, .logo img { width: 100%; height: auto; display: block; }
+
+  .rate { display: flex; align-items: center; gap: 20px; color: #fff; }
+  .rate img { width: 190px; height: auto; display: block; filter: brightness(0) invert(1); }
+  .rate b { font: 700 44px/1 Alef, Arial, sans-serif; }
+
+  h1 { color: #fff; font: 700 62px/1.12 Alef, Arial, sans-serif; text-align: center;
+       text-shadow: 0 3px 24px rgba(0,0,0,.45); }
+  p  { color: #eaf7ff; font: 400 31px/1.3 Alef, Arial, sans-serif; text-align: center; }
+
+  .rule { width: 128px; height: 5px; border-radius: 3px; background: #00aeef; }
+</style>
+</head>
+<body>
+<div class="card">
+  <img class="shot" src="../assets/img/hero.jpg" alt="">
+  <div class="veil"></div>
+  <div class="body">
+    <div class="logo"><img src="../assets/img/logo.svg" alt=""></div>
+    <h1>מכירה מתצוגה<br>של גופי תאורה בינלאומיים</h1>
+    <div class="rule"></div>
+    <div class="rate"><b>עד</b><img src="../assets/img/seventy.svg" alt=""><b>הנחה</b></div>
+    <p>לרגל שיפוצים באולם התצוגה · הנחושת 4, רמת החייל, ת״א</p>
+  </div>
+</div>
+</body>
+</html>

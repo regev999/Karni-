@@ -56,6 +56,15 @@ body {
 img, svg, picture { display: block; }
 a { color: inherit; }
 
+/* Headings that exist for structure and search engines, not for the artboard. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden; white-space: nowrap;
+  clip-path: inset(50%);
+}
+
 /* =========================================================================== */
 /* Hero                                                                        */
 /* =========================================================================== */
@@ -141,14 +150,19 @@ a { color: inherit; }
   justify-content: center;
 }
 
+/* A real link, so the card is crawlable and opens in a new tab on demand; the
+   script turns the click into the pop-up. */
 .card {
   position: relative;
+  display: block;
   appearance: none;
   margin: 0;
   padding: 0;
   border: 0;
   font: inherit;
+  color: inherit;
   text-align: initial;
+  text-decoration: none;
   cursor: pointer;
   overflow: hidden;
   grid-column-start: var(--col, auto);   /* keeps the design's gaps within a row */
@@ -179,6 +193,8 @@ a { color: inherit; }
 .card__name, .card__sku, .card__old, .card__new {
   position: absolute;
   left: calc(12.1 * var(--u));
+  margin: 0;                     /* .card__name is an <h3>: its own margin would shift `top` */
+  font-weight: inherit;
   direction: ltr;
   line-height: var(--mont-lh);
   white-space: nowrap;
@@ -395,6 +411,10 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   font: 700 calc(17 * var(--u)) / 1.2 Alef, Arial, sans-serif;
 }
 
+/* Shown only for a product whose sheet carried a description. */
+.pm__desc { margin: calc(20 * var(--u)) 0 0; color: var(--ink-soft);
+            font-size: calc(19 * var(--u)); line-height: 1.55; }
+
 .pm hr { border: 0; border-top: 1px solid #e4e4e4; margin: calc(26 * var(--u)) 0 0; }
 .pm__lead { margin: calc(22 * var(--u)) 0 calc(14 * var(--u));
             font: 700 calc(23 * var(--u)) / 1.3 Alef, Arial, sans-serif; }
@@ -563,6 +583,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .pm__old s { left: 2px; height: 11px; }
   .pm__new { font-size: 32px; }
   .pm__save { font-size: 14px; padding: 4px 12px 5px; }
+  .pm__desc { margin-top: 12px; font-size: 15px; }
   .pm hr { margin-top: 16px; }
   .pm__lead { margin: 16px 0 10px; font-size: 19px; }
   .pm__fields { grid-template-columns: 1fr; gap: 14px; }

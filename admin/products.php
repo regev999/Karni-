@@ -71,6 +71,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     'sku'          => trim((string) ($p['sku'] ?? '')),
                     'price_before' => $num($p['price_before'] ?? ''),
                     'price_after'  => $num($p['price_after'] ?? ''),
+                    'description'  => mb_substr(trim((string) ($p['description'] ?? '')), 0, 600),
                     'image'        => basename((string) ($p['image'] ?? '')),
                 ];
             }
@@ -141,6 +142,7 @@ flash();
   <table class="grid-table">
     <thead><tr>
       <th>תמונה</th><th>שם מוצר</th><th>מק״ט</th><th>מחיר לפני</th><th>מחיר אחרי</th>
+      <th>תיאור <span class="hint">לגוגל ולחלון המוצר</span></th>
       <th>מחיקה</th>
     </tr></thead>
     <tbody>
@@ -159,6 +161,8 @@ flash();
         <td><input name="p[<?= $i ?>][sku]"  value="<?= e($r['sku'] ?? '') ?>" size="12"></td>
         <td><input name="p[<?= $i ?>][price_before]" value="<?= e((string) ($r['price_before'] ?? '')) ?>" size="7" inputmode="numeric"></td>
         <td><input name="p[<?= $i ?>][price_after]"  value="<?= e((string) ($r['price_after'] ?? '')) ?>" size="7" inputmode="numeric"></td>
+        <td><textarea name="p[<?= $i ?>][description]" rows="2" maxlength="600"
+                      placeholder="2-3 משפטים על גוף התאורה — זה מה שגוגל מציג"><?= e((string) ($r['description'] ?? '')) ?></textarea></td>
         <td class="mid"><input type="checkbox" name="p[<?= $i ?>][delete]" value="1"></td>
       </tr>
     <?php endforeach; ?>

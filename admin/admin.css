@@ -73,6 +73,13 @@ input:focus { outline: 2px solid var(--cyan); outline-offset: -1px; border-color
 .grid-table th, .grid-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; }
 .grid-table th { font-size: 13px; color: #7b8895; position: sticky; top: 60px; background: #fff; }
 .grid-table input:not([type=checkbox]) { margin: 0; padding: 6px 8px; }
+.grid-table textarea {
+  display: block; width: 100%; min-width: 240px; margin: 0; padding: 6px 8px;
+  border: 1px solid var(--line); border-radius: 8px; font: inherit;
+  line-height: 1.4; background: #fff; resize: vertical;
+}
+.grid-table textarea:focus { outline: 2px solid var(--cyan); outline-offset: -1px; border-color: var(--cyan); }
+.grid-table th .hint { display: block; font-weight: 400; font-size: 11px; color: #a3aeb8; }
 .grid-table .mid { text-align: center; }
 .grid-table .nowrap { white-space: nowrap; font-size: 13px; color: #7b8895; }
 .thumb img { width: 56px; height: 54px; object-fit: contain; background: #f6f6f6; border-radius: 6px; }

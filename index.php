@@ -1,32 +1,34 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/inc/bootstrap.php';
+require __DIR__ . '/inc/seo.php';
 
 $s        = settings();
-$products = products_all();
+$products = products_indexed();
 $logo     = @file_get_contents(BASE . '/assets/img/logo.svg') ?: '';
 $rev      = static fn(string $f): string
     => $f . '?v=' . (is_file(BASE . '/' . $f) ? filemtime(BASE . '/' . $f) : '1');
+
+// ?p=<slug> is a real, indexable address for one product: the same page, with
+// that product's details rendered into the pop-up and its own title and schema.
+$current = product_by_slug((string) ($_GET['p'] ?? ''));
+seo_refresh_static();
 ?>
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title><?= e($s['site_title']) ?></title>
-<meta name="description" content="<?= e($s['description']) ?>">
-<meta name="theme-color" content="#00aeef">
-<meta property="og:type" content="website">
-<meta property="og:title" content="<?= e($s['site_title']) ?>">
-<meta property="og:description" content="<?= e($s['description']) ?>">
-<meta property="og:image" content="assets/img/hero.jpg">
-<meta property="og:locale" content="he_IL">
+<?php seo_head($s, $current, $rev('assets/img/og.jpg')); ?>
 <link rel="icon" href="<?= e($rev('assets/img/favicon.svg')) ?>" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/Alef-700-hebrew.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/Alef-400-hebrew.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/img/hero.webp" as="image" type="image/webp" fetchpriority="high">
 <link rel="stylesheet" href="<?= e($rev('assets/css/site.css')) ?>">
+<?php seo_jsonld($s, $current, $rev('assets/img/og.jpg')); ?>
 </head>
 <body>
+<main>
 
 <header class="hero">
   <picture class="hero__bg">
@@ -61,7 +63,8 @@ $rev      = static fn(string $f): string
   </ol>
 </section>
 
-<section class="catalog" id="catalog" aria-label="גופי תאורה במכירה">
+<section class="catalog" id="catalog">
+  <h2 class="sr-only">גופי תאורה במכירה מתצוגה</h2>
   <?php if (!$products): ?>
     <p class="catalog__empty">הקטלוג בהכנה. העלו תמונות מוצרים וקובץ אקסל באזור הניהול כדי להציג אותם כאן.</p>
   <?php else: ?>
@@ -77,10 +80,12 @@ $rev      = static fn(string $f): string
         $prevRow = $row;
         $img = $p['image'] ?? '';
     ?>
-    <button type="button" class="card"<?= $style ?>
+    <a class="card" href="?p=<?= e(rawurlencode($p['slug'])) ?>"<?= $style ?>
+            data-slug="<?= e($p['slug']) ?>"
             data-name="<?= e($p['name'] ?? '') ?>" data-sku="<?= e($p['sku'] ?? '') ?>"
             data-before="<?= e((string) ($p['price_before'] ?? '')) ?>"
             data-after="<?= e((string) ($p['price_after'] ?? '')) ?>"
+            data-desc="<?= e((string) ($p['description'] ?? '')) ?>"
             data-img="<?= e($img ? UPLOAD_URL . '/' . rawurlencode($img) : '') ?>"
             aria-label="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? '')) . ' — לפרטים ויצירת קשר') ?>">
       <?php if ($img): ?>
@@ -89,7 +94,7 @@ $rev      = static fn(string $f): string
              width="608" height="582" <?= $i < 8 ? '' : 'loading="lazy" ' ?>decoding="async">
       <?php endif; ?>
       <div class="card__meta">
-        <span class="card__name"><?= e($p['name'] ?? '') ?></span>
+        <h3 class="card__name"><?= e($p['name'] ?? '') ?></h3>
         <span class="card__sku"><?= e($p['sku'] ?? '') ?></span>
         <?php if (!empty($p['price_before'])): ?>
           <span class="card__old"><i>₪</i><?= e(shekel($p['price_before'])) ?><s aria-hidden="true"></s></span>
@@ -103,7 +108,7 @@ $rev      = static fn(string $f): string
           <path d="M1348.50 12503.27 C1349.31 12502.53 1350.12 12501.47 1351.04 12500.88 C1358.32 12496.16 1366.88 12505.17 1360.22 12513.10 C1353.29 12521.34 1343.56 12528.69 1336.39 12536.89 C1333.12 12539.40 1329.29 12539.17 1326.17 12536.54 C1319.29 12528.44 1309.05 12521.07 1302.52 12512.92 C1300.15 12509.98 1299.30 12506.65 1301.32 12503.23 C1303.25 12499.96 1307.55 12498.86 1310.95 12500.42 C1312.47 12501.12 1316.64 12505.33 1318.19 12506.79 C1322.72 12511.08 1326.93 12515.75 1331.45 12520.05 C1337.18 12514.52 1342.58 12508.60 1348.50 12503.27" fill="currentColor"/>
         </svg>
       </span>
-    </button>
+    </a>
     <?php endforeach; ?>
   </div>
   <?php endif; ?>
@@ -115,6 +120,7 @@ $rev      = static fn(string $f): string
   <p class="lead__sub">מלאו פרטים בטופס ונחזור אליכם בהקדם</p>
   <img class="lead__chevron" src="assets/img/chevron.svg" alt="" aria-hidden="true" width="68" height="43">
 </section>
+</main>
 
 <footer class="foot">
   <form class="lform" action="api/lead.php" method="post" novalidate>
@@ -146,25 +152,40 @@ $rev      = static fn(string $f): string
   </address>
 </footer>
 
-<dialog class="pm" id="product-modal" aria-labelledby="pm-name">
+<?php
+// On ?p=<slug> the pop-up is filled here rather than only by JavaScript, so the
+// address has real, unique content for a crawler and for a visitor without JS.
+$cName   = (string) ($current['name'] ?? '');
+$cSku    = (string) ($current['sku'] ?? '');
+$cImg    = (string) ($current['image'] ?? '');
+$cDesc   = trim((string) ($current['description'] ?? ''));
+$cBefore = (int) ($current['price_before'] ?? 0);
+$cAfter  = (int) ($current['price_after'] ?? 0);
+$cPct    = $current ? product_discount($current) : null;
+?>
+<dialog class="pm" id="product-modal" aria-labelledby="pm-name"<?= $current ? ' data-open="1"' : '' ?>>
   <button class="pm__x" type="button" data-close aria-label="סגירת החלון">&times;</button>
-  <div class="pm__media"><img class="pm__img" src="" alt=""></div>
+  <div class="pm__media"<?= $current && !$cImg ? ' hidden' : '' ?>>
+    <?php // src="" would make the browser fetch the page itself as an image. ?>
+    <img class="pm__img"<?= $cImg ? ' src="' . e(UPLOAD_URL . '/' . rawurlencode($cImg)) . '"' : '' ?>
+         alt="<?= e(trim($cName . ' ' . $cSku)) ?>"></div>
   <div class="pm__body" tabindex="-1" autofocus>
-    <p class="pm__name" id="pm-name"></p>
-    <p class="pm__sku"></p>
+    <h2 class="pm__name" id="pm-name"><?= e($cName) ?></h2>
+    <p class="pm__sku"><?= e($cSku !== '' ? 'מק״ט ' . $cSku : '') ?></p>
     <div class="pm__prices">
-      <span class="pm__old" hidden><i>₪</i><span></span><s aria-hidden="true"></s></span>
-      <span class="pm__new" hidden><i>₪</i><span></span></span>
-      <span class="pm__save" hidden></span>
+      <span class="pm__old"<?= $cBefore ? '' : ' hidden' ?>><i>₪</i><span><?= e(shekel($cBefore ?: null)) ?></span><s aria-hidden="true"></s></span>
+      <span class="pm__new"<?= $cAfter ? '' : ' hidden' ?>><i>₪</i><span><?= e(shekel($cAfter ?: null)) ?></span></span>
+      <span class="pm__save"<?= $cPct ? '' : ' hidden' ?>><?= $cPct ? e('חיסכון ₪' . shekel($cBefore - $cAfter) . ' · ' . $cPct . '%') : '' ?></span>
     </div>
+    <p class="pm__desc"<?= $cDesc === '' ? ' hidden' : '' ?>><?= e($cDesc) ?></p>
     <hr>
 
     <div class="pm__ask">
       <p class="pm__lead">מעוניינים? השאירו פרטים ונחזור אליכם</p>
       <form class="lform pm__form" action="api/lead.php" method="post" novalidate>
         <p class="lform__hp" aria-hidden="true"><label>אל תמלאו שדה זה<input type="text" name="website" tabindex="-1" autocomplete="off"></label></p>
-        <input type="hidden" name="sku" value="">
-        <input type="hidden" name="product" value="">
+        <input type="hidden" name="sku" value="<?= e($cSku) ?>">
+        <input type="hidden" name="product" value="<?= e($cName) ?>">
         <input type="hidden" name="source" value="popup">
         <div class="pm__fields">
           <label class="pf"><input name="name" type="text" autocomplete="name" placeholder="שם מלא" aria-label="שם מלא" required></label>
@@ -177,7 +198,7 @@ $rev      = static fn(string $f): string
         </div>
         <p class="lform__msg" role="status" aria-live="polite"></p>
       </form>
-      <p class="pm__fine"></p>
+      <p class="pm__fine"><?= e(($cSku !== '' ? 'המק״ט ' . $cSku . ' מצורף לפנייה אוטומטית · ' : '') . 'אין חיוב ואין רכישה באתר') ?></p>
     </div>
 
     <div class="pm__done" hidden>

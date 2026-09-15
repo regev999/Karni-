@@ -123,6 +123,10 @@ function catalog_apply_sheet(array $rows, array $sheet): array
                 'sku'          => $row['sku'],
                 'price_before' => $row['price_before'],
                 'price_after'  => $row['price_after'],
+                // A sheet without a description column must not wipe one that
+                // was typed into the admin.
+                'description'  => ($row['description'] ?? '') !== ''
+                    ? $row['description'] : ($rows[$i]['description'] ?? ''),
             ]);
         } else {
             $ordered[] = $row + ['image' => ''];

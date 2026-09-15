@@ -57,13 +57,22 @@
   /* ------------------------------------------------------------- pop-up --- */
 
   var pm = document.getElementById('product-modal');
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+
+  // A plain left click is ours; ctrl/cmd/shift-click and the middle button stay
+  // the browser's, because every card is a real link to its own address.
+  function plain(ev) {
+    return ev.button === 0 && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && !ev.altKey;
+  }
 
   // Without <dialog> support, fall back to carrying the SKU into the footer form.
   if (!pm || typeof pm.showModal !== 'function') {
-    document.querySelectorAll('.card').forEach(function (card) {
-      card.addEventListener('click', function () {
+    cards.forEach(function (card) {
+      card.addEventListener('click', function (ev) {
+        if (!plain(ev)) return;
         var field = document.querySelector('.foot [name=sku]');
         if (!field) return;
+        ev.preventDefault();
         field.value = card.dataset.sku || '';
         document.querySelector('.foot').scrollIntoView({ behavior: 'smooth', block: 'center' });
         setTimeout(function () { field.focus({ preventScroll: true }); }, 450);
@@ -107,6 +116,10 @@
         Math.round((before - after) / before * 100) + '%';
     }
 
+    var desc = pm.querySelector('.pm__desc');
+    desc.textContent = d.desc || '';
+    desc.hidden = !d.desc;
+
     pmForm.querySelector('[name=sku]').value = d.sku || '';
     pmForm.querySelector('[name=product]').value = d.name || '';
     pm.querySelector('.pm__fine').textContent = (d.sku ? 'המק״ט ' + d.sku + ' מצורף לפנייה אוטומטית · ' : '')
@@ -115,16 +128,33 @@
       + (d.sku ? ' בנוגע למק״ט ' + d.sku : '') + '.';
   }
 
-  function open(card) {
+  // True while the history drives the dialog, so the two do not answer each other.
+  var syncing = false;
+
+  function cardFor(slug) {
+    if (!slug) return null;
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].dataset.slug === slug) return cards[i];
+    }
+    return null;
+  }
+
+  function slugInUrl() {
+    return new URLSearchParams(location.search).get('p');
+  }
+
+  function open(card, push) {
     lastCard = card;
     fill(card);
     ask.hidden = false;
     done.hidden = true;
     setMsg(pmForm, '');
     markFields(pmForm, {});
-    pm.showModal();
+    if (!pm.open) pm.showModal();
     document.documentElement.classList.add('is-locked');
     pm.querySelector('.pm__body').scrollTop = 0;
+    // Each product has an address of its own; opening one goes to it.
+    if (push) history.pushState({ pm: 1 }, '', card.getAttribute('href'));
   }
 
   function close() {
@@ -135,6 +165,20 @@
     document.documentElement.classList.remove('is-locked');
     // Put the caret back where the visitor left off in the gallery.
     if (lastCard) lastCard.focus({ preventScroll: true });
+    if (syncing) return;
+    if (history.state && history.state.pm) {
+      history.back();                       // undo the entry opening it added
+    } else if (slugInUrl()) {
+      // Landed straight on a product address: drop the query, add no history.
+      history.replaceState({}, '', location.pathname);
+    }
+  });
+
+  window.addEventListener('popstate', function () {
+    syncing = true;
+    var card = cardFor(slugInUrl());
+    if (card) { open(card, false); } else { close(); }
+    syncing = false;
   });
 
   pm.querySelectorAll('[data-close]').forEach(function (b) {
@@ -153,7 +197,18 @@
     pm.querySelector('.pm__ghost').focus();
   });
 
-  document.querySelectorAll('.card').forEach(function (card) {
-    card.addEventListener('click', function () { open(card); });
+  cards.forEach(function (card) {
+    card.addEventListener('click', function (ev) {
+      if (!plain(ev)) return;
+      ev.preventDefault();
+      open(card, true);
+    });
   });
+
+  // Arriving on a product address: the server already rendered its details, so
+  // this only has to raise the pop-up over them.
+  if (pm.dataset.open) {
+    var landed = cardFor(slugInUrl());
+    if (landed) open(landed, false);
+  }
 }());
