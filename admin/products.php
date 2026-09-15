@@ -72,28 +72,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     'price_before' => $num($p['price_before'] ?? ''),
                     'price_after'  => $num($p['price_after'] ?? ''),
                     'image'        => basename((string) ($p['image'] ?? '')),
-                    'light'        => !empty($p['light']),
                 ];
             }
             products_save($out);
             flash('הקטלוג נשמר (' . count($out) . ' מוצרים).');
-
-        } elseif ($action === 'recolour') {
-            $changed = 0;
-            foreach ($rows as &$r) {
-                $file = $r['image'] ?? '';
-                if ($file === '' || !is_file(UPLOAD_DIR . '/' . $file)) {
-                    continue;
-                }
-                $light = image_wants_light_text(UPLOAD_DIR . '/' . $file);
-                if ($light !== null && (bool) ($r['light'] ?? false) !== $light) {
-                    $r['light'] = $light;
-                    $changed++;
-                }
-            }
-            unset($r);
-            products_save($rows);
-            flash($changed ? "עודכן צבע הטקסט ב-$changed מוצרים." : 'צבע הטקסט כבר מתאים בכל המוצרים.');
 
         } elseif ($action === 'clear') {
             foreach ($rows as $r) {
@@ -159,7 +141,7 @@ flash();
   <table class="grid-table">
     <thead><tr>
       <th>תמונה</th><th>שם מוצר</th><th>מק״ט</th><th>מחיר לפני</th><th>מחיר אחרי</th>
-      <th title="טקסט לבן — נקבע אוטומטית לפי התמונה, ניתן לשנות">לבן</th><th>מחיקה</th>
+      <th>מחיקה</th>
     </tr></thead>
     <tbody>
     <?php foreach ($rows as $i => $r): ?>
@@ -177,22 +159,12 @@ flash();
         <td><input name="p[<?= $i ?>][sku]"  value="<?= e($r['sku'] ?? '') ?>" size="12"></td>
         <td><input name="p[<?= $i ?>][price_before]" value="<?= e((string) ($r['price_before'] ?? '')) ?>" size="7" inputmode="numeric"></td>
         <td><input name="p[<?= $i ?>][price_after]"  value="<?= e((string) ($r['price_after'] ?? '')) ?>" size="7" inputmode="numeric"></td>
-        <td class="mid"><input type="checkbox" name="p[<?= $i ?>][light]" value="1"<?= !empty($r['light']) ? ' checked' : '' ?>></td>
         <td class="mid"><input type="checkbox" name="p[<?= $i ?>][delete]" value="1"></td>
       </tr>
     <?php endforeach; ?>
     </tbody>
   </table>
   <button class="btn" type="submit">שמירת שינויים</button>
-</form>
-
-<form method="post" class="card">
-  <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
-  <input type="hidden" name="action" value="recolour">
-  <h2>צבע הטקסט על הכרטיסים</h2>
-  <p class="muted">שם המוצר והמחיר מודפסים על גבי התמונה. הצבע נקבע אוטומטית בכל העלאה —
-     כהה לתמונות בהירות, לבן לתמונות כהות. הריצו את הבדיקה שוב אם החלפתם תמונות מחוץ למסך הזה.</p>
-  <button class="btn" type="submit">זיהוי אוטומטי מחדש</button>
 </form>
 
 <form method="post" class="card danger" onsubmit="return confirm('למחוק את כל המוצרים ואת כל התמונות שהועלו? לא ניתן לבטל.');">

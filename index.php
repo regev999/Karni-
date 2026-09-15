@@ -77,7 +77,7 @@ $rev      = static fn(string $f): string
         $prevRow = $row;
         $img = $p['image'] ?? '';
     ?>
-    <button type="button" class="card<?= !empty($p['light']) ? ' card--light' : '' ?>"<?= $style ?>
+    <button type="button" class="card"<?= $style ?>
             data-name="<?= e($p['name'] ?? '') ?>" data-sku="<?= e($p['sku'] ?? '') ?>"
             data-before="<?= e((string) ($p['price_before'] ?? '')) ?>"
             data-after="<?= e((string) ($p['price_after'] ?? '')) ?>"
