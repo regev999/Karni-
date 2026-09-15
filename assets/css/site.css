@@ -163,6 +163,37 @@ a { color: inherit; }
 /* Boxed to the card so the lines inside keep resolving their `top` against the
    same rectangle, while the wrapper alone is what moves. */
 .card__meta { position: absolute; inset: 0; pointer-events: none; transition: transform .18s ease; }
+
+/* The caption sits over the photo, and an uploaded photo can put anything
+   underneath it. This plate fades up from the bottom so the text always has
+   something to sit on - invisible over the white product tiles the design was
+   drawn with, and a soft wash over anything busier. It rides inside
+   .card__meta, so it lifts with the caption. */
+.card__meta::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  /* Holds its strength through the caption (which ends ~112px up), then fades
+     out quickly, so the wash reads as deliberate rather than as a band. */
+  height: calc(152 * var(--u));
+  background: linear-gradient(to top,
+    rgba(255, 255, 255, .97) 0%,
+    rgba(255, 255, 255, .96) 58%,
+    rgba(255, 255, 255, .90) 74%,
+    rgba(255, 255, 255, .62) 85%,
+    rgba(255, 255, 255, .24) 94%,
+    rgba(255, 255, 255, 0) 100%);
+}
+.card--light .card__meta::before {
+  background: linear-gradient(to top,
+    rgba(18, 20, 22, .90) 0%,
+    rgba(18, 20, 22, .88) 58%,
+    rgba(18, 20, 22, .78) 74%,
+    rgba(18, 20, 22, .50) 85%,
+    rgba(18, 20, 22, .20) 94%,
+    rgba(18, 20, 22, 0) 100%);
+}
 .card--light { color: #fff; }
 .card__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 

@@ -6,6 +6,64 @@ const IMAGE_TYPES = [
     IMAGETYPE_WEBP => 'webp', IMAGETYPE_AVIF => 'avif',
 ];
 
+/**
+ * The card prints its caption over the bottom-left of the photo. Sample exactly
+ * that corner and report whether it is dark enough to need white text.
+ * Returns null when the image cannot be read, so the caller can leave the
+ * existing choice alone.
+ */
+function image_wants_light_text(string $path): ?bool
+{
+    if (!extension_loaded('gd')) {
+        return null;
+    }
+    $info = @getimagesize($path);
+    $loaders = [
+        IMAGETYPE_JPEG => 'imagecreatefromjpeg', IMAGETYPE_PNG => 'imagecreatefrompng',
+        IMAGETYPE_GIF  => 'imagecreatefromgif',  IMAGETYPE_WEBP => 'imagecreatefromwebp',
+        IMAGETYPE_AVIF => 'imagecreatefromavif',
+    ];
+    $fn = $info ? ($loaders[$info[2]] ?? null) : null;
+    if (!$fn || !function_exists($fn)) {
+        return null;
+    }
+    $im = @$fn($path);
+    if (!$im) {
+        return null;
+    }
+    try {
+        $w = imagesx($im);
+        $h = imagesy($im);
+        // The caption box, as a fraction of the tile: left edge inward, bottom third.
+        $x0 = (int) ($w * 0.04);
+        $x1 = (int) ($w * 0.55);
+        $y0 = (int) ($h * 0.62);
+        $y1 = (int) ($h * 0.99);
+        $stepX = max(1, (int) (($x1 - $x0) / 40));
+        $stepY = max(1, (int) (($y1 - $y0) / 40));
+
+        $sum = 0;
+        $n = 0;
+        for ($y = $y0; $y < $y1; $y += $stepY) {
+            for ($x = $x0; $x < $x1; $x += $stepX) {
+                $c = imagecolorsforindex($im, imagecolorat($im, $x, $y));
+                // Blend against white, so a transparent PNG reads as the card does.
+                $a = 1 - ($c['alpha'] / 127);
+                $r = $c['red'] * $a + 255 * (1 - $a);
+                $g = $c['green'] * $a + 255 * (1 - $a);
+                $b = $c['blue'] * $a + 255 * (1 - $a);
+                $sum += 0.299 * $r + 0.587 * $g + 0.114 * $b;
+                $n++;
+            }
+        }
+        // 170 is where the designer's own calls fall: the two photos they set in
+        // white sample at 131 and 153, the lightest dark-caption photo at 189.
+        return $n ? ($sum / $n) < 170 : null;
+    } finally {
+        imagedestroy($im);
+    }
+}
+
 /** Case- and punctuation-insensitive key used to line images up with sheet rows. */
 function match_key(string $s): string
 {
@@ -66,7 +124,7 @@ function ingest_image(array $file): array
         throw new RuntimeException('שמירת הקובץ נכשלה');
     }
     @chmod(UPLOAD_DIR . '/' . $dest, 0664);
-    return [$name, $dest];
+    return [$name, $dest, image_wants_light_text(UPLOAD_DIR . '/' . $dest)];
 }
 
 /**
@@ -79,7 +137,7 @@ function catalog_add_images(array $rows, array $uploads): array
     foreach ($rows as $i => $r) {
         $index[match_key((string) ($r['name'] ?? ''))] = $i;
     }
-    foreach ($uploads as [$name, $file]) {
+    foreach ($uploads as [$name, $file, $light]) {
         $key = match_key($name);
         if (isset($index[$key])) {
             $old = $rows[$index[$key]]['image'] ?? '';
@@ -87,10 +145,13 @@ function catalog_add_images(array $rows, array $uploads): array
                 @unlink(UPLOAD_DIR . '/' . $old);
             }
             $rows[$index[$key]]['image'] = $file;
+            if ($light !== null) {
+                $rows[$index[$key]]['light'] = $light;
+            }
             continue;
         }
         $rows[] = ['name' => $name, 'sku' => '', 'price_before' => null,
-                   'price_after' => null, 'image' => $file, 'light' => false];
+                   'price_after' => null, 'image' => $file, 'light' => (bool) $light];
         $index[$key] = array_key_last($rows);
     }
     return $rows;
