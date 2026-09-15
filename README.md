@@ -32,14 +32,20 @@ PHP 8.1+ בלבד — **בלי Composer, בלי בסיס נתונים, בלי No
 אפשר גם להעלות במנות של 20–50 תמונות בכל פעם — התוצאה זהה.
 
 ### אבטחה
-* `data/` ו‑`inc/` חסומים ב‑`.htaccess`; בנוסף `data/settings.php` ו‑`data/leads.php` פותחים
-  ב‑`<?php ... exit;` כך שגם שרת שמתעלם מ‑`.htaccess` לא ידלוף.
+* **כל קובץ נתונים הוא `.php` שפותח ב‑`<?php http_response_code(404); exit; ?>`** —
+  `settings.php` (גיבוב הסיסמה), `leads.php` (פרטי לקוחות), `views.php` (מונה הצפיות)
+  ו‑`products.php` (הקטלוג), וגם `products.seed.php` שמגיע עם הקוד. זו ההגנה היחידה
+  שלא תלויה בהגדרת שרת: היא עובדת גם ב‑nginx בלי `.htaccess` וגם ב‑`php -S`.
+* `data/` ו‑`inc/` חסומים גם ב‑`.htaccess`, לשרתי Apache.
 * `uploads/` חוסם הרצת סקריפטים.
 * אם השרת הוא nginx (בלי `.htaccess`), הוסיפו:
   ```nginx
   location ~ ^/(data|inc|tools)/ { deny all; }
   location ~ ^/uploads/.*\.(php|phtml|cgi|pl|py|sh|html?)$ { deny all; }
   ```
+  בפאנל פרוגינטר אין `.htaccess` כברירת מחדל, ואת אותו הדבר עושים ב‑*אתרים →
+  הגדרות → ניתובים*: `^/(inc|data|tools)/` → `/blocked-by-rule`, דגל `last`.
+  זה מסתיר את קבצי הקוד והכלים; הנתונים עצמם מוגנים גם בלי זה, בזכות שורת ה‑404.
 * לחלופין אפשר להוציא את `data/` מחוץ לשורש האתר: צרו `inc/config.local.php` עם
   ```php
   <?php define('DATA_DIR', '/home/USER/private/karni-data');
@@ -146,7 +152,8 @@ inc/                   bootstrap, אחסון, הרשאות, קורא אקסל, �
 assets/css|js|fonts    עיצוב, סקריפט, ופונטים מקומיים (Alef + Montserrat)
 assets/img             hero, לוגו, 70%, ספרות השלבים, עגלה — חולצו מה‑PDF
 uploads/products       תמונות המוצרים
-data/                  products.json, settings.php, leads.php, views.php
+data/                  products.php (הקטלוג החי), products.seed.php (הקטלוג שמגיע עם הקוד),
+                       settings.php, leads.php, views.php — כולם מאחורי שורת 404
 tools/                 כלי פיתוח בלבד — לא נדרשים בשרת
 ```
 

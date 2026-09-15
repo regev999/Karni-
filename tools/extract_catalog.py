@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Extract the product catalog (names, SKUs, prices, photos) from the Adobe XD design PDF.
 
-Dev-time tool. Run once to seed data/products.json and uploads/products/.
+Dev-time tool. Run once to seed data/products.seed.php and uploads/products/.
     python3 tools/extract_catalog.py <design.pdf>
 """
 import json, os, re, sys, unicodedata
@@ -87,7 +87,6 @@ def blocks(page):
             "_rect": rect,
             "_base": base,
             "_col": c,
-            "_light": all(s["color"] == 0xFFFFFF for s in bands["name"]),
         })
 
     # The design carries a leftover row hidden under later tiles. A block counts as
@@ -157,10 +156,10 @@ def main():
         total += os.path.getsize(path)
         out.append({"id": i, "name": p["name"], "sku": p["sku"],
                     "price_before": p["price_before"], "price_after": p["price_after"],
-                    "image": fname, "row": p["_row"] + 1, "col": p["_ccol"],
-                    "light": p["_light"]})
+                    "image": fname, "row": p["_row"] + 1, "col": p["_ccol"]})
 
-    with open(os.path.join(DATA, "products.json"), "w", encoding="utf-8") as fh:
+    with open(os.path.join(DATA, "products.seed.php"), "w", encoding="utf-8") as fh:
+        fh.write("<?php http_response_code(404); exit; ?>\n")
         json.dump(out, fh, ensure_ascii=False, indent=1)
     print(f"wrote {len(out)} images, {total/1e6:.1f} MB")
 

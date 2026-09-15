@@ -2,6 +2,12 @@
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 
+// The live catalogue is data/products.php, JSON behind a one-line PHP guard.
+function catalogue() {
+  const raw = fs.readFileSync('data/products.php', 'utf8');
+  return JSON.parse(raw.startsWith('<?php') ? raw.slice(raw.indexOf('\n') + 1) : raw);
+}
+
 const BASE = process.env.SITE_URL || 'http://127.0.0.1:8088';
 const browser = await chromium.launch({
   executablePath: process.env.CHROME_BIN || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
@@ -48,11 +54,11 @@ for (const f of ['data/settings.php', 'data/leads.php', 'inc/store.php']) {
 }
 
 // 4. Upload product images; the filename becomes the product name.
-const before = JSON.parse(fs.readFileSync('data/products.json', 'utf8')).length;
+const before = catalogue().length;
 await page.setInputFiles('input[name="images[]"]', ['/tmp/claude-0/t/KELVIN.jpg', '/tmp/claude-0/t/Brand New Lamp.png']);
 await page.click('#imgform button[type=submit]');
 await page.waitForURL('**/products.php');
-const afterImg = JSON.parse(fs.readFileSync('data/products.json', 'utf8'));
+const afterImg = catalogue();
 ok(afterImg.length === before + 1, `image upload: existing product matched by name, new one added (${before} -> ${afterImg.length})`);
 ok(afterImg.some(p => p.name === 'Brand New Lamp'), 'new product named from the filename');
 const kelvin = afterImg.find(p => p.name === 'KELVIN');
@@ -62,7 +68,7 @@ ok(kelvin && kelvin.image === 'KELVIN.jpg', 'existing KELVIN photo replaced, not
 await page.setInputFiles('input[name=sheet]', '/tmp/claude-0/t/catalog.xlsx');
 await page.click('form:has(input[value=sheet]) button[type=submit]');
 await page.waitForURL('**/products.php');
-const merged = JSON.parse(fs.readFileSync('data/products.json', 'utf8'));
+const merged = catalogue();
 ok(merged[0].name === 'KELVIN' && merged[0].sku === 'FLS3198', 'sheet order drives page order');
 ok(merged[0].image === 'KELVIN.jpg', 'sheet merge keeps the photo');
 ok(merged.some(p => p.name === 'מנורת בדיקה' && p.price_after === 399), 'Hebrew row imported');

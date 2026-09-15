@@ -47,7 +47,16 @@ function write_json(string $path, mixed $value): bool
 
 function products_all(): array
 {
-    $rows = read_json(DATA_DIR . '/products.json', []) ?: [];
+    // null, not [], so that a catalogue someone deliberately emptied is not
+    // mistaken for a fresh install and re-seeded.
+    $rows = read_json(PRODUCTS_FILE, null);
+    if ($rows === null) {
+        $legacy = DATA_DIR . '/products.json';
+        $rows = read_json(is_file($legacy) ? $legacy : PRODUCTS_SEED, []) ?: [];
+        if ($rows) {
+            write_json(PRODUCTS_FILE, $rows);
+        }
+    }
     return array_values(array_filter($rows, static fn($r) => is_array($r) && ($r['name'] ?? '') !== ''));
 }
 
@@ -58,7 +67,7 @@ function products_save(array $rows): bool
         $r['id'] = ++$i;
     }
     unset($r);
-    return write_json(DATA_DIR . '/products.json', array_values($rows));
+    return write_json(PRODUCTS_FILE, array_values($rows));
 }
 
 function leads_all(): array

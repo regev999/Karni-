@@ -287,7 +287,7 @@ function seo_refresh_static(): void
 {
     $sitemap  = BASE . '/sitemap.xml';
     $robots   = BASE . '/robots.txt';
-    $catalogue = DATA_DIR . '/products.json';
+    $catalogue = PRODUCTS_FILE;
     $blocked  = !empty(settings()['noindex']);
 
     // Stale against the catalogue, the settings, this file (so a deploy that

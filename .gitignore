@@ -2,6 +2,8 @@
 /data/settings.php
 /data/leads.php
 /data/views.php
+/data/products.php
+/data/products.json
 /data/settings.json
 /data/leads.json
 /data/.rate_*

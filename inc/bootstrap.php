@@ -16,6 +16,12 @@ const UPLOAD_URL = 'uploads/products';
 define('SETTINGS_FILE', DATA_DIR . '/settings.php');
 define('LEADS_FILE', DATA_DIR . '/leads.php');
 define('VIEWS_FILE', DATA_DIR . '/views.php');
+// The live catalogue is a .php behind the same guard, so no server rule has to
+// keep it private; the seed beside it is what a fresh install starts from.
+define('PRODUCTS_FILE', DATA_DIR . '/products.php');
+// The seed ships with the code, so it stays next to it even when DATA_DIR has
+// been moved outside the web root.
+define('PRODUCTS_SEED', BASE . '/data/products.seed.php');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Jerusalem');
