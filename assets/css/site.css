@@ -162,7 +162,7 @@ a { color: inherit; }
 
 /* Boxed to the card so the lines inside keep resolving their `top` against the
    same rectangle, while the wrapper alone is what moves. */
-.card__meta { position: absolute; inset: 0; pointer-events: none; transition: transform .18s ease; }
+.card__meta { position: absolute; inset: 0; pointer-events: none; }
 
 /* The caption sits over the photo, and an uploaded photo can put anything
    underneath it. This plate fades up from the bottom so the text always has
@@ -308,29 +308,47 @@ a { color: inherit; }
 /* =========================================================================== */
 /* Product card: the affordance that it opens a pop-up                         */
 /* =========================================================================== */
-.card { transition: box-shadow .18s ease, transform .18s ease; }
+.card { transition: box-shadow .2s ease, transform .2s ease; }
 .card:hover, .card:focus-visible {
-  box-shadow: 0 calc(6 * var(--u)) calc(20 * var(--u)) rgba(0, 0, 0, .16);
+  box-shadow: 0 calc(7 * var(--u)) calc(22 * var(--u)) rgba(0, 0, 0, .15);
   transform: translateY(calc(-2 * var(--u)));
 }
 .card:focus-visible { outline: calc(3 * var(--u)) solid var(--cyan); outline-offset: calc(2 * var(--u)); }
 
-.card__cta {
-  position: absolute; inset-inline: 0; bottom: 0;
-  padding: calc(11 * var(--u)) 0 calc(12 * var(--u));
-  background: var(--cyan); color: #fff; text-align: center;
-  font: 700 calc(19 * var(--u)) / 1.2 Alef, Arial, sans-serif;
-  transform: translateY(100%);
-  transition: transform .18s ease;
+/* A cyan disc with the page's own chevron - the same motif as the numbered
+   step markers - in the one corner the photo's brand mark and the caption
+   both leave free. */
+.card__go {
+  position: absolute;
+  right: calc(15 * var(--u));
+  bottom: calc(15 * var(--u));
+  display: grid;
+  place-items: center;
+  width: calc(38 * var(--u));
+  height: calc(38 * var(--u));
+  border-radius: 50%;
+  background: var(--cyan);
+  color: #fff;
+  opacity: 0;
+  transform: scale(.7);
+  transition: opacity .2s ease, transform .2s cubic-bezier(.2, .9, .3, 1.2);
 }
-.card:hover .card__cta, .card:focus-visible .card__cta { transform: translateY(0); }
-.card:hover .card__meta,
-.card:focus-visible .card__meta { transform: translateY(calc(-48 * var(--u))); }
+.card__go svg {
+  width: calc(15 * var(--u));
+  height: auto;
+  rotate: 90deg;               /* the chevron is drawn pointing down */
+}
+.card:hover .card__go,
+.card:focus-visible .card__go { opacity: 1; transform: scale(1); }
 
-/* A pointer that cannot hover never gets a hover state, so the bar stays out. */
+/* A pointer that cannot hover never gets a hover state, so the disc stays out. */
 @media (hover: none) {
-  .card__cta { transform: translateY(0); }
-  .card__meta { transform: translateY(calc(-48 * var(--u))); }
+  .card__go { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .card__go { transition-duration: .01ms; }
+  .card:hover, .card:focus-visible { transform: none; }
 }
 
 /* =========================================================================== */

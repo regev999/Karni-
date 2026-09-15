@@ -81,7 +81,8 @@ $rev      = static fn(string $f): string
             data-name="<?= e($p['name'] ?? '') ?>" data-sku="<?= e($p['sku'] ?? '') ?>"
             data-before="<?= e((string) ($p['price_before'] ?? '')) ?>"
             data-after="<?= e((string) ($p['price_after'] ?? '')) ?>"
-            data-img="<?= e($img ? UPLOAD_URL . '/' . rawurlencode($img) : '') ?>">
+            data-img="<?= e($img ? UPLOAD_URL . '/' . rawurlencode($img) : '') ?>"
+            aria-label="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? '')) . ' — לפרטים ויצירת קשר') ?>">
       <?php if ($img): ?>
         <img class="card__img" src="<?= e(UPLOAD_URL . '/' . rawurlencode($img)) ?>"
              alt="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? ''))) ?>"
@@ -97,7 +98,11 @@ $rev      = static fn(string $f): string
           <span class="card__new"><i>₪</i><?= e(shekel($p['price_after'])) ?></span>
         <?php endif; ?>
       </div>
-      <span class="card__cta" aria-hidden="true">לפרטים ויצירת קשר</span>
+      <span class="card__go" aria-hidden="true">
+        <svg viewBox="1299.3 12496.2 67.6 43.2" width="16" height="10">
+          <path d="M1348.50 12503.27 C1349.31 12502.53 1350.12 12501.47 1351.04 12500.88 C1358.32 12496.16 1366.88 12505.17 1360.22 12513.10 C1353.29 12521.34 1343.56 12528.69 1336.39 12536.89 C1333.12 12539.40 1329.29 12539.17 1326.17 12536.54 C1319.29 12528.44 1309.05 12521.07 1302.52 12512.92 C1300.15 12509.98 1299.30 12506.65 1301.32 12503.23 C1303.25 12499.96 1307.55 12498.86 1310.95 12500.42 C1312.47 12501.12 1316.64 12505.33 1318.19 12506.79 C1322.72 12511.08 1326.93 12515.75 1331.45 12520.05 C1337.18 12514.52 1342.58 12508.60 1348.50 12503.27" fill="currentColor"/>
+        </svg>
+      </span>
     </button>
     <?php endforeach; ?>
   </div>
