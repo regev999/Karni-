@@ -20,16 +20,22 @@ function notify_lead(array $lead): array
 function mail_lead(array $to, array $lead, array $s): bool
 {
     $host = preg_replace('/^www\./', '', $_SERVER['HTTP_HOST'] ?? 'localhost');
-    $subject = 'ליד חדש מדף הנחיתה — ' . ($lead['name'] ?: 'ללא שם');
+    $subject = 'ליד חדש מדף הנחיתה — ' . ($lead['name'] ?: 'ללא שם')
+        . ($lead['product'] ?? '' ? ' · ' . $lead['product'] : '');
 
     $rows = '';
     foreach ([
         'שם מלא' => $lead['name'] ?? '',
         'טלפון'  => $lead['phone'] ?? '',
         'מייל'   => $lead['email'] ?? '',
+        'מוצר'   => $lead['product'] ?? '',
         'מק״ט'   => $lead['sku'] ?? '',
+        'מקור'   => ($lead['source'] ?? '') === 'popup' ? 'חלון מוצר' : 'טופס בתחתית הדף',
         'התקבל'  => $lead['created_at'] ?? '',
     ] as $label => $value) {
+        if ($value === '') {
+            continue;
+        }
         $rows .= '<tr><th align="right" style="padding:6px 12px;background:#f2f2f2;white-space:nowrap">'
             . e($label) . '</th><td style="padding:6px 12px">' . e((string) $value) . '</td></tr>';
     }

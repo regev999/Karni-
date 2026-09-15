@@ -24,11 +24,13 @@ if (($_GET['export'] ?? '') === 'csv') {
     header('Content-Disposition: attachment; filename="leads-' . date('Y-m-d') . '.csv"');
     $out = fopen('php://output', 'w');
     fwrite($out, "\xEF\xBB\xBF");
-    fputcsv($out, ['#', 'שם מלא', 'טלפון', 'מייל', 'מק״ט', 'התקבל'], ',', '"', '');
+    fputcsv($out, ['#', 'שם מלא', 'טלפון', 'מייל', 'מוצר', 'מק״ט', 'מקור', 'התקבל'], ',', '"', '');
     foreach ($leads as $l) {
         fputcsv($out, [
-            $l['id'] ?? '', $l['name'] ?? '', $l['phone'] ?? '',
-            $l['email'] ?? '', $l['sku'] ?? '', $l['created_at'] ?? '',
+            $l['id'] ?? '', $l['name'] ?? '', $l['phone'] ?? '', $l['email'] ?? '',
+            $l['product'] ?? '', $l['sku'] ?? '',
+            ($l['source'] ?? '') === 'popup' ? 'חלון מוצר' : 'טופס',
+            $l['created_at'] ?? '',
         ], ',', '"', '');
     }
     exit;
@@ -50,7 +52,7 @@ $leads = array_reverse($leads);
   <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
   <input type="hidden" name="action" value="delete">
   <table class="grid-table">
-    <thead><tr><th></th><th>#</th><th>שם מלא</th><th>טלפון</th><th>מייל</th><th>מק״ט</th><th>התקבל</th></tr></thead>
+    <thead><tr><th></th><th>#</th><th>שם מלא</th><th>טלפון</th><th>מייל</th><th>מוצר</th><th>מק״ט</th><th>מקור</th><th>התקבל</th></tr></thead>
     <tbody>
     <?php foreach ($leads as $l): ?>
       <tr>
@@ -63,7 +65,9 @@ $leads = array_reverse($leads);
               <a class="wa" href="https://wa.me/972<?= e(ltrim($digits, '0')) ?>" target="_blank" rel="noopener">וואטסאפ</a>
             <?php endif; ?></td>
         <td><?php if (!empty($l['email'])): ?><a href="mailto:<?= e($l['email']) ?>"><?= e($l['email']) ?></a><?php endif; ?></td>
+        <td><?= e($l['product'] ?? '') ?></td>
         <td><?= e($l['sku'] ?? '') ?></td>
+        <td class="nowrap"><?= ($l['source'] ?? '') === 'popup' ? 'חלון מוצר' : 'טופס' ?></td>
         <td class="nowrap"><?= e($l['created_at'] ?? '') ?></td>
       </tr>
     <?php endforeach; ?>

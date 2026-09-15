@@ -77,7 +77,11 @@ $rev      = static fn(string $f): string
         $prevRow = $row;
         $img = $p['image'] ?? '';
     ?>
-    <article class="card<?= !empty($p['light']) ? ' card--light' : '' ?>"<?= $style ?>>
+    <button type="button" class="card<?= !empty($p['light']) ? ' card--light' : '' ?>"<?= $style ?>
+            data-name="<?= e($p['name'] ?? '') ?>" data-sku="<?= e($p['sku'] ?? '') ?>"
+            data-before="<?= e((string) ($p['price_before'] ?? '')) ?>"
+            data-after="<?= e((string) ($p['price_after'] ?? '')) ?>"
+            data-img="<?= e($img ? UPLOAD_URL . '/' . rawurlencode($img) : '') ?>">
       <?php if ($img): ?>
         <img class="card__img" src="<?= e(UPLOAD_URL . '/' . rawurlencode($img)) ?>"
              alt="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? ''))) ?>"
@@ -93,7 +97,8 @@ $rev      = static fn(string $f): string
           <span class="card__new"><i>₪</i><?= e(shekel($p['price_after'])) ?></span>
         <?php endif; ?>
       </div>
-    </article>
+      <span class="card__cta" aria-hidden="true">לפרטים ויצירת קשר</span>
+    </button>
     <?php endforeach; ?>
   </div>
   <?php endif; ?>
@@ -135,6 +140,49 @@ $rev      = static fn(string $f): string
     <span><?= e($s['address']) ?></span>
   </address>
 </footer>
+
+<dialog class="pm" id="product-modal" aria-labelledby="pm-name">
+  <button class="pm__x" type="button" data-close aria-label="סגירת החלון">&times;</button>
+  <div class="pm__media"><img class="pm__img" src="" alt=""></div>
+  <div class="pm__body" tabindex="-1" autofocus>
+    <p class="pm__name" id="pm-name"></p>
+    <p class="pm__sku"></p>
+    <div class="pm__prices">
+      <span class="pm__old" hidden><i>₪</i><span></span><s aria-hidden="true"></s></span>
+      <span class="pm__new" hidden><i>₪</i><span></span></span>
+      <span class="pm__save" hidden></span>
+    </div>
+    <hr>
+
+    <div class="pm__ask">
+      <p class="pm__lead">מעוניינים? השאירו פרטים ונחזור אליכם</p>
+      <form class="lform pm__form" action="api/lead.php" method="post" novalidate>
+        <p class="lform__hp" aria-hidden="true"><label>אל תמלאו שדה זה<input type="text" name="website" tabindex="-1" autocomplete="off"></label></p>
+        <input type="hidden" name="sku" value="">
+        <input type="hidden" name="product" value="">
+        <input type="hidden" name="source" value="popup">
+        <div class="pm__fields">
+          <label class="pf"><input name="name" type="text" autocomplete="name" placeholder="שם מלא" aria-label="שם מלא" required></label>
+          <label class="pf"><input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="טלפון" aria-label="טלפון" required></label>
+          <label class="pf pf--wide"><input name="email" type="email" autocomplete="email" placeholder="מייל (לא חובה)" aria-label="מייל"></label>
+        </div>
+        <div class="pm__actions">
+          <button class="send pm__send" type="submit"><span class="send__label">שלח</span><span class="send__arrow" aria-hidden="true">&lt;</span></button>
+          <p class="pm__or">או חייגו <a href="tel:<?= e(preg_replace('/\D/', '', $s['phone'])) ?>"><?= e($s['phone']) ?></a></p>
+        </div>
+        <p class="lform__msg" role="status" aria-live="polite"></p>
+      </form>
+      <p class="pm__fine"></p>
+    </div>
+
+    <div class="pm__done" hidden>
+      <span class="pm__tick" aria-hidden="true">✓</span>
+      <p class="pm__done-t">תודה, קיבלנו את הפרטים</p>
+      <p class="pm__done-s"></p>
+      <button class="pm__ghost" type="button" data-close>חזרה לגלריה</button>
+    </div>
+  </div>
+</dialog>
 
 <script src="<?= e($rev('assets/js/site.js')) ?>" defer></script>
 </body>

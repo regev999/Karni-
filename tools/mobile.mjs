@@ -4,7 +4,10 @@ const browser = await chromium.launch({
   args: ['--no-proxy-server', '--disable-component-update', '--no-pings', '--disable-sync'],
 });
 for (const [w, h, name] of [[390, 844, 'phone'], [768, 1024, 'tablet'], [1024, 800, 'laptop']]) {
-  const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
+  const tag = name;
+  // hasTouch makes `hover: none` / `pointer: coarse` match, as on a real phone.
+  const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1,
+                                      hasTouch: tag !== 'laptop' });
   await page.goto(process.env.SITE_URL || 'http://127.0.0.1:8088/', { waitUntil: 'load' });
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(700);

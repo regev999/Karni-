@@ -32,10 +32,12 @@ if ($field('website') !== '') {
     reply(200, ['ok' => true, 'message' => 'תודה!'], 'ok');
 }
 
-$name  = $field('name', 80);
-$phone = $field('phone', 40);
-$email = $field('email', 120);
-$sku   = $field('sku', 60);
+$name    = $field('name', 80);
+$phone   = $field('phone', 40);
+$email   = $field('email', 120);
+$sku     = $field('sku', 60);
+$product = $field('product', 120);
+$source  = $field('source', 20) === 'popup' ? 'popup' : 'form';
 
 $errors = [];
 if ($name === '') {
@@ -72,6 +74,8 @@ $lead = [
     'phone'      => $phone,
     'email'      => $email,
     'sku'        => $sku,
+    'product'    => $product,
+    'source'     => $source,
     'created_at' => date('Y-m-d H:i:s'),
     'ip'         => $_SERVER['REMOTE_ADDR'] ?? '',
     'referer'    => mb_substr((string) ($_SERVER['HTTP_REFERER'] ?? ''), 0, 300),
