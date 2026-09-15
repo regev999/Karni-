@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../inc/seo.php';
+
 function layout_head(string $title, bool $nav = true): void
 {
     $current = basename($_SERVER['SCRIPT_NAME'] ?? '');
@@ -33,6 +35,40 @@ function layout_head(string $title, bool $nav = true): void
 </header>
 <?php endif; ?>
 <main class="wrap">
+    <?php
+    if ($nav) {
+        seo_block_banner();
+    }
+}
+
+/**
+ * The reminder to open the site up again. It cannot be a date in a diary: the
+ * move to the real domain happens when it happens. So the admin watches for it
+ * — the moment the site answers on an address other than the one the block was
+ * put in place for, this turns into a call to action.
+ */
+function seo_block_banner(): void
+{
+    $s = settings();
+    if (empty($s['noindex'])) {
+        return;
+    }
+    $was = (string) ($s['noindex_host'] ?? '');
+    $now = current_host();
+    $moved = $was !== '' && $was !== $now;
+    ?>
+<p class="note note--<?= $moved ? 'act' : 'warn' ?>">
+  <?php if ($moved): ?>
+    <strong>הדומיין השתנה — הגיע הזמן לפתוח את האתר לגוגל.</strong>
+    האתר נחסם לאינדוקס כשהוא ישב על <code><?= e($was) ?></code>, והוא עונה עכשיו על
+    <code><?= e($now) ?></code>. כל עוד החסימה דולקת, האתר לא יופיע בחיפוש.
+    <a href="settings.php">לכיבוי החסימה →</a>
+  <?php else: ?>
+    <strong>האתר חסום ממנועי חיפוש.</strong>
+    כך צריך להיות כל עוד הוא על כתובת זמנית. ביום המעבר לדומיין הסופי — לכבות
+    ב<a href="settings.php">הגדרות</a>.
+  <?php endif; ?>
+</p>
     <?php
 }
 

@@ -64,6 +64,14 @@ input:focus { outline: 2px solid var(--cyan); outline-offset: -1px; border-color
 
 .note { padding: 10px 14px; border-radius: 10px; margin: 0 0 12px; background: #e6f7ef; color: #14603f; }
 .note--bad { background: #fdecea; color: #8a231d; }
+.note--warn { background: #fff6e0; color: #6b4c05; }
+.note--act { background: #e3f4fd; color: #0b4a68; border: 1px solid #9fd8f4; }
+.note code { padding: 1px 6px; border-radius: 5px; background: rgba(0, 0, 0, .06); font-size: 13px; }
+.note a { font-weight: 700; }
+
+.check { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; }
+.check input { width: 18px; height: 18px; margin: 2px 0 0; flex: none; }
+.check small { display: block; margin-top: 3px; }
 
 .tablebar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
 .tablebar h1, .tablebar h2 { margin: 0; margin-inline-end: auto; }
@@ -80,6 +88,9 @@ input:focus { outline: 2px solid var(--cyan); outline-offset: -1px; border-color
 }
 .grid-table textarea:focus { outline: 2px solid var(--cyan); outline-offset: -1px; border-color: var(--cyan); }
 .grid-table th .hint { display: block; font-weight: 400; font-size: 11px; color: #a3aeb8; }
+.grid-table th .sort { text-decoration: none; color: inherit; }
+.grid-table th .sort.is-on { color: var(--cyan); }
+.grid-table .views { font-variant-numeric: tabular-nums; font-weight: 700; color: #4a5763; }
 .grid-table .mid { text-align: center; }
 .grid-table .nowrap { white-space: nowrap; font-size: 13px; color: #7b8895; }
 .thumb img { width: 56px; height: 54px; object-fit: contain; background: #f6f6f6; border-radius: 6px; }

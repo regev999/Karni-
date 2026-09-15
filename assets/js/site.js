@@ -143,8 +143,27 @@
     return new URLSearchParams(location.search).get('p');
   }
 
+  // One count per product per browser session: enough to tell which products
+  // draw people in, without a visitor who reopens the same one inflating it.
+  function countView(card) {
+    var slug = card.dataset.slug;
+    if (!slug) return;
+    try {
+      var seen = (sessionStorage.getItem('pv') || '').split(',');
+      if (seen.indexOf(slug) !== -1) return;
+      seen.push(slug);
+      sessionStorage.setItem('pv', seen.join(','));
+    } catch (e) { /* private mode: count it rather than lose it */ }
+
+    var body = new FormData();
+    body.append('p', slug);
+    if (navigator.sendBeacon) navigator.sendBeacon('api/view.php', body);
+    else fetch('api/view.php', { method: 'POST', body: body, keepalive: true }).catch(function () {});
+  }
+
   function open(card, push) {
     lastCard = card;
+    countView(card);
     fill(card);
     ask.hidden = false;
     done.hidden = true;

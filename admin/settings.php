@@ -35,7 +35,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         'address'     => trim((string) ($_POST['address'] ?? '')),
         'lead_emails' => $emails,
         'webhook_url' => trim((string) ($_POST['webhook_url'] ?? '')),
+        'noindex'     => !empty($_POST['noindex']),
     ];
+    // Remember which address it was blocked on, so the admin can notice later
+    // that the site has moved and the block is now costing traffic.
+    if ($patch['noindex'] !== !empty(settings()['noindex'])) {
+        $patch['noindex_host'] = $patch['noindex'] ? current_host() : '';
+        flash($patch['noindex'] ? 'האתר נחסם למנועי החיפוש.' : 'האתר נפתח למנועי החיפוש.');
+    }
 
     $pw = (string) ($_POST['password'] ?? '');
     if ($pw !== '') {
@@ -75,6 +82,12 @@ flash();
   <label>תיאור לחיפוש (description)<input name="description" value="<?= e((string) $s['description']) ?>"></label>
   <label>טלפון בפוטר<input name="phone" value="<?= e((string) $s['phone']) ?>"></label>
   <label>כתובת בפוטר<input name="address" value="<?= e((string) $s['address']) ?>"></label>
+
+  <h2>מנועי חיפוש</h2>
+  <label class="check"><input type="checkbox" name="noindex" value="1"<?= !empty($s['noindex']) ? ' checked' : '' ?>>
+    <span>חסימת האתר ממנועי חיפוש ומ-AI
+      <small>להשאיר דלוק כל עוד האתר יושב על כתובת זמנית, כדי שהיא לא תתחרה בדומיין הסופי.
+        ביום המעבר לדומיין האמיתי — לכבות. כרגע האתר על <code><?= e(current_host()) ?></code>.</small></span></label>
 
   <h2>אבטחה</h2>
   <label>סיסמת ניהול חדשה<input type="password" name="password" autocomplete="new-password" placeholder="השאירו ריק כדי לא לשנות"></label>

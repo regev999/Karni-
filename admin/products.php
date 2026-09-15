@@ -54,7 +54,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
         } elseif ($action === 'save') {
             $out = [];
-            foreach (($_POST['p'] ?? []) as $p) {
+            // The rows are keyed by their place in the catalogue, so sorting the
+            // table by views on screen cannot reshuffle the page.
+            $posted = (array) ($_POST['p'] ?? []);
+            ksort($posted, SORT_NUMERIC);
+            foreach ($posted as $p) {
                 if (!empty($p['delete'])) {
                     if (!empty($p['image']) && is_file(UPLOAD_DIR . '/' . basename($p['image']))) {
                         @unlink(UPLOAD_DIR . '/' . basename($p['image']));
@@ -95,6 +99,18 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 }
 
 $stats = catalog_stats($rows);
+
+// Pop-up openings, counted by the page itself. The row keeps its catalogue
+// position in $i so that saving a table sorted by views leaves the order alone.
+$rows       = with_slugs($rows);
+$views      = views_all();
+$viewOf     = static fn(array $r): int => (int) ($views[$r['slug']] ?? 0);
+$totalViews = array_sum(array_map($viewOf, $rows));
+$byViews    = ($_GET['sort'] ?? '') === 'views';
+if ($byViews) {
+    uasort($rows, static fn($a, $b) => $viewOf($b) <=> $viewOf($a));
+}
+
 layout_head('מוצרים');
 flash();
 ?>
@@ -136,6 +152,7 @@ flash();
   <input type="hidden" name="action" value="save">
   <div class="tablebar">
     <h2>עריכת הקטלוג</h2>
+    <span class="muted"><?= $totalViews ?> פתיחות פופ-אפ</span>
     <input class="search" type="search" placeholder="סינון לפי שם או מק״ט…" id="filter">
     <button class="btn" type="submit">שמירת שינויים</button>
   </div>
@@ -143,6 +160,11 @@ flash();
     <thead><tr>
       <th>תמונה</th><th>שם מוצר</th><th>מק״ט</th><th>מחיר לפני</th><th>מחיר אחרי</th>
       <th>תיאור <span class="hint">לגוגל ולחלון המוצר</span></th>
+      <th class="mid">
+        <a href="?sort=<?= $byViews ? '' : 'views' ?>#views" class="sort<?= $byViews ? ' is-on' : '' ?>"
+           title="<?= $byViews ? 'חזרה לסדר הדף' : 'מיון מהנצפה ביותר' ?>">צפיות <?= $byViews ? '▾' : '↕' ?></a>
+        <span class="hint">פתיחות הפופ-אפ</span>
+      </th>
       <th>מחיקה</th>
     </tr></thead>
     <tbody>
@@ -163,6 +185,7 @@ flash();
         <td><input name="p[<?= $i ?>][price_after]"  value="<?= e((string) ($r['price_after'] ?? '')) ?>" size="7" inputmode="numeric"></td>
         <td><textarea name="p[<?= $i ?>][description]" rows="2" maxlength="600"
                       placeholder="2-3 משפטים על גוף התאורה — זה מה שגוגל מציג"><?= e((string) ($r['description'] ?? '')) ?></textarea></td>
+        <td class="mid views" title="<?= e($views[$r['slug']]['last'] ?? '') ? 'אחרונה: ' . e($views[$r['slug']]['last']) : 'טרם נפתח' ?>"><?= $viewOf($r) ?: '—' ?></td>
         <td class="mid"><input type="checkbox" name="p[<?= $i ?>][delete]" value="1"></td>
       </tr>
     <?php endforeach; ?>

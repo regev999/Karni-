@@ -28,6 +28,11 @@ function abs_url(string $path = ''): string
     return origin() . '/' . ltrim($path, '/');
 }
 
+function current_host(): string
+{
+    return (string) preg_replace('~^https?://~', '', origin());
+}
+
 /** Lowercase, hyphenated, Hebrew letters kept as they are. */
 function slugify(string $s): string
 {
@@ -40,13 +45,8 @@ function slugify(string $s): string
  * the SKU rather than the stored id, because the id is positional and would
  * move every product's URL the moment a row is added or removed.
  */
-function products_indexed(): array
+function with_slugs(array $rows): array
 {
-    static $rows = null;
-    if ($rows !== null) {
-        return $rows;
-    }
-    $rows = products_all();
     $seen = [];
     foreach ($rows as &$p) {
         $base = slugify(($p['name'] ?? '') . '-' . ($p['sku'] ?? '')) ?: 'p';
@@ -60,6 +60,12 @@ function products_indexed(): array
     }
     unset($p);
     return $rows;
+}
+
+function products_indexed(): array
+{
+    static $rows = null;
+    return $rows ??= with_slugs(products_all());
 }
 
 function product_by_slug(string $slug): ?array
@@ -129,7 +135,9 @@ function seo_head(array $s, ?array $product, string $rev): void
 
     $tags = [
         ['name', 'description', $desc],
-        ['name', 'robots', 'index, follow, max-image-preview:large, max-snippet:-1'],
+        ['name', 'robots', !empty($s['noindex'])
+            ? 'noindex, nofollow'
+            : 'index, follow, max-image-preview:large, max-snippet:-1'],
         ['name', 'theme-color', '#00aeef'],
         ['property', 'og:type', $product ? 'product' : 'website'],
         ['property', 'og:site_name', 'קרני תכלת'],
@@ -280,10 +288,12 @@ function seo_refresh_static(): void
     $sitemap  = BASE . '/sitemap.xml';
     $robots   = BASE . '/robots.txt';
     $catalogue = DATA_DIR . '/products.json';
+    $blocked  = !empty(settings()['noindex']);
 
     $fresh = is_file($sitemap)
         && (!is_file($catalogue) || filemtime($sitemap) >= filemtime($catalogue))
         && is_file($robots)
+        && (!is_file(SETTINGS_FILE) || filemtime($robots) >= filemtime(SETTINGS_FILE))
         && str_contains((string) @file_get_contents($sitemap, false, null, 0, 512), origin() . '/');
     if ($fresh) {
         return;
@@ -300,14 +310,20 @@ function seo_refresh_static(): void
     }
     $xml .= '</urlset>' . "\n";
 
-    $txt = "User-agent: *\n"
-         . "Allow: /\n"
-         . "Disallow: /admin/\n"
-         . "Disallow: /api/\n"
-         . "Disallow: /inc/\n"
-         . "Disallow: /data/\n"
-         . "Disallow: /tools/\n\n"
-         . 'Sitemap: ' . abs_url('sitemap.xml') . "\n";
+    // While the site is blocked the sitemap is still written, so it is ready the
+    // moment the switch is turned off; robots.txt is what keeps crawlers away.
+    $txt = $blocked
+        ? "# הגדרת \"חסימת אינדוקס\" באזור הניהול דולקת.\n"
+          . "User-agent: *\n"
+          . "Disallow: /\n"
+        : "User-agent: *\n"
+          . "Allow: /\n"
+          . "Disallow: /admin/\n"
+          . "Disallow: /api/\n"
+          . "Disallow: /inc/\n"
+          . "Disallow: /data/\n"
+          . "Disallow: /tools/\n\n"
+          . 'Sitemap: ' . abs_url('sitemap.xml') . "\n";
 
     @file_put_contents($sitemap, $xml, LOCK_EX);
     @file_put_contents($robots, $txt, LOCK_EX);

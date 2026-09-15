@@ -138,6 +138,34 @@ await page.waitForTimeout(200);
 ok(!(await page.locator('#product-modal').isVisible()), 'back closes the pop-up');
 ok(!page.url().includes('?p='), 'back restores the list address');
 
+/* ------------------------------------------------------- the view counter -- */
+
+// The counter is a beacon, so watch the request rather than the database.
+const beacons = [];
+page.on('request', r => { if (r.url().includes('/api/view.php')) beacons.push(r.postData() || ''); });
+
+const third = await page.locator('.card').nth(3).getAttribute('data-slug');
+await page.locator('.card').nth(3).click();
+await page.waitForTimeout(250);
+ok(beacons.length === 1, 'opening a product counts a view', `${beacons.length} beacon(s)`);
+ok(beacons[0].includes(third), 'the beacon names that product', third);
+
+await page.keyboard.press('Escape');
+await page.waitForTimeout(150);
+await page.locator('.card').nth(3).click();
+await page.waitForTimeout(250);
+ok(beacons.length === 1, 'reopening the same product in one session counts once',
+   `${beacons.length} beacon(s)`);
+
+await page.keyboard.press('Escape');
+await page.waitForTimeout(150);
+await page.locator('.card').nth(4).click();
+await page.waitForTimeout(250);
+ok(beacons.length === 2, 'a different product counts again', `${beacons.length} beacon(s)`);
+
+const get405 = await fetch(BASE + '/api/view.php');
+ok(get405.status === 405, 'the counter refuses anything but a POST', `status=${get405.status}`);
+
 await browser.close();
 console.log(failed ? `\n${failed} check(s) failed` : '\nall SEO checks passed');
 process.exit(failed ? 1 : 0);

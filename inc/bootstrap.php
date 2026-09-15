@@ -15,6 +15,7 @@ const UPLOAD_URL = 'uploads/products';
 // Holds the admin hash and customer details; .php so a stray direct request is inert.
 define('SETTINGS_FILE', DATA_DIR . '/settings.php');
 define('LEADS_FILE', DATA_DIR . '/leads.php');
+define('VIEWS_FILE', DATA_DIR . '/views.php');
 
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Asia/Jerusalem');
@@ -59,6 +60,10 @@ function settings(): array
             'lead_emails'  => [],
             'webhook_url'  => '',
             'admin_hash'   => '',
+            // While the site lives on a preview address it stays out of the
+            // index, so it cannot end up competing with the real domain.
+            'noindex'      => false,
+            'noindex_host' => '',
         ];
     }
     return $s;
