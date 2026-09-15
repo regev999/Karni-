@@ -290,10 +290,15 @@ function seo_refresh_static(): void
     $catalogue = DATA_DIR . '/products.json';
     $blocked  = !empty(settings()['noindex']);
 
-    $fresh = is_file($sitemap)
-        && (!is_file($catalogue) || filemtime($sitemap) >= filemtime($catalogue))
-        && is_file($robots)
-        && (!is_file(SETTINGS_FILE) || filemtime($robots) >= filemtime(SETTINGS_FILE))
+    // Stale against the catalogue, the settings, this file (so a deploy that
+    // changes what these say rewrites them) or the host the site answers on.
+    $newest = max(
+        is_file($catalogue) ? filemtime($catalogue) : 0,
+        is_file(SETTINGS_FILE) ? filemtime(SETTINGS_FILE) : 0,
+        filemtime(__FILE__)
+    );
+    $fresh = is_file($sitemap) && is_file($robots)
+        && min(filemtime($sitemap), filemtime($robots)) >= $newest
         && str_contains((string) @file_get_contents($sitemap, false, null, 0, 512), origin() . '/');
     if ($fresh) {
         return;
