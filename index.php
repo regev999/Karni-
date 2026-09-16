@@ -69,18 +69,8 @@ seo_refresh_static();
     <p class="catalog__empty">הקטלוג בהכנה. העלו תמונות מוצרים וקובץ אקסל באזור הניהול כדי להציג אותם כאן.</p>
   <?php else: ?>
   <div class="grid">
-    <?php $prevRow = null; foreach ($products as $i => $p):
-        $row = $p['row'] ?? null;
-        $col = $p['col'] ?? null;
-        // Honour the design's row/column when the catalogue carries it, so gaps
-        // in a row stay where the designer put them. Carried as a custom
-        // property so the narrow layout can ignore it without needing !important.
-        $style = ($row !== null && $col !== null && $row !== $prevRow && (int) $col !== 1)
-            ? ' style="--col:' . (int) $col . '"' : '';
-        $prevRow = $row;
-        $img = $p['image'] ?? '';
-    ?>
-    <a class="card" href="?p=<?= e(rawurlencode($p['slug'])) ?>"<?= $style ?>
+    <?php foreach ($products as $i => $p): $img = $p['image'] ?? ''; ?>
+    <a class="card" href="?p=<?= e(rawurlencode($p['slug'])) ?>"
             data-slug="<?= e($p['slug']) ?>"
             data-name="<?= e($p['name'] ?? '') ?>" data-sku="<?= e($p['sku'] ?? '') ?>"
             data-before="<?= e((string) ($p['price_before'] ?? '')) ?>"

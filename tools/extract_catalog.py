@@ -19,6 +19,12 @@ TEXT_DX, TEXT_DY = 12.1, 209.2              # text block origin relative to tile
 GRID_TOP, GRID_BOTTOM = 1790.0, 12100.0
 
 
+# The design has one typo of its own: the tile beside "LAGOON CON00091" reads
+# "CON00090LAGO", the neighbour's name having run into the SKU. Corrected here
+# rather than in the seed, so re-running this does not bring it back.
+SKU_FIXES = {"CON00090LAGO": "CON00090"}
+
+
 def slug(name, sku):
     s = unicodedata.normalize("NFKC", f"{name} {sku}").strip()
     s = re.sub(r'[\\/:*?"<>|]+', "", s)
@@ -155,9 +161,10 @@ def caption_to_product(col, spans):
         return None
     rect = pymupdf.Rect(TEXT_LEFTS[col] - TEXT_DX, base - TEXT_DY,
                         TEXT_LEFTS[col] - TEXT_DX + TILE_W, base - TEXT_DY + TILE_H)
+    sku = join(bands["sku"])
     return {
         "name": join(bands["name"]),
-        "sku": join(bands["sku"]),
+        "sku": SKU_FIXES.get(sku, sku),
         "price_before": money(join(bands["old"])),
         "price_after": money(join(bands["new"])),
         "note": join(bands["note"]),
@@ -200,7 +207,7 @@ def main():
         total += os.path.getsize(path)
         out.append({"id": i, "name": p["name"], "sku": p["sku"],
                     "price_before": p["price_before"], "price_after": p["price_after"],
-                    "image": fname, "row": p["_row"] + 1, "col": p["_ccol"],
+                    "image": fname,
                     **({"description": p["note"]} if p.get("note") else {})})
 
     with open(os.path.join(DATA, "products.seed.php"), "w", encoding="utf-8") as fh:

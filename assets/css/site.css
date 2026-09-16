@@ -165,7 +165,6 @@ a { color: inherit; }
   text-decoration: none;
   cursor: pointer;
   overflow: hidden;
-  grid-column-start: var(--col, auto);   /* keeps the design's gaps within a row */
   width: calc(304 * var(--u));
   height: calc(291 * var(--u));
   background: #fff;
@@ -530,7 +529,6 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   /* aspect-ratio keeps the card's own box exact; cqw then scales everything
      inside it off the card's real width (304 design px == 100cqw). */
   .card { container-type: inline-size; --u: 0.328947cqw;
-          grid-column-start: auto;
           width: 100%; height: auto; aspect-ratio: 304 / 291; }
   .catalog__empty { max-width: none; padding: 0 22px; font-size: 18px; }
 
