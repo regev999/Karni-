@@ -1,6 +1,7 @@
 // End-to-end smoke test of the admin panel and the lead form.
 import { chromium } from 'playwright';
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
 
 // The live catalogue is data/products.php, JSON behind a one-line PHP guard.
 function catalogue() {
@@ -147,6 +148,51 @@ ok(await page.locator('text=חלון מוצר').first().isVisible(), 'admin show
 const csv = await (await page.request.get(`${BASE}/admin/leads.php?export=csv`)).body();
 ok(csv[0] === 0xEF && csv.toString('utf8').includes('ישראל ישראלי'), 'CSV export has a BOM and the lead');
 ok(csv.toString('utf8').includes(wantName), 'CSV export includes the product name');
+
+// 10. Password reset. The mail cannot be read from here, so the token is minted
+// through the same code the mail would have carried.
+// A reset has to have somewhere to go, so give the site an address first.
+await page.goto(`${BASE}/admin/settings.php`);
+await page.fill('input[name=lead_emails]', 'owner@example.com');
+await page.click('form:has(input[name=lead_emails]) button[type=submit]');
+ok((await page.locator('input[name=lead_emails]').inputValue()) === 'owner@example.com',
+   'lead address saved');
+
+await page.goto(`${BASE}/admin/logout.php`);
+await page.goto(`${BASE}/admin/`);
+ok(await page.locator('a[href="forgot.php"]').isVisible(), 'login screen offers a reset');
+await page.click('a[href="forgot.php"]');
+await page.click('button[type=submit]');
+ok(await page.locator('text=קישור לבחירת סיסמה חדשה').isVisible(), 'reset request is acknowledged');
+
+fs.rmSync('data/.reset_stamp', { force: true });          // skip the ten-minute pause
+const token = execFileSync('php', ['-r',
+  'require "inc/bootstrap.php"; echo reset_start();']).toString().trim();
+ok(/^[0-9a-f]{64}$/.test(token), 'a one-time token is issued');
+
+await page.goto(`${BASE}/admin/reset.php?t=deadbeef`);
+ok(await page.locator('text=הקישור אינו תקף').isVisible(), 'a wrong token is refused');
+
+await page.goto(`${BASE}/admin/reset.php?t=${token}`);
+await page.fill('input[name=password]', 'short');
+await page.fill('input[name=password2]', 'short');
+await page.click('button[type=submit]');
+ok(await page.locator('text=לפחות 8 תווים').isVisible(), 'reset rejects a short password');
+await page.fill('input[name=password]', 'karni-reset-2026');
+await page.fill('input[name=password2]', 'karni-reset-2026');
+await page.click('button[type=submit]');
+ok(page.url().includes('products.php'), 'reset signs the admin straight in');
+
+await page.goto(`${BASE}/admin/reset.php?t=${token}`);
+ok(await page.locator('text=הקישור אינו תקף').isVisible(), 'the token cannot be used twice');
+
+await page.goto(`${BASE}/admin/logout.php`);
+await page.fill('input[name=password]', 'karni-test-2026');
+await page.click('button[type=submit]');
+ok(await page.locator('text=סיסמה שגויה').isVisible(), 'the old password no longer works');
+await page.fill('input[name=password]', 'karni-reset-2026');
+await page.click('button[type=submit]');
+ok(page.url().includes('products.php'), 'the new password works');
 
 await browser.close();
 console.log(fail.length ? `\n${fail.length} FAILED: ${fail.join(' | ')}` : '\nall checks passed');

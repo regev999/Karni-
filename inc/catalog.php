@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/image.php';
+
 const IMAGE_TYPES = [
     IMAGETYPE_JPEG => 'jpg', IMAGETYPE_PNG => 'png', IMAGETYPE_GIF => 'gif',
     IMAGETYPE_WEBP => 'webp', IMAGETYPE_AVIF => 'avif',
@@ -66,6 +68,9 @@ function ingest_image(array $file): array
         throw new RuntimeException('שמירת הקובץ נכשלה');
     }
     @chmod(UPLOAD_DIR . '/' . $dest, 0664);
+    // Supplier photos are often shot on a light grey sweep, which shows as a
+    // grey box inside the white card. This puts them all on the same white.
+    flatten_backdrop(UPLOAD_DIR . '/' . $dest);
     return [$name, $dest];
 }
 

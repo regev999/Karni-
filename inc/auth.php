@@ -63,3 +63,54 @@ function csrf_check(): void
         exit('Bad CSRF token');
     }
 }
+
+/* ----------------------------------------------------------------- reset -- */
+
+const RESET_TTL   = 1800;   // half an hour is long enough to find the mail
+const RESET_PAUSE = 600;    // and one request per ten minutes is enough to ask
+
+/**
+ * Start a reset: mint a one-time token and keep only its hash. Null when one
+ * was asked for too recently, or when there is no address to send it to. The
+ * caller turns the token into a link, so this file stays free of URL building.
+ */
+function reset_start(): ?string
+{
+    $s = settings();
+    $stamp = DATA_DIR . '/.reset_stamp';
+    if (is_file($stamp) && time() - (int) filemtime($stamp) < RESET_PAUSE) {
+        return null;
+    }
+    if (!array_filter((array) ($s['lead_emails'] ?? []), static fn($e) => filter_var($e, FILTER_VALIDATE_EMAIL))) {
+        return null;
+    }
+    @touch($stamp);
+
+    $token = bin2hex(random_bytes(32));
+    save_settings([
+        'reset_hash'    => hash('sha256', $token),
+        'reset_expires' => time() + RESET_TTL,
+    ]);
+    return $token;
+}
+
+/** Is this token the live one, and still in date? */
+function reset_valid(string $token): bool
+{
+    $s = settings();
+    $hash = (string) ($s['reset_hash'] ?? '');
+    return $token !== '' && $hash !== ''
+        && time() < (int) ($s['reset_expires'] ?? 0)
+        && hash_equals($hash, hash('sha256', $token));
+}
+
+/** Set the new password and burn the token, whatever else happens. */
+function reset_complete(string $password): void
+{
+    save_settings([
+        'admin_hash'    => password_hash($password, PASSWORD_DEFAULT),
+        'reset_hash'    => '',
+        'reset_expires' => 0,
+    ]);
+    @unlink(DATA_DIR . '/.reset_stamp');
+}

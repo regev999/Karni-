@@ -40,58 +40,73 @@ def money(text):
     return int(digits) if digits else None
 
 
-def blocks(page):
-    """Every visible product text block in the grid, in RTL reading order."""
-    cols = [[] for _ in TEXT_LEFTS]
-    for b in page.get_text("dict")["blocks"]:
+HEBREW = re.compile(r"[\u0590-\u05FF]")
+
+
+def captions(page):
+    """Every caption block inside the grid, tagged with its column and paint order."""
+    out = []
+    for bi, b in enumerate(page.get_text("dict")["blocks"]):
         if b["type"] != 0:
             continue
-        for line in b["lines"]:
-            for s in line["spans"]:
-                x0, y0, x1, y1 = s["bbox"]
-                if not (GRID_TOP <= y0 and y1 <= GRID_BOTTOM):
-                    continue
-                for c, left in enumerate(TEXT_LEFTS):
-                    if left - 4 <= x0 and x1 <= left + 232:
-                        cols[c].append(s)
-                        break
-
-    out = []
-    for c, spans in enumerate(cols):
-        spans.sort(key=lambda s: s["bbox"][3])
-        cluster = []
-        for s in spans + [None]:
-            if cluster and (s is None or s["bbox"][3] - cluster[-1]["bbox"][3] > 40):
-                out.append((c, cluster))
-                cluster = []
-            if s is not None:
-                cluster.append(s)
-
-    products = []
-    for c, cluster in out:
-        base = min(s["bbox"][3] for s in cluster)
-        bands = {"name": [], "sku": [], "old": [], "new": []}
-        for s in cluster:
-            rel = s["bbox"][3] - base
-            key = "name" if rel < 12 else "sku" if rel < 35 else "old" if rel < 58 else "new"
-            bands[key].append(s)
-        if not bands["name"] or not bands["new"]:
+        spans = [s for line in b["lines"] for s in line["spans"]]
+        # The design sets the spaces between words as spans of their own, so they
+        # are kept: dropping them is what turns "Romeo Moon" into "RomeoMoon".
+        inked = [s for s in spans if s["text"].strip()]
+        if not inked:
             continue
-        rect = pymupdf.Rect(TEXT_LEFTS[c] - TEXT_DX, base - TEXT_DY,
-                            TEXT_LEFTS[c] - TEXT_DX + TILE_W, base - TEXT_DY + TILE_H)
-        products.append({
-            "name": join(bands["name"]),
-            "sku": join(bands["sku"]),
-            "price_before": money(join(bands["old"])),
-            "price_after": money(join(bands["new"])),
-            "_rect": rect,
-            "_base": base,
-            "_col": c,
-        })
+        x0 = min(s["bbox"][0] for s in inked)
+        y0 = min(s["bbox"][3] for s in inked)
+        if not (GRID_TOP <= y0 <= GRID_BOTTOM):
+            continue
+        for c, left in enumerate(TEXT_LEFTS):
+            if left - 4 <= x0 <= left + 232:
+                out.append({"col": c, "bi": bi, "y": y0, "spans": spans})
+                break
+    return out
 
-    # The design carries a leftover row hidden under later tiles. A block counts as
-    # visible when erasing it actually changes the page - which also catches the
-    # cards whose text is white over a dark photo.
+
+def blocks(page):
+    """
+    Every visible product text block in the grid, in RTL reading order.
+
+    The design has captions left behind where a tile was replaced: a stale one
+    and its replacement sit at exactly the same spot, and a caption is spread
+    over two or three PDF text blocks. Grouping by position alone merged the two
+    into one product - two names, two SKUs and two prices concatenated - which is
+    where VOIDEtch S hade and its price of 21272414 came from. A PDF paints in
+    content order, so of the captions sharing a slot the one with the highest
+    block index is the one on top, and the one a visitor actually sees.
+    """
+    products = []
+    caps = captions(page)
+    for c in range(len(TEXT_LEFTS)):
+        column = sorted([x for x in caps if x["col"] == c], key=lambda x: (x["y"], x["bi"]))
+        slot = []
+        for cap in column + [None]:
+            if slot and (cap is None or cap["y"] - slot[-1]["y"] > 80):
+                # One slot holds one caption, or a stale one under its
+                # replacement. Read them in paint order: a block sitting on the
+                # name line starts a caption, the price blocks after it belong
+                # to it, and the caption painted last is the visible one.
+                base = min(x["y"] for x in slot)
+                groups = []
+                for cap2 in sorted(slot, key=lambda x: x["bi"]):
+                    if cap2["y"] - base < 12 or not groups:
+                        groups.append([cap2])
+                    else:
+                        groups[-1].append(cap2)
+                top = max(groups, key=lambda g: max(x["bi"] for x in g))
+                p = caption_to_product(c, [s for x in top for s in x["spans"]])
+                if p:
+                    products.append(p)
+                slot = []
+            if cap is not None:
+                slot.append(cap)
+
+    # The design also carries a leftover row hidden under later tiles with nothing
+    # painted over its text. A block counts as visible when erasing it actually
+    # changes the page - which also catches text that is white over a dark photo.
     blank = pymupdf.open(page.parent.name)[page.number]
     for p in products:
         r = p["_rect"]
@@ -121,6 +136,35 @@ def blocks(page):
         p["_ccol"] = len(TEXT_LEFTS) - p["_col"]      # 1 = rightmost
     visible.sort(key=lambda p: (p["_row"], p["_ccol"]))
     return visible
+
+
+def caption_to_product(col, spans):
+    """Name, SKU and the two prices, read off one caption's spans by their baseline."""
+    base = min(s["bbox"][3] for s in spans)
+    bands = {"name": [], "sku": [], "old": [], "new": [], "note": []}
+    for s in spans:
+        rel = s["bbox"][3] - base
+        # Two products carry Hebrew names, so Hebrew only means a footnote once
+        # it turns up down among the prices - as "available in 18 colours" does,
+        # on the same line as the price it was being read as part of.
+        if rel >= 35 and HEBREW.search(s["text"]):
+            bands["note"].append(s)
+            continue
+        bands["name" if rel < 12 else "sku" if rel < 35 else "old" if rel < 58 else "new"].append(s)
+    if not bands["name"] or not bands["new"]:
+        return None
+    rect = pymupdf.Rect(TEXT_LEFTS[col] - TEXT_DX, base - TEXT_DY,
+                        TEXT_LEFTS[col] - TEXT_DX + TILE_W, base - TEXT_DY + TILE_H)
+    return {
+        "name": join(bands["name"]),
+        "sku": join(bands["sku"]),
+        "price_before": money(join(bands["old"])),
+        "price_after": money(join(bands["new"])),
+        "note": join(bands["note"]),
+        "_rect": rect,
+        "_base": base,
+        "_col": col,
+    }
 
 
 def main():
@@ -156,7 +200,8 @@ def main():
         total += os.path.getsize(path)
         out.append({"id": i, "name": p["name"], "sku": p["sku"],
                     "price_before": p["price_before"], "price_after": p["price_after"],
-                    "image": fname, "row": p["_row"] + 1, "col": p["_ccol"]})
+                    "image": fname, "row": p["_row"] + 1, "col": p["_ccol"],
+                    **({"description": p["note"]} if p.get("note") else {})})
 
     with open(os.path.join(DATA, "products.seed.php"), "w", encoding="utf-8") as fh:
         fh.write("<?php http_response_code(404); exit; ?>\n")

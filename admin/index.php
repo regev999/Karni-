@@ -51,5 +51,6 @@ layout_head($setup ? 'הגדרת סיסמה' : 'כניסה', false);
     <label>אימות סיסמה<input type="password" name="password2" required autocomplete="new-password"></label>
   <?php endif; ?>
   <button class="btn" type="submit"><?= $setup ? 'שמירה וכניסה' : 'כניסה' ?></button>
+  <?php if (!$setup): ?><p class="muted"><a href="forgot.php">שכחתי סיסמה</a></p><?php endif; ?>
 </form>
 <?php layout_foot();

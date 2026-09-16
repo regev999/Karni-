@@ -70,6 +70,9 @@ function settings(): array
             // index, so it cannot end up competing with the real domain.
             'noindex'      => false,
             'noindex_host' => '',
+            // One-time password reset: only the hash is kept, and only until it expires.
+            'reset_hash'    => '',
+            'reset_expires' => 0,
         ];
     }
     return $s;
