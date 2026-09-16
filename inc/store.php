@@ -75,49 +75,12 @@ function leads_all(): array
     return read_json(LEADS_FILE, []) ?: [];
 }
 
-/** How many times each product's pop-up was opened, keyed by its URL slug. */
-function views_all(): array
+/**
+ * Read, change and write one JSON file under an exclusive lock, so that two
+ * requests landing together cannot each write over the other's change.
+ */
+function json_update(string $path, callable $change): bool
 {
-    return read_json(VIEWS_FILE, []) ?: [];
-}
-
-/** Count one pop-up opening. Locked, because several visitors can land together. */
-function views_bump(string $slug): bool
-{
-    @mkdir(dirname(VIEWS_FILE), 0775, true);
-    $fh = fopen(VIEWS_FILE, 'c+');
-    if (!$fh) {
-        return false;
-    }
-    try {
-        if (!flock($fh, LOCK_EX)) {
-            return false;
-        }
-        $raw = stream_get_contents($fh);
-        if (str_starts_with($raw, '<?php')) {
-            $raw = substr($raw, (int) strpos($raw, "\n") + 1);
-        }
-        $rows = trim($raw) === '' ? [] : (json_decode($raw, true) ?: []);
-        $rows[$slug] = [
-            'views' => (int) ($rows[$slug]['views'] ?? 0) + 1,
-            'last'  => date('Y-m-d H:i:s'),
-        ];
-        $json = JSON_GUARD . json_encode($rows, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        ftruncate($fh, 0);
-        rewind($fh);
-        fwrite($fh, $json);
-        fflush($fh);
-        return true;
-    } finally {
-        flock($fh, LOCK_UN);
-        fclose($fh);
-    }
-}
-
-/** Append one lead under an exclusive lock, so concurrent submits cannot clobber each other. */
-function lead_append(array $lead): bool
-{
-    $path = LEADS_FILE;
     @mkdir(dirname($path), 0775, true);
     $fh = fopen($path, 'c+');
     if (!$fh) {
@@ -131,10 +94,9 @@ function lead_append(array $lead): bool
         if (str_starts_with($raw, '<?php')) {
             $raw = substr($raw, (int) strpos($raw, "\n") + 1);
         }
-        $rows = trim($raw) === '' ? [] : (json_decode($raw, true) ?: []);
-        $lead['id'] = ($rows ? max(array_map(static fn($r) => (int) ($r['id'] ?? 0), $rows)) : 0) + 1;
-        $rows[] = $lead;
-        $json = JSON_GUARD . json_encode($rows, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $rows = $change(trim($raw) === '' ? [] : (json_decode($raw, true) ?: []));
+        $json = (str_ends_with($path, '.php') ? JSON_GUARD : '')
+            . json_encode($rows, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         ftruncate($fh, 0);
         rewind($fh);
         fwrite($fh, $json);
@@ -144,4 +106,32 @@ function lead_append(array $lead): bool
         flock($fh, LOCK_UN);
         fclose($fh);
     }
+}
+
+/** How many times each product's pop-up was opened, keyed by its URL slug. */
+function views_all(): array
+{
+    return read_json(VIEWS_FILE, []) ?: [];
+}
+
+/** Count one pop-up opening. */
+function views_bump(string $slug): bool
+{
+    return json_update(VIEWS_FILE, static function (array $rows) use ($slug): array {
+        $rows[$slug] = [
+            'views' => (int) ($rows[$slug]['views'] ?? 0) + 1,
+            'last'  => date('Y-m-d H:i:s'),
+        ];
+        return $rows;
+    });
+}
+
+/** Append one lead; concurrent submits cannot clobber each other. */
+function lead_append(array $lead): bool
+{
+    return json_update(LEADS_FILE, static function (array $rows) use ($lead): array {
+        $lead['id'] = ($rows ? max(array_map(static fn($r) => (int) ($r['id'] ?? 0), $rows)) : 0) + 1;
+        $rows[] = $lead;
+        return $rows;
+    });
 }

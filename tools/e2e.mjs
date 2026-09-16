@@ -194,6 +194,34 @@ await page.fill('input[name=password]', 'karni-reset-2026');
 await page.click('button[type=submit]');
 ok(page.url().includes('products.php'), 'the new password works');
 
+// 11. Brute-force brake. Left to last, because it locks this address out.
+fs.rmSync('data/logins.php', { force: true });
+await page.goto(`${BASE}/admin/logout.php`);
+for (let i = 0; i < 3; i++) {
+  await page.fill('input[name=password]', `wrong-${i}`);
+  await page.click('button[type=submit]');
+}
+ok(await page.locator('text=סיסמה שגויה').isVisible(), 'the first few wrong guesses are just wrong');
+await page.fill('input[name=password]', 'wrong-again');
+await page.click('button[type=submit]');
+ok(await page.locator('text=יותר מדי ניסיונות').isVisible(), 'past that the address is made to wait');
+
+// And the wait is real: the right password is refused while it runs.
+await page.fill('input[name=password]', 'karni-reset-2026');
+await page.click('button[type=submit]');
+ok(!page.url().includes('products.php'), 'even the right password waits its turn');
+
+const locks = JSON.parse(fs.readFileSync('data/logins.php', 'utf8').split('\n').slice(1).join('\n'));
+const row = Object.values(locks)[0];
+// Four: the right password tried during the wait is turned away before it is
+// checked, so waiting it out does not make the wait longer.
+ok(row.fails === 4 && row.until > Math.floor(Date.now() / 1000), 'the failures are counted', `${row.fails} fails`);
+
+fs.rmSync('data/logins.php', { force: true });   // and clearing it lets the owner back in
+await page.fill('input[name=password]', 'karni-reset-2026');
+await page.click('button[type=submit]');
+ok(page.url().includes('products.php'), 'once the wait is over the password works again');
+
 await browser.close();
 console.log(fail.length ? `\n${fail.length} FAILED: ${fail.join(' | ')}` : '\nall checks passed');
 process.exit(fail.length ? 1 : 0);

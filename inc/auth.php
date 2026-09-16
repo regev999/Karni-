@@ -19,12 +19,76 @@ function admin_configured(): bool
     return (settings()['admin_hash'] ?? '') !== '';
 }
 
+/* ---------------------------------------------------------- brute force -- */
+
+const LOGIN_FREE_TRIES = 3;     // typing it wrong twice is a person, not an attack
+const LOGIN_MAX_WAIT   = 900;   // and the wait never grows past a quarter of an hour
+const LOGIN_FORGET     = 3600;  // an address that stopped trying is forgotten
+
+/**
+ * The wait is per address and doubles with every wrong guess past the first
+ * few, which costs a person nothing and turns a script from thousands of
+ * guesses an hour into a few dozen. It is deliberately not a global counter:
+ * one attacker could otherwise lock the owner out of their own panel.
+ */
+function login_key(): string
+{
+    return sha1((string) ($_SERVER['REMOTE_ADDR'] ?? ''));
+}
+
+/** Seconds this address still has to wait, 0 when it may try. */
+function login_locked_for(): int
+{
+    $row = (read_json(LOGINS_FILE, []) ?: [])[login_key()] ?? null;
+    return is_array($row) ? max(0, (int) ($row['until'] ?? 0) - time()) : 0;
+}
+
+function login_failed(): void
+{
+    json_update(LOGINS_FILE, static function (array $rows): array {
+        foreach ($rows as $k => $r) {
+            if (time() - (int) ($r['seen'] ?? 0) > LOGIN_FORGET) {
+                unset($rows[$k]);
+            }
+        }
+        $key = login_key();
+        $fails = (int) ($rows[$key]['fails'] ?? 0) + 1;
+        $wait = $fails <= LOGIN_FREE_TRIES
+            ? 0
+            : (int) min(2 ** ($fails - LOGIN_FREE_TRIES), LOGIN_MAX_WAIT);
+        $rows[$key] = ['fails' => $fails, 'until' => time() + $wait, 'seen' => time()];
+        return $rows;
+    });
+}
+
+function login_succeeded(): void
+{
+    json_update(LOGINS_FILE, static function (array $rows): array {
+        unset($rows[login_key()]);
+        return $rows;
+    });
+}
+
+/** "בעוד 45 שניות" / "בעוד 3 דקות" — whichever reads better. */
+function wait_text(int $seconds): string
+{
+    return $seconds >= 60
+        ? 'בעוד ' . (int) ceil($seconds / 60) . ' דקות'
+        : 'בעוד ' . max(1, $seconds) . ' שניות';
+}
+
 function admin_login(string $password): bool
 {
     session_start_once();
-    if (!admin_configured() || !password_verify($password, settings()['admin_hash'])) {
+    // Checked here rather than in the page, so no future caller can forget it.
+    if (login_locked_for() > 0) {
         return false;
     }
+    if (!admin_configured() || !password_verify($password, settings()['admin_hash'])) {
+        login_failed();
+        return false;
+    }
+    login_succeeded();
     session_regenerate_id(true);
     $_SESSION['admin'] = true;
     return true;

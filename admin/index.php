@@ -31,7 +31,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             header('Location: products.php');
             exit;
         }
-        $error = 'סיסמה שגויה.';
+        $wait = login_locked_for();
+        $error = $wait > 0
+            ? 'יותר מדי ניסיונות. אפשר לנסות שוב ' . wait_text($wait) . '.'
+            : 'סיסמה שגויה.';
         usleep(400000);
     }
 }

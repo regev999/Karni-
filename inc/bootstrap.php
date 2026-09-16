@@ -16,6 +16,7 @@ const UPLOAD_URL = 'uploads/products';
 define('SETTINGS_FILE', DATA_DIR . '/settings.php');
 define('LEADS_FILE', DATA_DIR . '/leads.php');
 define('VIEWS_FILE', DATA_DIR . '/views.php');
+define('LOGINS_FILE', DATA_DIR . '/logins.php');
 // The live catalogue is a .php behind the same guard, so no server rule has to
 // keep it private; the seed beside it is what a fresh install starts from.
 define('PRODUCTS_FILE', DATA_DIR . '/products.php');
