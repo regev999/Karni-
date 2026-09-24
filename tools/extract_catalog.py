@@ -16,7 +16,7 @@ SCALE = 2.0                       # 2x so tiles stay sharp on retina
 TILE_W, TILE_H = 304.0, 291.0
 TEXT_LEFTS = [64.0, 408.0, 752.0, 1096.0]   # text inset per column
 TEXT_DX, TEXT_DY = 12.1, 209.2              # text block origin relative to tile top-left
-GRID_TOP, GRID_BOTTOM = 1790.0, 12100.0
+GRID_TOP, GRID_BOTTOM = 1790.0, 13250.0
 
 
 # The design has one typo of its own: the tile beside "LAGOON CON00091" reads
@@ -65,8 +65,12 @@ def captions(page):
         y0 = min(s["bbox"][3] for s in inked)
         if not (GRID_TOP <= y0 <= GRID_BOTTOM):
             continue
+        # The second design appends rows a few points to the left of the first
+        # four columns, so the column is matched loosely and the tile is cut
+        # from the caption's own left edge further down rather than from this
+        # nominal one.
         for c, left in enumerate(TEXT_LEFTS):
-            if left - 4 <= x0 <= left + 232:
+            if left - 16 <= x0 <= left + 232:
                 out.append({"col": c, "bi": bi, "y": y0, "spans": spans})
                 break
     return out
@@ -145,29 +149,57 @@ def blocks(page):
 
 
 def caption_to_product(col, spans):
-    """Name, SKU and the two prices, read off one caption's spans by their baseline."""
-    base = min(s["bbox"][3] for s in spans)
-    bands = {"name": [], "sku": [], "old": [], "new": [], "note": []}
-    for s in spans:
-        rel = s["bbox"][3] - base
-        # Two products carry Hebrew names, so Hebrew only means a footnote once
-        # it turns up down among the prices - as "available in 18 colours" does,
-        # on the same line as the price it was being read as part of.
-        if rel >= 35 and HEBREW.search(s["text"]):
-            bands["note"].append(s)
-            continue
-        bands["name" if rel < 12 else "sku" if rel < 35 else "old" if rel < 58 else "new"].append(s)
-    if not bands["name"] or not bands["new"]:
+    """
+    One caption, read by what each line is rather than by where it sits.
+
+    The first design put name, SKU and the two prices at four fixed offsets, so
+    the bands could be cut by distance from the top. The second adds a colour
+    line under the SKU on some tiles, which pushed both prices past the last
+    cut-off and welded them together - AIM came out with no "before" and an
+    "after" of 2616785. Lines are identified now: the first two are the name
+    and the SKU, a line carrying the shekel sign is a price, and the big digits
+    are the one being asked today. Anything in Hebrew below the SKU is a note
+    the designer left - a finish, or "available in 18 colours".
+    """
+    lines = []
+    for s in sorted(spans, key=lambda s: s["bbox"][3]):
+        if lines and abs(s["bbox"][3] - lines[-1]["y"]) <= 6:
+            lines[-1]["spans"].append(s)
+        else:
+            lines.append({"y": s["bbox"][3], "spans": [s]})
+    if len(lines) < 2:
         return None
-    rect = pymupdf.Rect(TEXT_LEFTS[col] - TEXT_DX, base - TEXT_DY,
-                        TEXT_LEFTS[col] - TEXT_DX + TILE_W, base - TEXT_DY + TILE_H)
-    sku = join(bands["sku"])
+
+    before = after = None
+    notes = []
+    for ln in lines[2:]:
+        hebrew = [s for s in ln["spans"] if HEBREW.search(s["text"])]
+        rest = [s for s in ln["spans"] if not HEBREW.search(s["text"])]
+        notes += hebrew
+        if not any("\u20aa" in s["text"] for s in rest):
+            continue
+        digits = [s for s in rest if re.search(r"\d", s["text"])]
+        value = money(join(rest))
+        # 29pt is the price being asked, 19pt the one struck through.
+        if max((s["size"] for s in digits), default=0) >= 24:
+            after = value
+        else:
+            before = value
+
+    name = join(lines[0]["spans"])
+    sku = join(lines[1]["spans"])
+    if name == "" or after is None:
+        return None
+    base = lines[0]["y"]
+    left = min(s["bbox"][0] for s in spans)      # where this tile actually is
+    rect = pymupdf.Rect(left - TEXT_DX, base - TEXT_DY,
+                        left - TEXT_DX + TILE_W, base - TEXT_DY + TILE_H)
     return {
-        "name": join(bands["name"]),
+        "name": name,
         "sku": SKU_FIXES.get(sku, sku),
-        "price_before": money(join(bands["old"])),
-        "price_after": money(join(bands["new"])),
-        "note": join(bands["note"]),
+        "price_before": before,
+        "price_after": after,
+        "note": join(notes),
         "_rect": rect,
         "_base": base,
         "_col": col,

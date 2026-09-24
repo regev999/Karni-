@@ -18,6 +18,7 @@ const BACKDROP_MAX_LUMA   = 250;   // lighter than this is white already
 const BACKDROP_MIN_SHARE  = 0.15;  // a sweep fills the frame; a highlight does not
 const BACKDROP_TOLERANCE  = 6;    // how far from the seed colour still counts as backdrop
 const BACKDROP_NEUTRAL    = 12;    // max channel spread: a colour cast is product, not sweep
+const BACKDROP_FLATNESS   = 0.45;  // a sweep is one value; a lit wall is a slope
 
 /** Luminance, the cheap way; these images are near-neutral by nature. */
 function luma(int $r, int $g, int $b): int
@@ -57,7 +58,19 @@ function backdrop_seed(\GdImage $im, int $w, int $h): ?int
         return null;
     }
     $top = array_keys($hist, max($hist))[0];
-    return $hist[$top] / $seen >= BACKDROP_MIN_SHARE ? $top : null;
+    if ($hist[$top] / $seen < BACKDROP_MIN_SHARE) {
+        return null;
+    }
+    // A sweep is one value; a wall lit from one side is a slope through many,
+    // and flooding a slope eats holes out of the product where it happens to
+    // pass through the tolerance. So the value has to be a spike, not a hump.
+    $band = 0;
+    foreach ($hist as $l => $n) {
+        if (abs($l - $top) <= 6) {
+            $band += $n;
+        }
+    }
+    return $hist[$top] / max(1, $band) >= BACKDROP_FLATNESS ? $top : null;
 }
 
 /**

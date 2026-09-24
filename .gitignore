@@ -17,3 +17,6 @@
 # Tooling
 /node_modules/
 /tools/out/
+
+# Design files are shared out of band, not carried in the repo.
+*.pdf
