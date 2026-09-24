@@ -80,6 +80,7 @@ seo_refresh_static();
             data-note="<?= e($note) ?>"
             data-wa="<?= e(wa_link(product_message($p, $s))) ?>"
             data-brand="<?= e(!empty($p['brand']) ? BRAND_URL . '/' . rawurlencode($p['brand']) : '') ?>"
+            data-brand-ink="<?= e((string) ($p['brand_ink'] ?? '')) ?>"
             data-img="<?= e(upload_url($img)) ?>"
             aria-label="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? '')) . ' — לפרטים ויצירת קשר') ?>">
       <?php if ($img): ?>
@@ -152,7 +153,7 @@ $cBefore = (int) ($current['price_before'] ?? 0);
 $cAfter  = (int) ($current['price_after'] ?? 0);
 $cPct    = $current ? product_discount($current) : null;
 ?>
-<dialog class="pm" id="product-modal" aria-labelledby="pm-name"<?= $current ? ' data-open="1"' : '' ?>>
+<dialog class="pm<?= ($current['brand_ink'] ?? '') === 'light' ? ' pm--mark-light' : '' ?>" id="product-modal" aria-labelledby="pm-name"<?= $current ? ' data-open="1"' : '' ?>>
   <button class="pm__x" type="button" data-close aria-label="סגירת החלון">&times;</button>
   <div class="pm__media"<?= $current && !$cImg ? ' hidden' : '' ?>>
     <?php // src="" would make the browser fetch the page itself as an image. ?>
@@ -173,7 +174,7 @@ $cPct    = $current ? product_discount($current) : null;
     <hr>
 
     <div class="pm__ask">
-      <p class="pm__lead">מעוניינים? שלחו לנו הודעה — המק״ט כבר בתוכה</p>
+      <p class="pm__lead">מעוניינים? שלחו הודעה — המק״ט כבר בתוכה</p>
       <a class="wa wa--pm" href="<?= e(wa_link(product_message($current, $s))) ?>"
          target="_blank" rel="noopener">
         <span class="wa__mark" aria-hidden="true"><?= wa_mark() ?></span>

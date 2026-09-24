@@ -183,10 +183,15 @@ function flatten_backdrop(string $path): bool
  */
 const INK_CAPTION = [8, 180, 190, 288];    // in the design's own 304x291 tile
 const INK_BRAND   = [235, 8, 296, 36];
-const INK_DARK    = 165;                   // mean luma below this wants white
+// Black and white are equally legible against a mid grey of about 116. The
+// caption is allowed a darker ground than the mark, being set larger and given
+// a wash of its own colour to sit on.
+const INK_CAPTION_DARK = 165;
+const INK_BRAND_DARK   = 116;
 
 function patch_ink(string $path, array $box): string
 {
+    $limit = $box === INK_BRAND ? INK_BRAND_DARK : INK_CAPTION_DARK;
     $im = @imagecreatefromstring((string) @file_get_contents($path));
     if (!$im) {
         return 'dark';
@@ -207,5 +212,5 @@ function patch_ink(string $path, array $box): string
         }
     }
     imagedestroy($im);
-    return $n && $sum / $n < INK_DARK ? 'light' : 'dark';
+    return $n && $sum / $n < $limit ? 'light' : 'dark';
 }

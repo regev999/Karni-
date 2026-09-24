@@ -1056,7 +1056,6 @@
   "price_after": 1005,
   "image": "SPLIT-MDL01294.webp",
   "ink": "light",
-  "brand_ink": "light",
   "brand": "78f7a13e.svg",
   "brand_w": 42.6
  },
@@ -1169,7 +1168,6 @@
   "price_after": 420,
   "image": "TRAFFIC-TOS06971.webp",
   "ink": "light",
-  "brand_ink": "light",
   "brand": "2d1a07b8.svg",
   "brand_w": 131.9
  },
@@ -1226,7 +1224,6 @@
   "price_after": 549,
   "image": "TRAFFIC-TOS05972.webp",
   "ink": "light",
-  "brand_ink": "light",
   "brand": "7ec83a26.svg",
   "brand_w": 131.9
  },
@@ -1262,7 +1259,6 @@
   "price_after": 310,
   "image": "SONJA-WALL-N0100006.webp",
   "ink": "light",
-  "brand_ink": "light",
   "brand": "da616c52.svg",
   "brand_w": 131.9
  },
@@ -1274,7 +1270,6 @@
   "price_after": 3948,
   "image": "CRYSTAL-CON05576.webp",
   "ink": "light",
-  "brand_ink": "light",
   "brand": "da616c52.svg",
   "brand_w": 131.9
  },
@@ -1286,7 +1281,6 @@
   "price_after": 4860,
   "image": "CRYSTAL-CON05577.webp",
   "ink": "light",
-  "brand_ink": "light",
   "brand": "da616c52.svg",
   "brand_w": 131.9
  },

@@ -52,16 +52,14 @@ await page.evaluate(() => {
 await page.evaluate(() => {
   document.querySelectorAll('img[loading="lazy"]').forEach(i => { i.loading = 'eager'; });
 });
+// `load` only says the bytes arrived; `decode` says the frame is ready to
+// paint. Waiting on the weaker one left a few cards blank in the capture and
+// made the mismatch figure wander by a point between runs.
 await page.evaluate(async () => {
-  const imgs = [...document.images];
+  const imgs = [...document.images].filter(im => im.getAttribute('src'));
   for (let i = 0; i < imgs.length; i += 10) {
-    await Promise.all(imgs.slice(i, i + 10).map(im => im.complete && im.naturalWidth
-      ? Promise.resolve()
-      : new Promise(r => {
-          im.addEventListener('load', r, { once: true });
-          im.addEventListener('error', r, { once: true });
-          setTimeout(r, 5000);
-        })));
+    await Promise.all(imgs.slice(i, i + 10).map(im =>
+      Promise.race([im.decode().catch(() => {}), new Promise(r => setTimeout(r, 5000))])));
   }
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 });

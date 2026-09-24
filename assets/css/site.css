@@ -218,7 +218,6 @@ a { color: inherit; }
    them all down together, the artboard drawing them larger than the card needs. */
 .card__brand {
   --brand-s: .65;
-  color: #1a1a1a;                /* the marks are drawn in currentColor */
   position: absolute;
   top: calc(10 * var(--u));
   right: calc(10 * var(--u));
@@ -226,7 +225,10 @@ a { color: inherit; }
   height: auto;
   pointer-events: none;
 }
-.card--mark-light .card__brand { color: #fff; }
+/* An SVG loaded through <img> is its own document: a `color` set out here never
+   reaches the `currentColor` inside it, and the mark comes out its default
+   black. Repainting it is what works - to black first, then inverted. */
+.card--mark-light .card__brand { filter: brightness(0) invert(1); }
 
 .card__name, .card__sku, .card__note, .card__old, .card__new {
   position: absolute;
@@ -425,7 +427,10 @@ html.is-locked, html.is-locked body { overflow: hidden; }
 .pm {
   width: calc(1080 * var(--u));
   max-width: calc(100vw - 40px);
-  height: calc(600 * var(--u));
+  /* 520 x 497.6 is the product tile's own 304:291. Matching it means the photo
+     fills its half without being cropped, so the window shows what the card
+     showed - including the corner the maker's mark was measured against. */
+  height: calc(497.6 * var(--u));
   max-height: calc(100vh - 40px);
   padding: 0;
   border: 0;
@@ -446,17 +451,20 @@ html.is-locked, html.is-locked body { overflow: hidden; }
 .pm__x:hover { color: var(--cyan); }
 .pm__x:focus-visible { outline: calc(2 * var(--u)) solid var(--cyan); outline-offset: calc(2 * var(--u)); }
 
+/* The photo fills its half of the window, as it fills the card, so the maker's
+   mark sits on the picture rather than floating in a white band above it. */
 .pm__media {
   position: relative;
   flex: 0 0 calc(520 * var(--u));
-  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
   background: #fff; border-inline-end: 1px solid #f0f0f0;
 }
-.pm__img { width: 100%; height: auto; }
+.pm__img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .pm__brand {
-  position: absolute; top: calc(22 * var(--u)); right: calc(22 * var(--u));
-  width: calc(120 * var(--u)); height: auto; opacity: .85;
+  position: absolute; top: calc(20 * var(--u)); right: calc(20 * var(--u));
+  width: calc(96 * var(--u)); height: auto;
 }
+.pm--mark-light .pm__brand { filter: brightness(0) invert(1); }
 .pm__body {
   flex: 1; min-width: 0; overflow-y: auto;
   outline: none;               /* it only takes focus so the close button does not */
@@ -591,7 +599,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   /* --- footer --- */
   /* Room at the bottom for the floating bubble, which otherwise sits on the
      phone number. */
-  .foot { height: auto; padding: 34px 22px 96px; }
+  .foot { height: auto; padding: 34px 22px 112px; }
   .foot__brand { position: static; width: min(230px, 62vw); margin: 34px 0 0; }
   .foot__contact { position: static; margin-top: 18px; font-size: 18px; }
 
@@ -609,10 +617,10 @@ html.is-locked, html.is-locked body { overflow: hidden; }
     width: 46px; height: 5px; border-radius: 3px; background: #d5d9dc;
   }
   .pm__x { left: 6px; top: 6px; width: 44px; height: 44px; color: #9aa1a7; font-size: 34px; z-index: 2; }
-  .pm__media { flex: none; height: 30vh; min-height: 170px; border: 0;
+  .pm__media { flex: none; height: 40vh; min-height: 230px; border: 0;
                border-bottom: 1px solid #f0f0f0; padding-top: 14px; }
-  .pm__img { width: 100%; height: 100%; object-fit: contain; }
-  .pm__brand { top: 12px; right: 14px; width: 86px; }
+  .pm__img { width: 100%; height: 100%; object-fit: cover; }
+  .pm__brand { top: 12px; right: 14px; width: 74px; }
   .pm__body { padding: 16px 20px 0; }
   .pm__name { font-size: 25px; }
   .pm__sku { font-size: 15px; margin-top: 4px; }

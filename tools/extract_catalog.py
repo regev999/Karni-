@@ -26,7 +26,10 @@ BRAND_STRIP = 70.0                # the band at the top of a tile holding the br
 BRAND_LEFT = 120.0                # and it sits in the tile's right half, never the left
 EMPTY_TILE = 0.6                  # below this a tile carries no photograph (see `has_photo`)
 INK_BRAND = (235, 8, 296, 36)     # the rectangle the maker's mark is hung in
-INK_DARK = 165                    # mean luma below this wants what sits on it set in white
+# Black and white are equally legible against a mid grey of about 116, so that
+# is where the mark should change hands. The caption is allowed a darker ground
+# than that because it is set larger and sits on a wash of its own colour.
+INK_DARK = 116
 
 
 # The design has one typo of its own: the tile beside "LAGOON CON00091" reads

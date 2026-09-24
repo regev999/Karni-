@@ -54,6 +54,7 @@
     var brand = pm.querySelector('.pm__brand');
     brand.hidden = !d.brand;
     if (d.brand) brand.src = d.brand;
+    pm.classList.toggle('pm--mark-light', d.brandInk === 'light');
 
     var oldEl = pm.querySelector('.pm__old');
     oldEl.hidden = !before;
