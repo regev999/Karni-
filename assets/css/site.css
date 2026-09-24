@@ -14,6 +14,8 @@
   --ink-soft: #383838;
   --dark: #2a2a2a;
   --grey: #f1f1f1;
+  --wa: #62ca6e;                      /* the green the artboard uses for WhatsApp */
+  --wa-dark: #4fb85b;
   --alef-lh: 1.3618;                  /* Alef hhea ascent+descent, so a line box == the design's text box */
   --mont-lh: 1.219;                   /* same, for Montserrat */
 }
@@ -123,18 +125,16 @@ a { color: inherit; }
                line-height: calc(35 * var(--u)); letter-spacing: calc(-0.4 * var(--u)); }
 .step__text span { display: block; }
 
-.step--1 .step__disc { top: calc(70 * var(--u)); }
-.step--2 .step__disc { top: calc(332.4 * var(--u)); }
-.step--3 .step__disc { top: calc(594.9 * var(--u)); }
-.step--1 .step__num  { top: calc(108.8 * var(--u)); }
-.step--2 .step__num  { top: calc(379.5 * var(--u)); }
-.step--3 .step__num  { top: calc(649.5 * var(--u)); }
-.step--1 .step__title { top: calc(97.2 * var(--u)); }
-.step--2 .step__title { top: calc(371.3 * var(--u)); }
-.step--3 .step__title { top: calc(642.9 * var(--u)); }
-.step--1 .step__text  { top: calc(154.05 * var(--u)); }
-.step--2 .step__text  { top: calc(428.15 * var(--u)); }
-.step--3 .step__text  { top: calc(699.75 * var(--u)); }
+.step--1 .step__disc { top: calc(60 * var(--u)); }
+.step--2 .step__disc { top: calc(322.4 * var(--u)); }
+.step--3 .step__disc { top: calc(584.9 * var(--u)); }
+.step--1 .step__num  { top: calc(98.8 * var(--u)); }
+.step--2 .step__num  { top: calc(369.5 * var(--u)); }
+.step--3 .step__num  { top: calc(639.5 * var(--u)); }
+.step--1 .step__title { top: calc(87.2 * var(--u)); }
+.step--2 .step__title { top: calc(361.3 * var(--u)); }
+.step--3 .step__title { top: calc(632.9 * var(--u)); }
+.step--2 .step__text  { top: calc(416.05 * var(--u)); }
 
 /* =========================================================================== */
 /* Product grid                                                                */
@@ -218,82 +218,28 @@ a { color: inherit; }
 /* =========================================================================== */
 /* Lead prompt                                                                 */
 /* =========================================================================== */
-.lead { position: relative; z-index: 2; height: calc(501.3 * var(--u)); background: #fff; }
+.lead { position: relative; z-index: 2; height: calc(440.3 * var(--u)); background: #fff; }
 .lead > :not(.lead__dolly) { position: absolute; margin: 0; white-space: nowrap; }
 
 /* The photo carries its own backdrop, matched to the three bands it crosses. */
 .lead__dolly { position: absolute; z-index: 3; pointer-events: none;
-               left: calc(31.2 * var(--u)); top: calc(-267.8 * var(--u));
-               width: calc(699 * var(--u)); height: calc(1046.5 * var(--u)); }
-.lead__title { top: calc(126.3 * var(--u)); right: calc(82.6 * var(--u));
-               font-size: calc(76 * var(--u)); font-weight: 700; color: var(--cyan); }
-.lead__sub   { top: calc(220.2 * var(--u)); right: calc(84.4 * var(--u));
+               left: calc(55 * var(--u)); top: calc(-149 * var(--u));
+               width: calc(375 * var(--u)); height: calc(647 * var(--u)); }
+.lead__title { top: calc(61.3 * var(--u)); right: calc(80.6 * var(--u));
+               font-size: calc(71 * var(--u)); font-weight: 700; color: var(--cyan); }
+.lead__sub   { top: calc(150.2 * var(--u)); right: calc(82.3 * var(--u));
                font-size: calc(43 * var(--u)); color: #080808; }
-.lead__chevron { top: calc(346.9 * var(--u)); right: calc(73.1 * var(--u));
-                 width: calc(67.6 * var(--u)); height: calc(43.2 * var(--u)); }
 
 /* =========================================================================== */
-/* Footer: lead form, brand, contact                                           */
+/* Footer: brand and contact                                                   */
 /* =========================================================================== */
-.foot { position: relative; z-index: 1; height: calc(453.4 * var(--u)); background: var(--dark); color: #fff; }
+.foot { position: relative; z-index: 1; height: calc(253.4 * var(--u)); background: var(--dark); color: #fff; }
 
-.lform__hp { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0;
-             overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.lform__row > * { position: absolute; }
-
-/* Anchored from the bottom: in the design all four rules sit on one line, and
-   only the label above them shifts a hair from field to field. */
-.field { width: calc(230 * var(--u)); bottom: calc(258 * var(--u)); }
-.field input {
-  width: 100%;
-  padding: 0 0 calc(25.24 * var(--u));
-  border: 0;
-  border-bottom: calc(3 * var(--u)) solid #fff;
-  border-radius: 0;
-  background: none;
-  color: #fff;
-  font: 700 calc(35 * var(--u)) / var(--alef-lh) Alef, Arial, sans-serif;
-  letter-spacing: calc(3.1 * var(--u));
-  text-align: right;
-}
-.field input::placeholder { color: #fff; opacity: 1; }
-.field input:focus { outline: none; border-bottom-color: var(--cyan); }
-.field input:focus::placeholder { opacity: .5; }
-.field.is-bad input { border-bottom-color: #ff6b6b; }
-
-.lform__row .field:nth-of-type(1) { right: calc(53 * var(--u)); }
-.lform__row .field:nth-of-type(2) { right: calc(316.4 * var(--u)); }
-.lform__row .field:nth-of-type(3) { right: calc(579.2 * var(--u)); }
-.lform__row .field:nth-of-type(4) { right: calc(845.2 * var(--u)); }
-.lform__row .field:nth-of-type(2) input { padding-bottom: calc(21.64 * var(--u)); }
-.lform__row .field:nth-of-type(3) input,
-.lform__row .field:nth-of-type(4) input { font-size: calc(34 * var(--u)); padding-bottom: calc(22.3 * var(--u)); }
-
-.send {
-  top: calc(122.7 * var(--u)); right: calc(1094.8 * var(--u));
-  display: flex; align-items: center; justify-content: center; gap: calc(14 * var(--u));
-  width: calc(252.1 * var(--u)); height: calc(71.2 * var(--u));
-  border: 0; border-radius: calc(35.6 * var(--u));
-  background: var(--cyan); color: #fff; cursor: pointer;
-  font: 700 calc(40 * var(--u)) / 1 Alef, Arial, sans-serif;
-  transition: background .18s ease, transform .18s ease;
-}
-.send:hover { background: #00c0ff; }
-.send:active { transform: translateY(calc(1 * var(--u))); }
-.send[disabled] { opacity: .6; cursor: progress; }
-.send__arrow { direction: ltr; unicode-bidi: isolate; }
-
-.lform__msg {
-  position: absolute; top: calc(210 * var(--u)); right: calc(53 * var(--u));
-  margin: 0; font-size: calc(24 * var(--u)); color: var(--cyan); min-height: 1em;
-}
-.lform__msg.is-bad { color: #ff8b8b; }
-
-.foot__brand { position: absolute; top: calc(315.9 * var(--u)); left: calc(54.1 * var(--u));
+.foot__brand { position: absolute; top: calc(126.9 * var(--u)); left: calc(56.1 * var(--u));
                width: calc(316.1 * var(--u)); color: #fff; }
 .foot__brand svg { width: 100%; height: auto; }
 
-.foot__contact { position: absolute; top: calc(323.5 * var(--u)); right: calc(53 * var(--u));
+.foot__contact { position: absolute; top: calc(137.5 * var(--u)); right: calc(51 * var(--u));
                  font-style: normal; font-size: calc(33 * var(--u)); text-align: right; }
 .foot__contact a { text-decoration: none; }
 .foot__contact a:hover { text-decoration: underline; }
@@ -343,6 +289,73 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .card, .card__go { transition-duration: .01ms; }
   .card:hover, .card:focus-visible { transform: none; }
+}
+
+/* =========================================================================== */
+/* WhatsApp                                                                    */
+/* =========================================================================== */
+/* One button in three sizes: the call to action above the footer, the one
+   inside the pop-up, and the bubble that follows the page down. */
+.wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(22 * var(--u));
+  background: var(--wa);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 999px;
+  transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.wa:hover { background: var(--wa-dark); }
+.wa:active { transform: translateY(calc(1 * var(--u))); }
+.wa__arrow { direction: ltr; unicode-bidi: isolate; }
+/* The artboard sets the mark in white straight onto the green, no disc behind. */
+.wa__mark { display: grid; place-items: center; }
+.wa__mark svg { width: 100%; height: auto; }
+
+/* Above the footer, sized to the artboard. */
+.wa--cta {
+  top: calc(266.5 * var(--u)); right: calc(67 * var(--u));
+  width: calc(521.6 * var(--u)); height: calc(105.6 * var(--u));
+  /* Mark hard against one end, label against the other, as the artboard sets
+     them; the artboard also tracks this one line out by 75/1000. */
+  justify-content: space-between;
+  padding: 0 calc(16.4 * var(--u)) 0 calc(25 * var(--u));
+  font: 700 calc(45 * var(--u)) / 1 Alef, Arial, sans-serif;
+  letter-spacing: .075em;
+}
+.wa--cta .wa__mark { width: calc(82.6 * var(--u)); height: calc(82.6 * var(--u)); }
+
+/* Inside the pop-up. */
+.wa--pm {
+  width: 100%;
+  height: calc(64 * var(--u));
+  gap: calc(14 * var(--u));
+  padding: 0 calc(10 * var(--u)) 0 calc(20 * var(--u));
+  font: 700 calc(24 * var(--u)) / 1 Alef, Arial, sans-serif;
+}
+.wa--pm .wa__mark { width: calc(48 * var(--u)); height: calc(48 * var(--u)); }
+
+/* And the bubble, which the artboard draws once but a page carries with it. */
+.wa--float {
+  position: fixed;
+  z-index: 40;
+  right: calc(30 * var(--u));
+  bottom: calc(30 * var(--u));
+  width: calc(129 * var(--u));
+  height: calc(129 * var(--u));
+  color: #fff;
+  box-shadow: 0 calc(4 * var(--u)) calc(18 * var(--u)) rgba(0, 0, 0, .25);
+}
+
+/* The pop-up has a WhatsApp button of its own; two would be one too many. */
+.is-locked .wa--float { display: none; }
+.wa--float svg { width: 64%; height: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wa { transition-duration: .01ms; }
+  .wa:active { transform: none; }
 }
 
 /* =========================================================================== */
@@ -418,50 +431,12 @@ html.is-locked, html.is-locked body { overflow: hidden; }
 .pm__lead { margin: calc(22 * var(--u)) 0 calc(14 * var(--u));
             font: 700 calc(23 * var(--u)) / 1.3 Alef, Arial, sans-serif; }
 
-.pm__fields { display: grid; grid-template-columns: 1fr 1fr; gap: calc(6 * var(--u)) calc(22 * var(--u)); }
-.pf { position: relative; display: block; }
-.pf--wide { grid-column: 1 / -1; }
-.pf input {
-  width: 100%;
-  padding: calc(8 * var(--u)) calc(2 * var(--u)) calc(11 * var(--u));
-  border: 0; border-bottom: calc(2 * var(--u)) solid #d5d9dc; border-radius: 0;
-  background: none; color: var(--ink); text-align: right;
-  font: 400 calc(20 * var(--u)) / 1.3618 Alef, Arial, sans-serif;
-}
-.pf input::placeholder { color: #9aa1a7; }
-.pf input:focus { outline: none; border-bottom-color: var(--cyan); }
-.pf.is-bad input { border-bottom-color: #e0483c; }
-
-.pm__actions { display: flex; align-items: center; flex-wrap: wrap;
-               gap: calc(20 * var(--u)); margin-top: calc(26 * var(--u)); }
-.pm__send { position: static; width: calc(220 * var(--u)); height: calc(56 * var(--u));
-            border-radius: calc(28 * var(--u)); font-size: calc(26 * var(--u)); }
-.pm__or { margin: 0; font-size: calc(18 * var(--u)); color: #6f7a83; }
+.pm__or { margin: calc(14 * var(--u)) 0 0; font-size: calc(19 * var(--u)); color: #7b8790; }
 .pm__or a { color: var(--cyan); font-weight: 700; text-decoration: none; }
-.pm .lform__msg { position: static; margin-top: calc(12 * var(--u));
-                  font-size: calc(17 * var(--u)); color: var(--cyan); min-height: 1em; }
-.pm .lform__msg.is-bad { color: #e0483c; }
+.pm__or a:hover { text-decoration: underline; }
+
 .pm__fine { margin: auto 0 0; padding-top: calc(18 * var(--u));
             font-size: calc(15 * var(--u)); color: #a7aeb4; }
-
-.pm__done { margin: auto 0; text-align: center; }
-.pm__tick {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: calc(64 * var(--u)); height: calc(64 * var(--u)); border-radius: 50%;
-  background: var(--cyan); color: #fff; font-size: calc(34 * var(--u));
-  margin-bottom: calc(16 * var(--u));
-}
-.pm__done-t { margin: 0; font: 700 calc(23 * var(--u)) / 1.3 Alef, Arial, sans-serif; }
-.pm__done-s { margin: calc(8 * var(--u)) 0 0; font-size: calc(17 * var(--u));
-              line-height: 1.5; color: #6f7a83; }
-.pm__done-s a { color: var(--cyan); font-weight: 700; text-decoration: none; }
-.pm__ghost {
-  margin-top: calc(22 * var(--u)); padding: calc(11 * var(--u)) calc(26 * var(--u));
-  border: calc(2 * var(--u)) solid #e4e4e4; border-radius: 999px; background: none;
-  color: #6f7a83; cursor: pointer;
-  font: 700 calc(18 * var(--u)) / 1.2 Alef, Arial, sans-serif;
-}
-.pm__ghost:hover { border-color: var(--cyan); color: var(--cyan); }
 
 /* ===========================================================================
    Narrow screens.
@@ -538,21 +513,15 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .lead__dolly { display: none; }             /* its backdrop is painted for the desktop bands */
   .lead__title { font-size: clamp(28px, 7.6vw, 46px); line-height: 1.15; }
   .lead__sub { font-size: clamp(16px, 4.4vw, 24px); margin-top: 8px; }
-  .lead__chevron { width: 44px; height: 28px; margin: 22px 0 0 auto; }
+  .wa--cta { width: 100%; height: 62px; margin-top: 22px; gap: 12px;
+             padding: 0 8px 0 18px; font-size: clamp(18px, 4.8vw, 24px); }
+  .wa--cta .wa__mark { width: 46px; height: 46px; }
+  .wa--float { right: 16px; bottom: 16px; width: 62px; height: 62px; }
 
   /* --- footer --- */
-  .foot { height: auto; padding: 34px 22px 30px; }
-  .lform__row { display: flex; flex-direction: column; gap: 18px; }
-  .lform__row > * { position: static; }
-  .field { width: 100%; bottom: auto; }
-  .field input,
-  .lform__row .field:nth-of-type(3) input,
-  .lform__row .field:nth-of-type(4) input {
-    font-size: 20px; padding-bottom: 8px; letter-spacing: .06em;
-    border-bottom-width: 2px;
-  }
-  .send { width: 100%; height: 56px; font-size: 24px; border-radius: 28px; margin-top: 6px; }
-  .lform__msg { position: static; margin-top: 14px; font-size: 16px; }
+  /* Room at the bottom for the floating bubble, which otherwise sits on the
+     phone number. */
+  .foot { height: auto; padding: 34px 22px 96px; }
   .foot__brand { position: static; width: min(230px, 62vw); margin: 34px 0 0; }
   .foot__contact { position: static; margin-top: 18px; font-size: 18px; }
 
@@ -584,8 +553,9 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .pm__desc { margin-top: 12px; font-size: 15px; }
   .pm hr { margin-top: 16px; }
   .pm__lead { margin: 16px 0 10px; font-size: 19px; }
-  .pm__fields { grid-template-columns: 1fr; gap: 14px; }
-  .pf input { font-size: 18px; }
+  .wa--pm { height: 56px; font-size: 19px; }
+  .wa--pm .wa__mark { width: 42px; height: 42px; }
+  .pm__or { font-size: 15px; margin-top: 12px; }
 
   /* The send button stays reachable however far the sheet is scrolled. */
   .pm__actions {
@@ -601,9 +571,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
     font-size: 0;
   }
   .pm__or a { font-size: 17px; }
-  .pm .lform__msg { margin: 10px 0 0; font-size: 15px; }
   .pm__fine { margin: 14px 0 0; padding: 0 0 16px; font-size: 13px; }
-  .pm__done { padding: 18px 0 28px; }
 }
 
 @media (max-width: 559px) {

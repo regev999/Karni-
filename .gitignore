@@ -1,13 +1,10 @@
-# Runtime data: contains the admin password hash and customer details.
+# Runtime data: the admin password hash, the catalogue as edited, the counters.
 /data/settings.php
-/data/leads.php
 /data/views.php
 /data/logins.php
 /data/products.php
 /data/products.json
 /data/settings.json
-/data/leads.json
-/data/.rate_*
 /data/*.tmp
 
 # Written by the site itself from the current host and catalogue.
@@ -17,6 +14,8 @@
 # Tooling
 /node_modules/
 /tools/out/
+/tools/__pycache__/
 
 # Design files are shared out of band, not carried in the repo.
 *.pdf
+

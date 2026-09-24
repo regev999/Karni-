@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/../inc/bootstrap.php';
-require __DIR__ . '/../inc/notify.php';
+require __DIR__ . '/../inc/mail.php';
 require __DIR__ . '/_layout.php';
 
 session_start_once();
@@ -21,7 +21,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $s = settings();
     $token = reset_start();
     if ($token !== null) {
-        $to = array_values(array_filter((array) $s['lead_emails'],
+        $to = array_values(array_filter((array) $s['admin_emails'],
             static fn($e) => filter_var($e, FILTER_VALIDATE_EMAIL)));
         mail_reset($to, abs_url('admin/reset.php') . '?t=' . $token, $s);
     }

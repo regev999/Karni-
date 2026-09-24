@@ -104,7 +104,7 @@ $stats = catalog_stats($rows);
 // position in $i so that saving a table sorted by views leaves the order alone.
 $rows       = with_slugs($rows);
 $views      = views_all();
-$viewOf     = static fn(array $r): int => (int) ($views[$r['slug']] ?? 0);
+$viewOf     = static fn(array $r): int => (int) ($views[$r['slug']]['views'] ?? 0);
 $totalViews = array_sum(array_map($viewOf, $rows));
 $byViews    = ($_GET['sort'] ?? '') === 'views';
 if ($byViews) {

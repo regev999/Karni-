@@ -96,6 +96,17 @@ function product_discount(array $p): ?int
         : null;
 }
 
+/** What the WhatsApp message says when it opens, so nobody has to type a SKU. */
+function product_message(?array $p, array $s): string
+{
+    if (!$p) {
+        return 'היי, אני מעוניין/ת בפרטים על המכירה מתצוגה';
+    }
+    return 'היי, אני מעוניין/ת ב-' . $p['name']
+        . ($p['sku'] !== '' ? ' (מק״ט ' . $p['sku'] . ')' : '')
+        . (!empty($p['price_after']) ? ' — ₪' . shekel($p['price_after']) : '');
+}
+
 function product_title(array $p, array $s): string
 {
     $head = trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? ''));

@@ -70,11 +70,6 @@ function products_save(array $rows): bool
     return write_json(PRODUCTS_FILE, array_values($rows));
 }
 
-function leads_all(): array
-{
-    return read_json(LEADS_FILE, []) ?: [];
-}
-
 /**
  * Read, change and write one JSON file under an exclusive lock, so that two
  * requests landing together cannot each write over the other's change.
@@ -122,16 +117,6 @@ function views_bump(string $slug): bool
             'views' => (int) ($rows[$slug]['views'] ?? 0) + 1,
             'last'  => date('Y-m-d H:i:s'),
         ];
-        return $rows;
-    });
-}
-
-/** Append one lead; concurrent submits cannot clobber each other. */
-function lead_append(array $lead): bool
-{
-    return json_update(LEADS_FILE, static function (array $rows) use ($lead): array {
-        $lead['id'] = ($rows ? max(array_map(static fn($r) => (int) ($r['id'] ?? 0), $rows)) : 0) + 1;
-        $rows[] = $lead;
         return $rows;
     });
 }

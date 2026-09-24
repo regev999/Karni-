@@ -24,7 +24,6 @@ function layout_head(string $title, bool $nav = true): void
   <nav class="bar__nav">
     <?php foreach ([
         'products.php' => 'מוצרים',
-        'leads.php'    => 'לידים',
         'settings.php' => 'הגדרות',
     ] as $href => $label): ?>
       <a href="<?= $href ?>"<?= $current === $href ? ' class="is-on"' : '' ?>><?= $label ?></a>

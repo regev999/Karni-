@@ -13,11 +13,11 @@ const DESIGN = `${OUT}/design.png`;
 // depends on how many rows the catalogue has.
 const SECTIONS = [
   ['hero',    0,     900,   0],
-  ['steps',   900,   1790,  0],
+  ['steps',   900,   1650,  0],
   ['grid1',   1790,  2560,  0],
   ['grid2',   1790,  3000,  0],
-  ['lead',    12100, 12660, 'bottom'],
-  ['footer',  12650, 13104, 'bottom'],
+  ['lead',    13134, 13574, 'bottom'],
+  ['footer',  13574, 13827, 'bottom'],
 ];
 
 const browser = await chromium.launch({
@@ -32,6 +32,14 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 1200 }, de
 page.setDefaultTimeout(60000);
 await page.goto(URL, { waitUntil: 'load' });
 await page.evaluate(() => document.fonts.ready);
+
+// The artboard draws the floating WhatsApp bubble once, where it would sit on
+// the first screen; on the page it is fixed to the viewport, so a full-page
+// capture can never land it there. Hide it rather than diff its two positions.
+await page.evaluate(() => {
+  const f = document.querySelector('.wa--float');
+  if (f) { f.style.display = 'none'; }
+});
 
 // Force every lazy image in before measuring the full page. Waiting on all of
 // them at once is enough to crash the renderer, so walk them in batches.
@@ -70,7 +78,7 @@ const height = await page.evaluate(() => document.documentElement.scrollHeight);
 await page.screenshot({ path: `${OUT}/build.png`, fullPage: true, timeout: 180000 });
 await browser.close();
 
-console.log(`build height ${height}px   design height 13104px   delta ${height - 13104}px`);
+console.log(`build height ${height}px   design height 13827px   delta ${height - 13827}px`);
 
 if (!fs.existsSync(DESIGN)) { console.log('no design render; skipping diff'); process.exit(0); }
 const design = PNG.sync.read(fs.readFileSync(DESIGN));

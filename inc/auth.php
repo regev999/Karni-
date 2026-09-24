@@ -145,7 +145,7 @@ function reset_start(): ?string
     if (is_file($stamp) && time() - (int) filemtime($stamp) < RESET_PAUSE) {
         return null;
     }
-    if (!array_filter((array) ($s['lead_emails'] ?? []), static fn($e) => filter_var($e, FILTER_VALIDATE_EMAIL))) {
+    if (!array_filter((array) ($s['admin_emails'] ?? []), static fn($e) => filter_var($e, FILTER_VALIDATE_EMAIL))) {
         return null;
     }
     @touch($stamp);

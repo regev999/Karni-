@@ -121,8 +121,11 @@ def main():
            progressive=True)
 
     # The dolly straddles the grey, white and dark bands; its baked-in backdrop
-    # matches those sections exactly, so it drops straight back into place.
-    raster(page, (31.2, 11881.5, 730.2, 12928.0), "dolly.webp", quality=93, method=6)
+    # matches those sections exactly, so it drops straight back into place. The
+    # crop stops short of the headline beside it: anything wider bakes the
+    # design's own words into the photo, and they then show through whatever
+    # the page itself says.
+    raster(page, (55.0, 12985.0, 430.0, 13632.0), "dolly.webp", quality=93, method=6)
 
 
 if __name__ == "__main__":

@@ -1,61 +1,6 @@
 (function () {
   'use strict';
 
-  /* ---------------------------------------------------------------- forms -- */
-
-  function msgEl(form) { return form.querySelector('.lform__msg'); }
-
-  function setMsg(form, text, bad) {
-    var el = msgEl(form);
-    if (!el) return;
-    el.textContent = text || '';
-    el.classList.toggle('is-bad', !!bad);
-  }
-
-  function markFields(form, errors) {
-    form.querySelectorAll('.field, .pf').forEach(function (f) { f.classList.remove('is-bad'); });
-    Object.keys(errors || {}).forEach(function (name) {
-      var input = form.querySelector('[name="' + name + '"]');
-      if (input && input.parentElement) input.parentElement.classList.add('is-bad');
-    });
-  }
-
-  // Both the footer form and the pop-up form post to the same endpoint.
-  function bindLeadForm(form, onSuccess) {
-    var btn = form.querySelector('button[type=submit]');
-    form.addEventListener('submit', function (ev) {
-      ev.preventDefault();
-      setMsg(form, '');
-      markFields(form, {});
-      if (btn) btn.disabled = true;
-
-      fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { 'Accept': 'application/json' }
-      })
-        .then(function (res) { return res.json().then(function (body) { return { ok: res.ok, body: body }; }); })
-        .then(function (r) {
-          if (r.ok && r.body.ok) {
-            form.reset();
-            if (onSuccess) onSuccess(r.body);
-            else setMsg(form, r.body.message || 'תודה! נחזור אליכם בהקדם.', false);
-            return;
-          }
-          markFields(form, r.body.errors);
-          var first = r.body.errors && Object.keys(r.body.errors)[0];
-          setMsg(form, (first && r.body.errors[first]) || r.body.error || 'השליחה נכשלה, נסו שוב.', true);
-        })
-        .catch(function () { setMsg(form, 'אין חיבור לשרת, נסו שוב בעוד רגע.', true); })
-        .finally(function () { if (btn) btn.disabled = false; });
-    });
-  }
-
-  var footerForm = document.querySelector('.foot .lform');
-  if (footerForm) bindLeadForm(footerForm);
-
-  /* ------------------------------------------------------------- pop-up --- */
-
   var pm = document.getElementById('product-modal');
   var cards = [].slice.call(document.querySelectorAll('.card'));
 
@@ -65,28 +10,28 @@
     return ev.button === 0 && !ev.metaKey && !ev.ctrlKey && !ev.shiftKey && !ev.altKey;
   }
 
-  // Without <dialog> support, fall back to carrying the SKU into the footer form.
+  // Without <dialog> support the card is left as the plain link it already is:
+  // the product's own address renders the same details on the server.
   if (!pm || typeof pm.showModal !== 'function') {
-    cards.forEach(function (card) {
-      card.addEventListener('click', function (ev) {
-        if (!plain(ev)) return;
-        var field = document.querySelector('.foot [name=sku]');
-        if (!field) return;
-        ev.preventDefault();
-        field.value = card.dataset.sku || '';
-        document.querySelector('.foot').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(function () { field.focus({ preventScroll: true }); }, 450);
-      });
-    });
     return;
   }
 
-  var pmForm = pm.querySelector('.lform');
-  var ask = pm.querySelector('.pm__ask');
-  var done = pm.querySelector('.pm__done');
   var lastCard = null;
+  var syncing = false;          // true while the history drives the dialog
 
   function money(n) { return '₪' + n; }
+
+  function cardFor(slug) {
+    if (!slug) return null;
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].dataset.slug === slug) return cards[i];
+    }
+    return null;
+  }
+
+  function slugInUrl() {
+    return new URLSearchParams(location.search).get('p');
+  }
 
   function fill(card) {
     var d = card.dataset;
@@ -120,27 +65,11 @@
     desc.textContent = d.desc || '';
     desc.hidden = !d.desc;
 
-    pmForm.querySelector('[name=sku]').value = d.sku || '';
-    pmForm.querySelector('[name=product]').value = d.name || '';
-    pm.querySelector('.pm__fine').textContent = (d.sku ? 'המק״ט ' + d.sku + ' מצורף לפנייה אוטומטית · ' : '')
-      + 'אין חיוב ואין רכישה באתר';
-    pm.querySelector('.pm__done-s').textContent = 'נציג יחזור אליכם בהקדם'
-      + (d.sku ? ' בנוגע למק״ט ' + d.sku : '') + '.';
-  }
-
-  // True while the history drives the dialog, so the two do not answer each other.
-  var syncing = false;
-
-  function cardFor(slug) {
-    if (!slug) return null;
-    for (var i = 0; i < cards.length; i++) {
-      if (cards[i].dataset.slug === slug) return cards[i];
-    }
-    return null;
-  }
-
-  function slugInUrl() {
-    return new URLSearchParams(location.search).get('p');
+    // Each product carries its own link, with its name and SKU already in the
+    // message, so the person sending it types nothing.
+    pm.querySelector('.wa--pm').href = d.wa || '';
+    pm.querySelector('.pm__fine').textContent =
+      (d.sku ? 'המק״ט ' + d.sku + ' מצורף להודעה · ' : '') + 'אין חיוב ואין רכישה באתר';
   }
 
   // One count per product per browser session: enough to tell which products
@@ -165,10 +94,6 @@
     lastCard = card;
     countView(card);
     fill(card);
-    ask.hidden = false;
-    done.hidden = true;
-    setMsg(pmForm, '');
-    markFields(pmForm, {});
     if (!pm.open) pm.showModal();
     document.documentElement.classList.add('is-locked');
     pm.querySelector('.pm__body').scrollTop = 0;
@@ -207,13 +132,6 @@
   // A click that lands on the dialog element itself is a click on the backdrop.
   pm.addEventListener('click', function (ev) {
     if (ev.target === pm) close();
-  });
-
-  bindLeadForm(pmForm, function () {
-    ask.hidden = true;
-    done.hidden = false;
-    pm.querySelector('.pm__body').scrollTop = 0;
-    pm.querySelector('.pm__ghost').focus();
   });
 
   cards.forEach(function (card) {

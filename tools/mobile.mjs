@@ -12,9 +12,9 @@ for (const [w, h, name] of [[390, 844, 'phone'], [768, 1024, 'tablet'], [1024, 8
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(700);
   const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  for (const [tag, y] of [['top', 0], ['steps', null], ['grid', null], ['form', null]]) {
+  for (const [tag, y] of [['top', 0], ['steps', null], ['grid', null], ['lead', null]]) {
     if (tag === 'top') { await page.evaluate(() => window.scrollTo(0, 0)); }
-    else { await page.evaluate(s => document.querySelector(s).scrollIntoView(), tag === 'steps' ? '.steps' : tag === 'grid' ? '.catalog' : '.foot'); }
+    else { await page.evaluate(s => document.querySelector(s).scrollIntoView(), tag === 'steps' ? '.steps' : tag === 'grid' ? '.catalog' : '.lead'); }
     await page.waitForTimeout(450);
     await page.screenshot({ path: `tools/out/m-${name}-${tag}.png` });
   }

@@ -1,4 +1,4 @@
-// End-to-end smoke test of the admin panel and the lead form.
+// End-to-end smoke test of the admin panel and the WhatsApp buttons.
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -48,7 +48,7 @@ const anon = await browser.newContext();
 const ap = await anon.newPage();
 await ap.goto(`${BASE}/admin/products.php`);
 ok(ap.url().endsWith('/admin/index.php'), 'products.php redirects anonymous visitors');
-for (const f of ['data/settings.php', 'data/leads.php', 'inc/store.php']) {
+for (const f of ['data/settings.php', 'data/views.php', 'inc/store.php']) {
   const r = await ap.request.get(`${BASE}/${f}`);
   const body = await r.text();
   ok(!/admin_hash|050-|JSON_GUARD/.test(body), `${f} over HTTP leaks nothing (status ${r.status()}, ${body.length}B)`);
@@ -76,33 +76,27 @@ ok(merged.some(p => p.name === 'מנורת בדיקה' && p.price_after === 399)
 ok(merged.some(p => p.name === 'New Only Sheet' && !p.image), 'sheet-only row added without a photo');
 ok(merged.some(p => p.name === 'Romeo Moon' && p.price_before === 4802), 'currency and commas stripped');
 
-// 6. Footer lead form.
+// 6. With no number set, every button falls back to the phone in the footer.
 await page.goto(`${BASE}/`);
-await page.click('.foot .send');
-await page.waitForTimeout(600);
-ok((await page.locator('.foot .lform__msg').textContent()).includes('שם'), 'empty footer form is rejected');
-await page.fill('.foot [name=name]', 'ישראל ישראלי');
-await page.fill('.foot [name=phone]', '050-1234567');
-await page.fill('.foot [name=email]', 'test@example.com');
-await page.fill('.foot [name=sku]', 'FLS3198');
-await page.click('.foot .send');
-await page.waitForTimeout(800);
-ok((await page.locator('.foot .lform__msg').textContent()).includes('תודה'), 'valid lead accepted');
-const readLeads = () => JSON.parse(fs.readFileSync('data/leads.php', 'utf8').replace(/^<\?php[^\n]*\n/, ''));
-let leads = readLeads();
-ok(leads.length === 1 && leads[0].phone === '050-1234567', 'lead stored');
-ok(leads[0].source === 'form', 'footer lead marked as coming from the form');
+ok((await page.locator('.wa--cta').getAttribute('href')).startsWith('tel:'),
+   'with no WhatsApp number the buttons dial the phone instead');
 
-// 7. Rate limit.
-await page.fill('.foot [name=name]', 'שוב');
-await page.fill('.foot [name=phone]', '050-7654321');
-await page.click('.foot .send');
-await page.waitForTimeout(600);
-ok((await page.locator('.foot .lform__msg').textContent()).includes('רגע'), 'second submit is rate limited');
+// 7. The number comes from the settings, and the links are built from it.
+await page.goto(`${BASE}/admin/settings.php`);
+await page.fill('input[name=whatsapp]', '050-1234567');
+await page.click('form button[type=submit]');
+ok((await page.locator('input[name=whatsapp]').inputValue()) === '050-1234567', 'WhatsApp number saved');
+ok((await page.locator('code').first().textContent()).includes('wa.me/972501234567'),
+   'a local number is read as an international one');
+
+await page.goto(`${BASE}/`);
+const cta = decodeURIComponent(await page.locator('.wa--cta').getAttribute('href'));
+ok(cta.startsWith('https://wa.me/972501234567?text='), `the CTA goes to WhatsApp (${cta.slice(0, 38)})`);
+ok(cta.includes('המכירה מתצוגה'), 'the CTA opens WhatsApp with a message already written');
+ok(await page.locator('.wa--float').isVisible(), 'the floating WhatsApp bubble is on the page');
+ok((await page.locator('.lform, .foot form, .send').count()) === 0, 'no lead form is left anywhere');
 
 // 8. The product pop-up.
-for (const f of fs.readdirSync('data')) if (f.startsWith('.rate_')) fs.rmSync('data/' + f);
-await page.reload({ waitUntil: 'load' });
 const card = page.locator('.card').first();
 const wantName = await card.getAttribute('data-name');
 const wantSku = await card.getAttribute('data-sku');
@@ -112,8 +106,13 @@ ok(await page.locator('#product-modal').isVisible(), 'clicking a card opens the 
 ok((await page.locator('.pm__name').textContent()) === wantName, 'pop-up shows the product name');
 ok((await page.locator('.pm__sku').textContent()).includes(wantSku), 'pop-up shows the SKU');
 ok((await page.locator('.pm__save').textContent()).includes('%'), 'pop-up shows the saving');
-ok((await page.inputValue('.pm [name=sku]')) === wantSku, 'SKU is carried into the pop-up form');
 ok(await page.evaluate(() => document.documentElement.classList.contains('is-locked')), 'page scroll is locked');
+
+const pmHref = decodeURIComponent(await page.locator('.wa--pm').getAttribute('href'));
+ok(pmHref.startsWith('https://wa.me/972501234567?text='), 'the pop-up button goes to WhatsApp');
+ok(pmHref.includes(wantName), 'the message names the product the visitor opened');
+ok(pmHref.includes(wantSku), 'the message carries the SKU, so nobody has to type it');
+ok((await page.locator('.pm__fine').textContent()).includes(wantSku), 'the pop-up says the SKU is in the message');
 
 await page.keyboard.press('Escape');
 await page.waitForTimeout(400);
@@ -126,37 +125,34 @@ await page.mouse.click(6, 6);                     // the backdrop
 await page.waitForTimeout(400);
 ok(!(await page.locator('#product-modal').isVisible()), 'a click on the backdrop closes it');
 
-await card.click();
-await page.waitForTimeout(400);
-await page.click('.pm__send');
+// 9. Opening a product counts once per visit, and the count reaches the admin.
+const slug = await card.getAttribute('data-slug');
 await page.waitForTimeout(600);
-ok(await page.locator('.pm .pf.is-bad').first().isVisible(), 'pop-up form validates');
-await page.fill('.pm [name=name]', 'דנה לוי');
-await page.fill('.pm [name=phone]', '052-9876543');
-await page.click('.pm__send');
-await page.waitForTimeout(900);
-ok(await page.locator('.pm__done').isVisible(), 'pop-up shows the thank-you panel');
-leads = readLeads();
-const popup = leads[leads.length - 1];
-ok(popup.source === 'popup' && popup.product === wantName && popup.sku === wantSku,
-   `pop-up lead carries product and source (${popup.product} / ${popup.source})`);
+const seen = () => {
+  const raw = fs.readFileSync('data/views.php', 'utf8');
+  return JSON.parse(raw.replace(/^<\?php[^\n]*\n/, ''));
+};
+ok((seen()[slug] || {}).views >= 1, 'opening a product is counted');
+const once = seen()[slug].views;
+await card.click();
+await page.waitForTimeout(600);
+ok(seen()[slug].views === once, 'reopening the same product in one visit does not count twice');
+await page.keyboard.press('Escape');
 
-// 9. Leads page and CSV export.
-await page.goto(`${BASE}/admin/leads.php`);
-ok(await page.locator('text=ישראל ישראלי').isVisible(), 'lead shows in the admin table');
-ok(await page.locator('text=חלון מוצר').first().isVisible(), 'admin shows the pop-up as the lead source');
-const csv = await (await page.request.get(`${BASE}/admin/leads.php?export=csv`)).body();
-ok(csv[0] === 0xEF && csv.toString('utf8').includes('ישראל ישראלי'), 'CSV export has a BOM and the lead');
-ok(csv.toString('utf8').includes(wantName), 'CSV export includes the product name');
+await page.goto(`${BASE}/admin/products.php?sort=views`);
+const top = (await page.locator('tbody tr').first().locator('.views').textContent()).trim();
+ok(top === String(once), `sorted by views, the admin puts the opened product on top (${top})`);
+ok((await page.locator('tbody tr').first().locator('input[name$="[name]"]').inputValue()) === wantName,
+   'and it is the product that was opened');
 
 // 10. Password reset. The mail cannot be read from here, so the token is minted
 // through the same code the mail would have carried.
 // A reset has to have somewhere to go, so give the site an address first.
 await page.goto(`${BASE}/admin/settings.php`);
-await page.fill('input[name=lead_emails]', 'owner@example.com');
-await page.click('form:has(input[name=lead_emails]) button[type=submit]');
-ok((await page.locator('input[name=lead_emails]').inputValue()) === 'owner@example.com',
-   'lead address saved');
+await page.fill('input[name=admin_emails]', 'owner@example.com');
+await page.click('form button[type=submit]');
+ok((await page.locator('input[name=admin_emails]').inputValue()) === 'owner@example.com',
+   'reset address saved');
 
 await page.goto(`${BASE}/admin/logout.php`);
 await page.goto(`${BASE}/admin/`);

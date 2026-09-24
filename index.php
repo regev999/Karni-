@@ -49,15 +49,15 @@ seo_refresh_static();
 <section class="steps" aria-label="איך זה עובד">
   <ol class="steps__list">
     <?php foreach ([
-        ['בוחרים גוף תאורה', ['גוללים ובוחרים את מה שאוהבים']],
-        ['יוצרים קשר טלפוני או משאירים פרטים', ['ציינו את המק״ט של גוף התאורה שאהבתם']],
-        ['נציג שלנו יחזור אליכם', ['באפשרותכם גם להגיע לאולם התצוגה', 'ולרכוש במקום']],
+        ['בוחרים גוף תאורה', []],
+        ['משאירים הודעה בוואטסאפ', ['עם הפרטים והבחירה שלכם']],
+        ['ונציג שלנו יחזור אליכם בהקדם', []],
     ] as $i => [$title, $lines]): $n = $i + 1; ?>
     <li class="step step--<?= $n ?>">
       <span class="step__disc" aria-hidden="true"></span>
       <img class="step__num" src="assets/img/step<?= $n ?>.svg" alt="שלב <?= $n ?>" width="650" height="142">
       <h2 class="step__title"><?= e($title) ?></h2>
-      <p class="step__text"><?php foreach ($lines as $l): ?><span><?= e($l) ?></span><?php endforeach; ?></p>
+      <?php if ($lines): ?><p class="step__text"><?php foreach ($lines as $l): ?><span><?= e($l) ?></span><?php endforeach; ?></p><?php endif; ?>
     </li>
     <?php endforeach; ?>
   </ol>
@@ -76,6 +76,7 @@ seo_refresh_static();
             data-before="<?= e((string) ($p['price_before'] ?? '')) ?>"
             data-after="<?= e((string) ($p['price_after'] ?? '')) ?>"
             data-desc="<?= e((string) ($p['description'] ?? '')) ?>"
+            data-wa="<?= e(wa_link(product_message($p, $s))) ?>"
             data-img="<?= e($img ? UPLOAD_URL . '/' . rawurlencode($img) : '') ?>"
             aria-label="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? '')) . ' — לפרטים ויצירת קשר') ?>">
       <?php if ($img): ?>
@@ -105,36 +106,18 @@ seo_refresh_static();
 </section>
 
 <section class="lead" id="lead">
-  <img class="lead__dolly" src="assets/img/dolly.webp" alt="" aria-hidden="true" width="699" height="1047">
-  <h2 class="lead__title">לרכישה צרו קשר בטופס</h2>
-  <p class="lead__sub">מלאו פרטים בטופס ונחזור אליכם בהקדם</p>
-  <img class="lead__chevron" src="assets/img/chevron.svg" alt="" aria-hidden="true" width="68" height="43">
+  <img class="lead__dolly" src="assets/img/dolly.webp" alt="" aria-hidden="true" width="375" height="647">
+  <h2 class="lead__title">לרכישה שלחו הודעה בווטסאפ</h2>
+  <p class="lead__sub">ונציג מטעמנו יחזור אליכם בהקדם</p>
+  <a class="wa wa--cta" href="<?= e(wa_link('היי, אני מעוניין/ת בפרטים על המכירה מתצוגה')) ?>"
+     target="_blank" rel="noopener">
+    <span class="wa__mark" aria-hidden="true"><?= wa_mark() ?></span>
+    <span class="wa__label">לשיחה עם נציג <span class="wa__arrow" aria-hidden="true">&lt;</span></span>
+  </a>
 </section>
 </main>
 
 <footer class="foot">
-  <form class="lform" action="api/lead.php" method="post" novalidate>
-    <p class="lform__hp" aria-hidden="true"><label>אל תמלאו שדה זה<input type="text" name="website" tabindex="-1" autocomplete="off"></label></p>
-    <div class="lform__row">
-      <div class="field"><input id="f-name"  name="name" aria-label="שם מלא" type="text"  autocomplete="name"       placeholder="שם מלא" required></div>
-      <div class="field"><input id="f-sku"   name="sku" aria-label="מק״ט" type="text"  autocomplete="off"        placeholder="מק&quot;ט"></div>
-      <div class="field"><input id="f-phone" name="phone" aria-label="טלפון" type="tel"   autocomplete="tel"        placeholder="טלפון" required inputmode="tel"></div>
-      <div class="field"><input id="f-email" name="email" aria-label="מייל" type="email" autocomplete="email"      placeholder="מייל"></div>
-      <button class="send" type="submit">
-        <span class="send__label">שלח</span>
-        <span class="send__arrow" aria-hidden="true">&lt;</span>
-      </button>
-    </div>
-    <?php
-    // Normally filled in by fetch; this covers a submit without JavaScript.
-    // The code is looked up here rather than echoed back, so the URL cannot put
-    // arbitrary words on the page.
-    $noJs = lead_notice((string) ($_GET['lead'] ?? ''));
-    ?>
-    <p class="lform__msg<?= $noJs && ($_GET['lead'] ?? '') !== 'ok' ? ' is-bad' : '' ?>"
-       role="status" aria-live="polite"><?= e($noJs) ?></p>
-  </form>
-
   <div class="foot__brand"><?= $logo ?></div>
   <address class="foot__contact">
     <a href="tel:<?= e(preg_replace('/\D/', '', $s['phone'])) ?>"><?= e($s['phone']) ?></a>
@@ -171,34 +154,20 @@ $cPct    = $current ? product_discount($current) : null;
     <hr>
 
     <div class="pm__ask">
-      <p class="pm__lead">מעוניינים? השאירו פרטים ונחזור אליכם</p>
-      <form class="lform pm__form" action="api/lead.php" method="post" novalidate>
-        <p class="lform__hp" aria-hidden="true"><label>אל תמלאו שדה זה<input type="text" name="website" tabindex="-1" autocomplete="off"></label></p>
-        <input type="hidden" name="sku" value="<?= e($cSku) ?>">
-        <input type="hidden" name="product" value="<?= e($cName) ?>">
-        <input type="hidden" name="source" value="popup">
-        <div class="pm__fields">
-          <label class="pf"><input name="name" type="text" autocomplete="name" placeholder="שם מלא" aria-label="שם מלא" required></label>
-          <label class="pf"><input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="טלפון" aria-label="טלפון" required></label>
-          <label class="pf pf--wide"><input name="email" type="email" autocomplete="email" placeholder="מייל (לא חובה)" aria-label="מייל"></label>
-        </div>
-        <div class="pm__actions">
-          <button class="send pm__send" type="submit"><span class="send__label">שלח</span><span class="send__arrow" aria-hidden="true">&lt;</span></button>
-          <p class="pm__or">או חייגו <a href="tel:<?= e(preg_replace('/\D/', '', $s['phone'])) ?>"><?= e($s['phone']) ?></a></p>
-        </div>
-        <p class="lform__msg" role="status" aria-live="polite"></p>
-      </form>
-      <p class="pm__fine"><?= e(($cSku !== '' ? 'המק״ט ' . $cSku . ' מצורף לפנייה אוטומטית · ' : '') . 'אין חיוב ואין רכישה באתר') ?></p>
-    </div>
-
-    <div class="pm__done" hidden>
-      <span class="pm__tick" aria-hidden="true">✓</span>
-      <p class="pm__done-t">תודה, קיבלנו את הפרטים</p>
-      <p class="pm__done-s"></p>
-      <button class="pm__ghost" type="button" data-close>חזרה לגלריה</button>
+      <p class="pm__lead">מעוניינים? שלחו לנו הודעה — המק״ט כבר בתוכה</p>
+      <a class="wa wa--pm" href="<?= e(wa_link(product_message($current, $s))) ?>"
+         target="_blank" rel="noopener">
+        <span class="wa__mark" aria-hidden="true"><?= wa_mark() ?></span>
+        <span class="wa__label">שליחת הודעה בוואטסאפ <span class="wa__arrow" aria-hidden="true">&lt;</span></span>
+      </a>
+      <p class="pm__or">או חייגו <a href="tel:<?= e(preg_replace('/\D/', '', $s['phone'])) ?>"><?= e($s['phone']) ?></a></p>
+      <p class="pm__fine"><?= e(($cSku !== '' ? 'המק״ט ' . $cSku . ' מצורף להודעה · ' : '') . 'אין חיוב ואין רכישה באתר') ?></p>
     </div>
   </div>
 </dialog>
+
+<a class="wa wa--float" href="<?= e(wa_link('היי, אני מעוניין/ת בפרטים על המכירה מתצוגה')) ?>"
+   target="_blank" rel="noopener" aria-label="שליחת הודעה בוואטסאפ"><?= wa_mark() ?></a>
 
 <script src="<?= e($rev('assets/js/site.js')) ?>" defer></script>
 </body>
