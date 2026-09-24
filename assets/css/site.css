@@ -143,7 +143,13 @@ a { color: inherit; }
 .catalog__empty { margin: 0 auto; max-width: calc(800 * var(--u)); text-align: center;
                   font-size: calc(30 * var(--u)); color: var(--ink-soft); }
 
+/* Above the lead band, and so above the dolly leaning up out of it. The design
+   never has to think about this - it leaves the slots the dolly reaches into
+   empty - but a packed grid puts a product there, and a cardboard box must not
+   be in front of one. The dolly still crosses the grey ground behind them. */
 .grid {
+  position: relative;
+  z-index: 3;
   display: grid;
   grid-template-columns: repeat(4, calc(304 * var(--u)));
   gap: calc(40 * var(--u));
