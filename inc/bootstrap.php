@@ -14,6 +14,30 @@ const UPLOAD_URL = 'uploads/products';
 // Maker's marks, cut out of the design's tiles so the card can place them itself.
 const BRAND_URL  = 'assets/img/brands';
 
+// Artwork the owner uploads rather than the design providing: the site icon.
+const SITE_DIR = BASE . '/uploads/site';
+const SITE_URL = 'uploads/site';
+
+/**
+ * The site icon's address and type, or null while none has been uploaded.
+ *
+ * Stored under its own extension rather than a name in the settings, so the
+ * file on disk is the whole record and there is nothing to fall out of step.
+ */
+function site_icon(): ?array
+{
+    static $types = ['png' => 'image/png', 'ico' => 'image/x-icon', 'webp' => 'image/webp',
+                     'jpg' => 'image/jpeg', 'gif' => 'image/gif'];
+    foreach ($types as $ext => $mime) {
+        $path = SITE_DIR . '/favicon.' . $ext;
+        if (is_file($path)) {
+            return ['url' => SITE_URL . '/favicon.' . $ext . '?v=' . filemtime($path),
+                    'type' => $mime, 'path' => $path];
+        }
+    }
+    return null;
+}
+
 /**
  * A product photo's address, stamped with the file's own time.
  *

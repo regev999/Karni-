@@ -1,11 +1,28 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/../inc/bootstrap.php';
+require __DIR__ . '/../inc/catalog.php';
 require __DIR__ . '/_layout.php';
 admin_require();
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     csrf_check();
+
+    // The site icon is a file rather than a setting: what is on disk is the
+    // whole record, so there is nothing to fall out of step with it.
+    if (!empty($_POST['drop_icon']) && ($old = site_icon())) {
+        @unlink($old['path']);
+        flash('האייקון הוסר, חזרנו לברירת המחדל.');
+    }
+    $up = $_FILES['favicon'] ?? null;
+    if (($up['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+        try {
+            $ext = site_icon_store($up);
+            flash('אייקון האתר עודכן (' . $ext . ').');
+        } catch (Throwable $e) {
+            flash($e->getMessage(), 'bad');
+        }
+    }
 
     $emails = array_values(array_filter(array_map(
         'trim',
@@ -49,7 +66,7 @@ layout_head('הגדרות');
 flash();
 ?>
 <h1>הגדרות</h1>
-<form class="card" method="post" autocomplete="off">
+<form class="card" method="post" autocomplete="off" enctype="multipart/form-data">
   <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
 
   <h2>וואטסאפ</h2>
@@ -61,6 +78,24 @@ flash();
       <?php else: ?>
         <strong>עדיין לא הוגדר</strong> — עד שיוגדר, הכפתורים מחייגים לטלפון שבפוטר.
       <?php endif; ?></small></label>
+
+  <h2>אייקון האתר</h2>
+  <label>העלאת אייקון (favicon)
+    <input type="file" name="favicon" accept=".png,.ico,.webp,.jpg,.jpeg,.gif">
+    <small>הסמל הקטן שמופיע בלשונית הדפדפן, במועדפים, ובמסך הבית בטלפון.
+      רצוי ריבועי, לפחות 180×180. פורמטים: png, ico, webp, jpg, gif —
+      SVG לא מתקבל כאן בכוונה, כי זה הקובץ היחיד שהדף מקשר לתוך ה-head שלו.
+      <?php if ($icon = site_icon()): ?>
+        כרגע: <img src="../<?= e($icon['url']) ?>" alt="" width="18" height="18"
+                   style="vertical-align:-4px;border-radius:3px">
+        <code><?= e(basename(parse_url($icon['url'], PHP_URL_PATH) ?: '')) ?></code>.
+      <?php else: ?>
+        כרגע משתמשים בסמל שהגיע עם העיצוב.
+      <?php endif; ?></small></label>
+  <?php if (site_icon()): ?>
+    <label class="check"><input type="checkbox" name="drop_icon" value="1">
+      <span>הסרת האייקון וחזרה לברירת המחדל</span></label>
+  <?php endif; ?>
 
   <h2>פרטי הדף</h2>
   <label>כותרת הדף (title)<input name="site_title" value="<?= e((string) $s['site_title']) ?>"></label>

@@ -7,6 +7,9 @@
 /data/settings.json
 /data/*.tmp
 
+# Uploaded by the owner, not shipped with the code.
+/uploads/site/
+
 # Written by the site itself from the current host and catalogue.
 /robots.txt
 /sitemap.xml

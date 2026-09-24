@@ -290,6 +290,25 @@ function seo_jsonld(array $s, ?array $product, string $ogRev): void
 }
 
 /**
+ * The fetchers that build a link preview in a chat or a timeline. They are not
+ * search engines and an unindexed site still wants them.
+ */
+const PREVIEW_BOTS = [
+    'WhatsApp',
+    'facebookexternalhit',
+    'facebookcatalog',
+    'Twitterbot',
+    'TelegramBot',
+    'Slackbot-LinkExpanding',
+    'LinkedInBot',
+    'Discordbot',
+    'Applebot',            /* iMessage and Safari's own previews */
+    'SkypeUriPreview',
+    'redditbot',
+    'Pinterestbot',
+];
+
+/**
  * Keep robots.txt and sitemap.xml on disk as plain static files, rewritten when
  * the catalogue changes or the site answers on a new host. Serving them from
  * PHP would need a rewrite rule that does not survive a move between servers.
@@ -330,8 +349,18 @@ function seo_refresh_static(): void
     // moment the switch is turned off; robots.txt is what keeps crawlers away.
     // ASCII only: this file is read by machines, and a comment is not worth an
     // encoding question.
+    // The bots that draw the little card when a link is pasted into a chat are
+    // not search engines, and they read this file: with a blanket Disallow,
+    // WhatsApp and the rest fetch nothing and the link arrives bare. They are
+    // let through by name even while the site is shut to search - a group of
+    // one's own is the whole rule for the agent it names.
+    $preview = "User-agent: " . implode("\nUser-agent: ", PREVIEW_BOTS)
+             . "\nAllow: /\n\n";
     $txt = $blocked
         ? "# Blocked from search on purpose. Turn off the indexing block in /admin/settings.php.\n"
+          . "# The link-preview bots stay allowed, so a link pasted into a chat\n"
+          . "# still arrives with its picture.\n"
+          . $preview
           . "User-agent: *\n"
           . "Disallow: /\n"
         : "User-agent: *\n"

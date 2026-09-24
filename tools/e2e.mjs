@@ -99,6 +99,27 @@ await page.click('form:has(textarea) button[type=submit]');
 await page.waitForURL('**/products.php');
 ok(catalogue()[0].ink === 'light', 'the admin can set a caption to white');
 
+// 5c. The site icon is uploaded, served, and removable.
+await page.goto(`${BASE}/admin/settings.php`);
+ok((await page.locator('link[rel=icon]').getAttribute('href')).includes('assets/img/favicon.svg'),
+   'with nothing uploaded the icon is the one the design shipped');
+await page.setInputFiles('input[name=favicon]', '/tmp/claude-0/t/icon-test.png');
+await page.click('form:has(input[name=favicon]) button[type=submit]');
+await page.waitForURL('**/settings.php');
+const iconOn = await page.goto(`${BASE}/`);
+const iconHref = await page.locator('link[rel=icon]').getAttribute('href');
+ok(iconHref.startsWith('uploads/site/favicon.png?v='), `the uploaded icon is served (${iconHref})`);
+ok((await page.request.get(`${BASE}/${iconHref}`)).status() === 200, 'and it resolves');
+ok(iconOn.status() === 200, 'the page still renders');
+
+await page.goto(`${BASE}/admin/settings.php`);
+await page.check('input[name=drop_icon]');
+await page.click('form:has(input[name=favicon]) button[type=submit]');
+await page.waitForURL('**/settings.php');
+await page.goto(`${BASE}/`);
+ok((await page.locator('link[rel=icon]').getAttribute('href')).includes('assets/img/favicon.svg'),
+   'removing it falls back to the design\'s own');
+
 // 6. With no number set, every button falls back to the phone in the footer.
 await page.goto(`${BASE}/`);
 ok((await page.locator('.wa--cta').getAttribute('href')).startsWith('tel:'),

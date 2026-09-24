@@ -14,7 +14,9 @@ function layout_head(string $title, bool $nav = true): void
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title><?= e($title) ?> — ניהול קרני תכלת</title>
-<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<?php $icon = site_icon(); ?>
+<link rel="icon" href="../<?= e($icon['url'] ?? 'assets/img/favicon.svg') ?>"
+      type="<?= e($icon['type'] ?? 'image/svg+xml') ?>">
 <link rel="stylesheet" href="admin.css?v=<?= is_file(__DIR__ . '/admin.css') ? filemtime(__DIR__ . '/admin.css') : 1 ?>">
 </head>
 <body>

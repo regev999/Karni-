@@ -20,7 +20,10 @@ seo_refresh_static();
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <?php seo_head($s, $current, $rev('assets/img/og.jpg')); ?>
-<link rel="icon" href="<?= e($rev('assets/img/favicon.svg')) ?>" type="image/svg+xml">
+<?php $icon = site_icon(); ?>
+<link rel="icon" href="<?= e($icon['url'] ?? $rev('assets/img/favicon.svg')) ?>"
+      type="<?= e($icon['type'] ?? 'image/svg+xml') ?>">
+<link rel="apple-touch-icon" href="<?= e($icon['url'] ?? $rev('assets/img/favicon.svg')) ?>">
 <link rel="preload" href="assets/fonts/Alef-700-hebrew.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/Alef-400-hebrew.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="<?= e($rev('assets/img/hero.webp')) ?>" as="image" type="image/webp" fetchpriority="high">

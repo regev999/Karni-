@@ -74,6 +74,45 @@ function ingest_image(array $file): array
     return [$name, $dest];
 }
 
+/** What a site icon may be. No SVG: it is the one upload the page links into
+ *  its own head, an SVG is a document that can carry script, and `uploads/`
+ *  refuses to serve one for exactly that reason. A 180px PNG is what a phone
+ *  wants for its home screen anyway. */
+const ICON_TYPES = ['png' => 'png', 'ico' => 'ico', 'webp' => 'webp',
+                    'jpg' => 'jpg', 'jpeg' => 'jpg', 'gif' => 'gif'];
+
+/**
+ * Store an uploaded site icon, replacing whatever was there.
+ *
+ * Returns the extension it was stored under.
+ */
+function site_icon_store(array $file): string
+{
+    if (!is_uploaded_file($file['tmp_name'] ?? '')) {
+        throw new RuntimeException('קובץ לא תקין');
+    }
+    $ext = ICON_TYPES[strtolower(pathinfo((string) $file['name'], PATHINFO_EXTENSION))] ?? null;
+    if ($ext === null) {
+        throw new RuntimeException('פורמט לא נתמך — png, ico, webp, jpg או gif');
+    }
+    if (($file['size'] ?? 0) > 512 * 1024) {
+        throw new RuntimeException('הקובץ גדול מדי (עד 512KB)');
+    }
+    if ($ext !== 'ico' && !@getimagesize($file['tmp_name'])) {
+        throw new RuntimeException('הקובץ אינו תמונה תקינה');
+    }
+
+    @mkdir(SITE_DIR, 0775, true);
+    foreach (array_unique(ICON_TYPES) as $old) {
+        @unlink(SITE_DIR . '/favicon.' . $old);
+    }
+    if (!move_uploaded_file($file['tmp_name'], SITE_DIR . '/favicon.' . $ext)) {
+        throw new RuntimeException('שמירת הקובץ נכשלה');
+    }
+    @chmod(SITE_DIR . '/favicon.' . $ext, 0664);
+    return $ext;
+}
+
 /**
  * Merge freshly uploaded images into the catalogue, matching on product name so
  * re-uploading a photo replaces it rather than duplicating the product.
