@@ -8,6 +8,9 @@ as SVG; photographs come out as raster at 2x.
 import os, sys
 import pymupdf
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pdfsvg import svg_markup
+
 PDF = sys.argv[1] if len(sys.argv) > 1 else "design.pdf"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "assets", "img")
@@ -16,72 +19,15 @@ os.makedirs(OUT, exist_ok=True)
 CYAN = "#00b8f1"
 
 
-def path_d(items):
-    d, cur = [], None
-    for it in items:
-        op = it[0]
-        if op == "l":
-            p1, p2 = it[1], it[2]
-            if cur != (p1.x, p1.y):
-                d.append(f"M{p1.x:.2f} {p1.y:.2f}")
-            d.append(f"L{p2.x:.2f} {p2.y:.2f}")
-            cur = (p2.x, p2.y)
-        elif op == "c":
-            p1, p2, p3, p4 = it[1], it[2], it[3], it[4]
-            if cur != (p1.x, p1.y):
-                d.append(f"M{p1.x:.2f} {p1.y:.2f}")
-            d.append(f"C{p2.x:.2f} {p2.y:.2f} {p3.x:.2f} {p3.y:.2f} {p4.x:.2f} {p4.y:.2f}")
-            cur = (p4.x, p4.y)
-        elif op == "re":
-            r = it[1]
-            d.append(f"M{r.x0:.2f} {r.y0:.2f}H{r.x1:.2f}V{r.y1:.2f}H{r.x0:.2f}Z")
-            cur = None
-        elif op == "qu":
-            q = it[1]
-            d.append(f"M{q.ul.x:.2f} {q.ul.y:.2f}L{q.ur.x:.2f} {q.ur.y:.2f}"
-                     f"L{q.lr.x:.2f} {q.lr.y:.2f}L{q.ll.x:.2f} {q.ll.y:.2f}Z")
-            cur = None
-    return " ".join(d)
-
-
-def hex_of(rgb):
-    return "#%02x%02x%02x" % tuple(round(c * 255) for c in rgb)
-
-
 def svg(page, clip, name, recolor=None, pad=0.0):
     """Write every drawing inside `clip` as an SVG whose viewBox is that clip."""
-    x0, y0, x1, y1 = clip
-    x0, y0, x1, y1 = x0 - pad, y0 - pad, x1 + pad, y1 + pad
-    parts = []
-    for dr in page.get_drawings():
-        r = dr["rect"]
-        if not (r.x0 >= x0 - .5 and r.x1 <= x1 + .5 and r.y0 >= y0 - .5 and r.y1 <= y1 + .5):
-            continue
-        d = path_d(dr["items"])
-        if not d:
-            continue
-        attrs = [f'd="{d}"']
-        fill = dr.get("fill")
-        stroke = dr.get("color")
-        if fill is not None:
-            col = hex_of(fill)
-            attrs.append(f'fill="{recolor.get(col, col) if recolor else col}"')
-        else:
-            attrs.append('fill="none"')
-        if stroke is not None:
-            col = hex_of(stroke)
-            attrs.append(f'stroke="{recolor.get(col, col) if recolor else col}"')
-            attrs.append(f'stroke-width="{dr.get("width") or 1}"')
-            attrs.append('stroke-linecap="round" stroke-linejoin="round"')
-        if dr.get("even_odd"):
-            attrs.append('fill-rule="evenodd"')
-        parts.append("<path " + " ".join(attrs) + "/>")
-    body = "\n  ".join(parts)
-    out = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0:.2f} {y0:.2f} '
-           f'{x1-x0:.2f} {y1-y0:.2f}" width="{x1-x0:.2f}" height="{y1-y0:.2f}">\n  {body}\n</svg>\n')
+    out = svg_markup(page.get_drawings(), clip, recolor=recolor, pad=pad)
+    if out is None:
+        print(f"  {name:18s} nothing to draw")
+        return
     path = os.path.join(OUT, name)
     open(path, "w").write(out)
-    print(f"  {name:18s} {len(parts):3d} paths  {os.path.getsize(path)/1024:6.1f} KB")
+    print(f"  {name:18s} {out.count('<path'):3d} paths  {os.path.getsize(path)/1024:6.1f} KB")
 
 
 def raster(page, clip, name, scale=2.0, fmt="WEBP", **kw):

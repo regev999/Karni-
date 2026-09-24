@@ -78,6 +78,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     'description'  => mb_substr(trim((string) ($p['description'] ?? '')), 0, 600),
                     'image'        => basename((string) ($p['image'] ?? '')),
                 ];
+                // The maker's mark rides along untouched: it is not editable
+                // here, and rebuilding the row from the form would drop it.
+                if (($p['brand'] ?? '') !== '') {
+                    $out[array_key_last($out)]['brand']   = basename((string) $p['brand']);
+                    $out[array_key_last($out)]['brand_w'] = (float) ($p['brand_w'] ?? 72);
+                }
             }
             products_save($out);
             flash('הקטלוג נשמר (' . count($out) . ' מוצרים).');
@@ -177,6 +183,10 @@ flash();
           <?php else: ?>
             <span class="noimg">אין</span>
             <input type="hidden" name="p[<?= $i ?>][image]" value="">
+          <?php endif; ?>
+          <?php if (!empty($r['brand'])): ?>
+            <input type="hidden" name="p[<?= $i ?>][brand]" value="<?= e($r['brand']) ?>">
+            <input type="hidden" name="p[<?= $i ?>][brand_w]" value="<?= e((string) ($r['brand_w'] ?? 72)) ?>">
           <?php endif; ?>
         </td>
         <td><input name="p[<?= $i ?>][name]" value="<?= e($r['name'] ?? '') ?>"></td>

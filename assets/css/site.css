@@ -189,6 +189,18 @@ a { color: inherit; }
   object-fit: contain;
 }
 
+/* The maker's mark, lifted out of the tile so every card hangs it off the same
+   edge. `--w` carries the mark's own width from the artboard, per product, so a
+   wide wordmark stays wide and a small monogram stays small. */
+.card__brand {
+  position: absolute;
+  top: calc(10 * var(--u));
+  right: calc(10 * var(--u));
+  width: calc(var(--w, 72) * var(--u));
+  height: auto;
+  pointer-events: none;
+}
+
 .card__name, .card__sku, .card__old, .card__new {
   position: absolute;
   left: calc(12.1 * var(--u));
@@ -218,17 +230,22 @@ a { color: inherit; }
 /* =========================================================================== */
 /* Lead prompt                                                                 */
 /* =========================================================================== */
-.lead { position: relative; z-index: 2; height: calc(440.3 * var(--u)); background: #fff; }
+/* The artboard sets this band's type and button a good deal larger than they
+   need to be on a real screen; --lead-s takes all of it down together, and the
+   three `top`s below are the artboard's spacing scaled by the same amount and
+   re-centred in the band, so shrinking the type does not leave a hole under it. */
+.lead { --lead-s: .7;
+        position: relative; z-index: 2; height: calc(440.3 * var(--u)); background: #fff; }
 .lead > :not(.lead__dolly) { position: absolute; margin: 0; white-space: nowrap; }
 
 /* The photo carries its own backdrop, matched to the three bands it crosses. */
 .lead__dolly { position: absolute; z-index: 3; pointer-events: none;
                left: calc(55 * var(--u)); top: calc(-149 * var(--u));
                width: calc(375 * var(--u)); height: calc(647 * var(--u)); }
-.lead__title { top: calc(61.3 * var(--u)); right: calc(80.6 * var(--u));
-               font-size: calc(71 * var(--u)); font-weight: 700; color: var(--cyan); }
-.lead__sub   { top: calc(150.2 * var(--u)); right: calc(82.3 * var(--u));
-               font-size: calc(43 * var(--u)); color: #080808; }
+.lead__title { top: calc(111.4 * var(--u)); right: calc(80.6 * var(--u));
+               font-size: calc(71 * var(--lead-s) * var(--u)); font-weight: 700; color: var(--cyan); }
+.lead__sub   { top: calc(173.6 * var(--u)); right: calc(82.3 * var(--u));
+               font-size: calc(43 * var(--lead-s) * var(--u)); color: #080808; }
 
 /* =========================================================================== */
 /* Footer: brand and contact                                                   */
@@ -316,16 +333,17 @@ a { color: inherit; }
 
 /* Above the footer, sized to the artboard. */
 .wa--cta {
-  top: calc(266.5 * var(--u)); right: calc(67 * var(--u));
-  width: calc(521.6 * var(--u)); height: calc(105.6 * var(--u));
+  top: calc(255 * var(--u)); right: calc(67 * var(--u));
+  width: calc(521.6 * var(--lead-s) * var(--u)); height: calc(105.6 * var(--lead-s) * var(--u));
   /* Mark hard against one end, label against the other, as the artboard sets
      them; the artboard also tracks this one line out by 75/1000. */
   justify-content: space-between;
-  padding: 0 calc(16.4 * var(--u)) 0 calc(25 * var(--u));
-  font: 700 calc(45 * var(--u)) / 1 Alef, Arial, sans-serif;
+  padding: 0 calc(16.4 * var(--lead-s) * var(--u)) 0 calc(25 * var(--lead-s) * var(--u));
+  font: 700 calc(45 * var(--lead-s) * var(--u)) / 1 Alef, Arial, sans-serif;
   letter-spacing: .075em;
 }
-.wa--cta .wa__mark { width: calc(82.6 * var(--u)); height: calc(82.6 * var(--u)); }
+.wa--cta .wa__mark { width: calc(82.6 * var(--lead-s) * var(--u));
+                     height: calc(82.6 * var(--lead-s) * var(--u)); }
 
 /* Inside the pop-up. */
 .wa--pm {
@@ -391,11 +409,16 @@ html.is-locked, html.is-locked body { overflow: hidden; }
 .pm__x:focus-visible { outline: calc(2 * var(--u)) solid var(--cyan); outline-offset: calc(2 * var(--u)); }
 
 .pm__media {
+  position: relative;
   flex: 0 0 calc(520 * var(--u));
   display: flex; align-items: center; justify-content: center;
   background: #fff; border-inline-end: 1px solid #f0f0f0;
 }
 .pm__img { width: 100%; height: auto; }
+.pm__brand {
+  position: absolute; top: calc(22 * var(--u)); right: calc(22 * var(--u));
+  width: calc(120 * var(--u)); height: auto; opacity: .85;
+}
 .pm__body {
   flex: 1; min-width: 0; overflow-y: auto;
   outline: none;               /* it only takes focus so the close button does not */
@@ -545,6 +568,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .pm__media { flex: none; height: 30vh; min-height: 170px; border: 0;
                border-bottom: 1px solid #f0f0f0; padding-top: 14px; }
   .pm__img { width: 100%; height: 100%; object-fit: contain; }
+  .pm__brand { top: 12px; right: 14px; width: 86px; }
   .pm__body { padding: 16px 20px 0; }
   .pm__name { font-size: 25px; }
   .pm__sku { font-size: 15px; margin-top: 4px; }

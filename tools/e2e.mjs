@@ -76,6 +76,15 @@ ok(merged.some(p => p.name === 'מנורת בדיקה' && p.price_after === 399)
 ok(merged.some(p => p.name === 'New Only Sheet' && !p.image), 'sheet-only row added without a photo');
 ok(merged.some(p => p.name === 'Romeo Moon' && p.price_before === 4802), 'currency and commas stripped');
 
+// 5b. Saving the table by hand must not drop what the table does not show.
+const marked = c => c.filter(r => r.brand).length;
+const beforeSave = marked(merged);
+await page.goto(`${BASE}/admin/products.php`);
+await page.click('form:has(textarea) button[type=submit]');
+await page.waitForURL('**/products.php');
+ok(beforeSave > 0 && marked(catalogue()) === beforeSave,
+   `a hand save keeps every maker's mark (${beforeSave})`);
+
 // 6. With no number set, every button falls back to the phone in the footer.
 await page.goto(`${BASE}/`);
 ok((await page.locator('.wa--cta').getAttribute('href')).startsWith('tel:'),

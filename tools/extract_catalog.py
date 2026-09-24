@@ -4,12 +4,16 @@
 Dev-time tool. Run once to seed data/products.seed.php and uploads/products/.
     python3 tools/extract_catalog.py <design.pdf>
 """
-import json, os, re, sys, unicodedata
+import hashlib, json, os, re, sys, unicodedata
 import pymupdf
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pdfsvg import svg_markup
 
 PDF = sys.argv[1] if len(sys.argv) > 1 else "design.pdf"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IMG_DIR = os.path.join(ROOT, "uploads", "products")
+BRAND_DIR = os.path.join(ROOT, "assets", "img", "brands")
 DATA = os.path.join(ROOT, "data")
 
 SCALE = 2.0                       # 2x so tiles stay sharp on retina
@@ -17,6 +21,8 @@ TILE_W, TILE_H = 304.0, 291.0
 TEXT_LEFTS = [64.0, 408.0, 752.0, 1096.0]   # text inset per column
 TEXT_DX, TEXT_DY = 12.1, 209.2              # text block origin relative to tile top-left
 GRID_TOP, GRID_BOTTOM = 1790.0, 13250.0
+BRAND_STRIP = 70.0                # the band at the top of a tile holding the brand mark
+BRAND_LEFT = 120.0                # and it sits in the tile's right half, never the left
 
 
 # The design has one typo of its own: the tile beside "LAGOON CON00091" reads
@@ -206,19 +212,67 @@ def caption_to_product(col, spans):
     }
 
 
+def brand_mark(drawings, rect):
+    """
+    The brand mark in the corner of one tile, as SVG, with its size in design px.
+
+    The designer sets every mark near the top right of its tile, but not at a
+    repeatable distance from the edge - the gap runs from 2 to 10px - so on the
+    page the marks read as scattered rather than as a column. Lifting each one
+    out of its tile is what lets the page line them all up, and it is only
+    possible because they are vector: the six tiles whose mark is painted into
+    the photograph itself keep it where the photographer put it.
+    """
+    strip = (rect.x0 + BRAND_LEFT, rect.y0, rect.x1, rect.y0 + BRAND_STRIP)
+    inside = [d for d in drawings
+              if d["rect"].x0 >= strip[0] and d["rect"].x1 <= strip[2] + .5
+              and d["rect"].y0 >= strip[1] - .5 and d["rect"].y1 <= strip[3]]
+    if not inside:
+        return None
+    box = (min(d["rect"].x0 for d in inside), min(d["rect"].y0 for d in inside),
+           max(d["rect"].x1 for d in inside), max(d["rect"].y1 for d in inside))
+    art = svg_markup(inside, box, origin=True)
+    if art is None:
+        return None
+    return art, box
+
+
 def main():
     doc = pymupdf.open(PDF)
     products = blocks(doc[0])
     print(f"parsed {len(products)} products "
           f"(rows {products[0]['_rect'].y0:.0f}..{products[-1]['_rect'].y0:.0f})")
 
-    # Strip the burned-in text and red strike-through from a working copy,
-    # then crop each tile down to a clean product photo.
+    # The brand mark is read off the untouched page, before the working copy has
+    # it redacted away: the photo underneath it is what gets cropped, and the
+    # mark becomes a file of its own that the card places where it wants.
+    drawings = doc[0].get_drawings()
+    marks = {}
+    for p in products:
+        got = brand_mark(drawings, p["_rect"])
+        if got:
+            art, box = got
+            p["_brand"] = (art, box[2] - box[0])
+            marks[art] = None
+
+    os.makedirs(BRAND_DIR, exist_ok=True)
+    for art in marks:
+        name = hashlib.sha1(art.encode()).hexdigest()[:8] + ".svg"
+        marks[art] = name
+        open(os.path.join(BRAND_DIR, name), "w").write(art)
+    print(f"{len(marks)} distinct brand marks over "
+          f"{sum(1 for p in products if '_brand' in p)} tiles")
+
+    # Strip the burned-in text, the red strike-through and the brand mark from a
+    # working copy, then crop each tile down to a clean product photo.
     work = pymupdf.open(PDF)
     page = work[0]
     for p in products:
         r = p["_rect"]
         page.add_redact_annot(pymupdf.Rect(r.x0, r.y0 + 180, r.x0 + 260, r.y1 + 2), fill=False)
+        if "_brand" in p:
+            page.add_redact_annot(
+                pymupdf.Rect(r.x0 + BRAND_LEFT, r.y0, r.x1, r.y0 + BRAND_STRIP), fill=False)
     page.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE,
                           graphics=pymupdf.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
                           text=pymupdf.PDF_REDACT_TEXT_REMOVE)
@@ -237,9 +291,11 @@ def main():
         path = os.path.join(IMG_DIR, fname)
         pix.pil_save(path, format="WEBP", quality=92, method=6)
         total += os.path.getsize(path)
+        art = p.get("_brand")
         out.append({"id": i, "name": p["name"], "sku": p["sku"],
                     "price_before": p["price_before"], "price_after": p["price_after"],
                     "image": fname,
+                    **({"brand": marks[art[0]], "brand_w": round(art[1], 1)} if art else {}),
                     **({"description": p["note"]} if p.get("note") else {})})
 
     with open(os.path.join(DATA, "products.seed.php"), "w", encoding="utf-8") as fh:

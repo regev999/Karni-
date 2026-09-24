@@ -6,7 +6,9 @@
   "sku": "FLS0097",
   "price_before": 4430,
   "price_after": 1329,
-  "image": "STYLOS-FLS0097.webp"
+  "image": "STYLOS-FLS0097.webp",
+  "brand": "84d6fccc.svg",
+  "brand_w": 72.0
  },
  {
   "id": 2,
@@ -14,7 +16,9 @@
   "sku": "FLS3665",
   "price_before": 4070,
   "price_after": 1221,
-  "image": "KTribe-Table-FLS3665.webp"
+  "image": "KTribe-Table-FLS3665.webp",
+  "brand": "436794f2.svg",
+  "brand_w": 72.0
  },
  {
   "id": 3,
@@ -22,7 +26,9 @@
   "sku": "FLS0070",
   "price_before": 4070,
   "price_after": 1221,
-  "image": "Romeo-Moon-FLS0070.webp"
+  "image": "Romeo-Moon-FLS0070.webp",
+  "brand": "436794f2.svg",
+  "brand_w": 72.0
  },
  {
   "id": 4,
@@ -30,7 +36,9 @@
   "sku": "FLS3198",
   "price_before": 2516,
   "price_after": 755,
-  "image": "KELVIN-FLS3198.webp"
+  "image": "KELVIN-FLS3198.webp",
+  "brand": "4d120d19.svg",
+  "brand_w": 72.0
  },
  {
   "id": 5,
@@ -38,7 +46,9 @@
   "sku": "FLS3666",
   "price_before": 4501,
   "price_after": 1350,
-  "image": "KTribe-Table-FLS3666.webp"
+  "image": "KTribe-Table-FLS3666.webp",
+  "brand": "0fa249e5.svg",
+  "brand_w": 72.0
  },
  {
   "id": 6,
@@ -46,7 +56,9 @@
   "sku": "F7402009",
   "price_before": 11619,
   "price_after": 3485,
-  "image": "Taraxacum-F7402009.webp"
+  "image": "Taraxacum-F7402009.webp",
+  "brand": "130a04c2.svg",
+  "brand_w": 72.0
  },
  {
   "id": 7,
@@ -54,7 +66,9 @@
   "sku": "FLS0074",
   "price_before": 2859,
   "price_after": 857,
-  "image": "Romeo-Moon-FLS0074.webp"
+  "image": "Romeo-Moon-FLS0074.webp",
+  "brand": "130a04c2.svg",
+  "brand_w": 72.0
  },
  {
   "id": 8,
@@ -62,7 +76,9 @@
   "sku": "FLS3290",
   "price_before": 2735,
   "price_after": 820,
-  "image": "AIM-FLS3290.webp"
+  "image": "AIM-FLS3290.webp",
+  "brand": "2f6f24c6.svg",
+  "brand_w": 72.0
  },
  {
   "id": 9,
@@ -71,6 +87,8 @@
   "price_before": 2616,
   "price_after": 785,
   "image": "AIM-FLS00954.webp",
+  "brand": "0fa249e5.svg",
+  "brand_w": 72.0,
   "description": "אפור"
  },
  {
@@ -80,6 +98,8 @@
   "price_before": 2616,
   "price_after": 785,
   "image": "AIM-FLS00955.webp",
+  "brand": "130a04c2.svg",
+  "brand_w": 72.0,
   "description": "כסוף"
  },
  {
@@ -88,7 +108,9 @@
   "sku": "FLS00586",
   "price_before": 1571,
   "price_after": 471,
-  "image": "Bonjour-FLS00586.webp"
+  "image": "Bonjour-FLS00586.webp",
+  "brand": "130a04c2.svg",
+  "brand_w": 72.0
  },
  {
   "id": 12,
@@ -96,7 +118,9 @@
   "sku": "FLS00718",
   "price_before": 2179,
   "price_after": 653,
-  "image": "Parentesi-FLS00718.webp"
+  "image": "Parentesi-FLS00718.webp",
+  "brand": "2f6f24c6.svg",
+  "brand_w": 72.0
  },
  {
   "id": 13,
@@ -104,7 +128,9 @@
   "sku": "FLS01040",
   "price_before": 3195,
   "price_after": 958,
-  "image": "OK-Floor-FLS01040.webp"
+  "image": "OK-Floor-FLS01040.webp",
+  "brand": "0fa249e5.svg",
+  "brand_w": 72.0
  },
  {
   "id": 14,
@@ -112,7 +138,9 @@
   "sku": "ANT90781",
   "price_before": 137500,
   "price_after": 412,
-  "image": "KAP-ANT90781.webp"
+  "image": "KAP-ANT90781.webp",
+  "brand": "2f6f24c6.svg",
+  "brand_w": 72.0
  },
  {
   "id": 15,
@@ -120,7 +148,9 @@
   "sku": "ANT90882",
   "price_before": 1375,
   "price_after": 412,
-  "image": "KAP-ANT90882.webp"
+  "image": "KAP-ANT90882.webp",
+  "brand": "0fa249e5.svg",
+  "brand_w": 72.0
  },
  {
   "id": 16,
@@ -128,7 +158,9 @@
   "sku": "FLS30897",
   "price_before": 2517,
   "price_after": 755,
-  "image": "CHIARA-FLS30897.webp"
+  "image": "CHIARA-FLS30897.webp",
+  "brand": "130a04c2.svg",
+  "brand_w": 72.0
  },
  {
   "id": 17,
@@ -136,7 +168,9 @@
   "sku": "FLS30893",
   "price_before": 4312,
   "price_after": 1293,
-  "image": "DIABLO-FLS30893.webp"
+  "image": "DIABLO-FLS30893.webp",
+  "brand": "2f6f24c6.svg",
+  "brand_w": 72.0
  },
  {
   "id": 18,
@@ -144,7 +178,9 @@
   "sku": "FLS5020",
   "price_before": 2664,
   "price_after": 799,
-  "image": "IC-FLS5020.webp"
+  "image": "IC-FLS5020.webp",
+  "brand": "0fa249e5.svg",
+  "brand_w": 72.0
  },
  {
   "id": 19,
@@ -152,7 +188,9 @@
   "sku": "FLS2163",
   "price_before": 3485,
   "price_after": 1045,
-  "image": "COPYCAT-FLS2163.webp"
+  "image": "COPYCAT-FLS2163.webp",
+  "brand": "130a04c2.svg",
+  "brand_w": 72.0
  },
  {
   "id": 20,
@@ -160,7 +198,9 @@
   "sku": "FLS2162",
   "price_before": 3485,
   "price_after": 1045,
-  "image": "COPYCAT-FLS2162.webp"
+  "image": "COPYCAT-FLS2162.webp",
+  "brand": "452576f5.svg",
+  "brand_w": 72.0
  },
  {
   "id": 21,
@@ -168,7 +208,9 @@
   "sku": "FLS2164",
   "price_before": 3485,
   "price_after": 1045,
-  "image": "COPYCAT-FLS2164.webp"
+  "image": "COPYCAT-FLS2164.webp",
+  "brand": "2f6f24c6.svg",
+  "brand_w": 72.0
  },
  {
   "id": 22,
@@ -176,7 +218,9 @@
   "sku": "FLS00726",
   "price_before": 1547,
   "price_after": 464,
-  "image": "OPLIGHTS-FLS00726.webp"
+  "image": "OPLIGHTS-FLS00726.webp",
+  "brand": "0fa249e5.svg",
+  "brand_w": 72.0
  },
  {
   "id": 23,
@@ -184,7 +228,9 @@
   "sku": "F4681030",
   "price_before": 1547,
   "price_after": 464,
-  "image": "OPLIGHTS-F4681030.webp"
+  "image": "OPLIGHTS-F4681030.webp",
+  "brand": "130a04c2.svg",
+  "brand_w": 72.0
  },
  {
   "id": 24,
@@ -192,7 +238,9 @@
   "sku": "FLS00724",
   "price_before": 1547,
   "price_after": 464,
-  "image": "OPLIGHTS-FLS00724.webp"
+  "image": "OPLIGHTS-FLS00724.webp",
+  "brand": "130a04c2.svg",
+  "brand_w": 72.0
  },
  {
   "id": 25,
@@ -200,7 +248,9 @@
   "sku": "FLS7816",
   "price_before": 3343,
   "price_after": 1003,
-  "image": "GOLDMAN-FLS7816.webp"
+  "image": "GOLDMAN-FLS7816.webp",
+  "brand": "2f6f24c6.svg",
+  "brand_w": 72.0
  },
  {
   "id": 26,
@@ -208,7 +258,9 @@
   "sku": "VIB00329",
   "price_before": 7224,
   "price_after": 2167,
-  "image": "PALMA-VIB00329.webp"
+  "image": "PALMA-VIB00329.webp",
+  "brand": "566779c4.svg",
+  "brand_w": 87.5
  },
  {
   "id": 27,
@@ -216,7 +268,9 @@
   "sku": "VIB00331",
   "price_before": 8456,
   "price_after": 2536,
-  "image": "PALMA-VIB00331.webp"
+  "image": "PALMA-VIB00331.webp",
+  "brand": "a410583f.svg",
+  "brand_w": 87.5
  },
  {
   "id": 28,
@@ -224,7 +278,9 @@
   "sku": "VIB00325",
   "price_before": 4397,
   "price_after": 1319,
-  "image": "PALMA-VIB00325.webp"
+  "image": "PALMA-VIB00325.webp",
+  "brand": "a410583f.svg",
+  "brand_w": 87.5
  },
  {
   "id": 29,
@@ -232,7 +288,9 @@
   "sku": "VIB00324",
   "price_before": 3068,
   "price_after": 920,
-  "image": "PALMA-VIB00324.webp"
+  "image": "PALMA-VIB00324.webp",
+  "brand": "401e2b92.svg",
+  "brand_w": 87.5
  },
  {
   "id": 30,
@@ -240,7 +298,9 @@
   "sku": "VIB00328",
   "price_before": 6161,
   "price_after": 1848,
-  "image": "PALMA-VIB00328.webp"
+  "image": "PALMA-VIB00328.webp",
+  "brand": "566779c4.svg",
+  "brand_w": 87.5
  },
  {
   "id": 31,
@@ -248,7 +308,9 @@
   "sku": "TOM01049",
   "price_before": 2958,
   "price_after": 887,
-  "image": "MINI-VOID-TOM01049.webp"
+  "image": "MINI-VOID-TOM01049.webp",
+  "brand": "cb8a1314.svg",
+  "brand_w": 81.5
  },
  {
   "id": 32,
@@ -256,7 +318,9 @@
   "sku": "TOM00046",
   "price_before": 4025,
   "price_after": 1207,
-  "image": "VOID-TOM00046.webp"
+  "image": "VOID-TOM00046.webp",
+  "brand": "cb8a1314.svg",
+  "brand_w": 81.5
  },
  {
   "id": 33,
@@ -264,7 +328,9 @@
   "sku": "TOM00051",
   "price_before": 5093,
   "price_after": 2127,
-  "image": "VOID-TOM00051.webp"
+  "image": "VOID-TOM00051.webp",
+  "brand": "2e84e67d.svg",
+  "brand_w": 81.5
  },
  {
   "id": 34,
@@ -272,7 +338,9 @@
   "sku": "TOM00053",
   "price_before": 5044,
   "price_after": 1513,
-  "image": "VOID-TOM00053.webp"
+  "image": "VOID-TOM00053.webp",
+  "brand": "7b70828a.svg",
+  "brand_w": 81.5
  },
  {
   "id": 35,
@@ -280,7 +348,9 @@
   "sku": "TOM03836",
   "price_before": 4268,
   "price_after": 1280,
-  "image": "Spot-Surface-TOM03836.webp"
+  "image": "Spot-Surface-TOM03836.webp",
+  "brand": "cb8a1314.svg",
+  "brand_w": 81.5
  },
  {
   "id": 36,
@@ -288,7 +358,9 @@
   "sku": "TOM03835",
   "price_before": 4268,
   "price_after": 1280,
-  "image": "Spot-Surface-TOM03835.webp"
+  "image": "Spot-Surface-TOM03835.webp",
+  "brand": "cb8a1314.svg",
+  "brand_w": 81.5
  },
  {
   "id": 37,
@@ -296,7 +368,9 @@
   "sku": "TOM03834",
   "price_before": 4801,
   "price_after": 1440,
-  "image": "Spot-Surface-TOM03834.webp"
+  "image": "Spot-Surface-TOM03834.webp",
+  "brand": "2e84e67d.svg",
+  "brand_w": 81.5
  },
  {
   "id": 38,
@@ -304,7 +378,9 @@
   "sku": "TOM01158",
   "price_before": 4898,
   "price_after": 1469,
-  "image": "Etch-Shade-TOM01158.webp"
+  "image": "Etch-Shade-TOM01158.webp",
+  "brand": "afb4e79c.svg",
+  "brand_w": 81.5
  },
  {
   "id": 39,
@@ -312,7 +388,9 @@
   "sku": "TOM00155",
   "price_before": 4898,
   "price_after": 1469,
-  "image": "Etch-Shade-TOM00155.webp"
+  "image": "Etch-Shade-TOM00155.webp",
+  "brand": "1bd59e89.svg",
+  "brand_w": 81.5
  },
  {
   "id": 40,
@@ -320,7 +398,9 @@
   "sku": "TOM00031",
   "price_before": 12106,
   "price_after": 3631,
-  "image": "Base-Floor-TOM00031.webp"
+  "image": "Base-Floor-TOM00031.webp",
+  "brand": "7b70828a.svg",
+  "brand_w": 81.5
  },
  {
   "id": 41,
@@ -328,7 +408,9 @@
   "sku": "MOI00398",
   "price_before": 36749,
   "price_after": 11024,
-  "image": "Constructiom-MOI00398.webp"
+  "image": "Constructiom-MOI00398.webp",
+  "brand": "f35b57d2.svg",
+  "brand_w": 130.9
  },
  {
   "id": 42,
@@ -336,7 +418,9 @@
   "sku": "MOI00800",
   "price_before": 21984,
   "price_after": 6595,
-  "image": "Constructiom-MOI00800.webp"
+  "image": "Constructiom-MOI00800.webp",
+  "brand": "f35b57d2.svg",
+  "brand_w": 130.9
  },
  {
   "id": 43,
@@ -344,7 +428,9 @@
   "sku": "MOI00021",
   "price_before": 5163,
   "price_after": 1548,
-  "image": "RANDOM-MOI00021.webp"
+  "image": "RANDOM-MOI00021.webp",
+  "brand": "f35b57d2.svg",
+  "brand_w": 130.9
  },
  {
   "id": 44,
@@ -352,7 +438,9 @@
   "sku": "MOI00070",
   "price_before": 13299,
   "price_after": 3989,
-  "image": "RANDOM-MOI00070.webp"
+  "image": "RANDOM-MOI00070.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 45,
@@ -360,7 +448,9 @@
   "sku": "MOI00552",
   "price_before": 9314,
   "price_after": 2794,
-  "image": "RANDOM-MOI00552.webp"
+  "image": "RANDOM-MOI00552.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 46,
@@ -368,7 +458,9 @@
   "sku": "MOI00305",
   "price_before": 11514,
   "price_after": 3454,
-  "image": "EMPEROR-MOI00305.webp"
+  "image": "EMPEROR-MOI00305.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 47,
@@ -376,7 +468,9 @@
   "sku": "MOI00705",
   "price_before": 13976,
   "price_after": 4193,
-  "image": "VALENTINE-MOI00705.webp"
+  "image": "VALENTINE-MOI00705.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 48,
@@ -384,7 +478,9 @@
   "sku": "MOI00427",
   "price_before": 17363,
   "price_after": 5209,
-  "image": "VALENTINE-MOI00427.webp"
+  "image": "VALENTINE-MOI00427.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 49,
@@ -392,7 +488,9 @@
   "sku": "MOI00279",
   "price_before": 7221,
   "price_after": 2166,
-  "image": "Plie-Plisse-MOI00279.webp"
+  "image": "Plie-Plisse-MOI00279.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 50,
@@ -400,7 +498,9 @@
   "sku": "MOI01687",
   "price_before": 37040,
   "price_after": 11112,
-  "image": "Plant-Chandelier-MOI01687.webp"
+  "image": "Plant-Chandelier-MOI01687.webp",
+  "brand": "e6399736.svg",
+  "brand_w": 130.9
  },
  {
   "id": 51,
@@ -408,7 +508,9 @@
   "sku": "MOI01298",
   "price_before": 7661,
   "price_after": 2298,
-  "image": "Peach-Flowers-MOI01298.webp"
+  "image": "Peach-Flowers-MOI01298.webp",
+  "brand": "937a956e.svg",
+  "brand_w": 130.9
  },
  {
   "id": 52,
@@ -416,7 +518,9 @@
   "sku": "MOI12308",
   "price_before": 12631,
   "price_after": 3789,
-  "image": "VALENTINE-MOI12308.webp"
+  "image": "VALENTINE-MOI12308.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 53,
@@ -424,7 +528,9 @@
   "sku": "MOI12309",
   "price_before": 12631,
   "price_after": 3789,
-  "image": "VALENTINE-MOI12309.webp"
+  "image": "VALENTINE-MOI12309.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 54,
@@ -432,7 +538,9 @@
   "sku": "MOI00201",
   "price_before": 11162,
   "price_after": 3348,
-  "image": "Paper-Lamp-MOI00201.webp"
+  "image": "Paper-Lamp-MOI00201.webp",
+  "brand": "e6399736.svg",
+  "brand_w": 130.9
  },
  {
   "id": 55,
@@ -440,7 +548,9 @@
   "sku": "MOI00095",
   "price_before": 7969,
   "price_after": 2390,
-  "image": "Non-Random-MOI00095.webp"
+  "image": "Non-Random-MOI00095.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 56,
@@ -448,7 +558,9 @@
   "sku": "MOI00304",
   "price_before": 8400,
   "price_after": 2520,
-  "image": "THE-EMPEROR-MOI00304.webp"
+  "image": "THE-EMPEROR-MOI00304.webp",
+  "brand": "d840f003.svg",
+  "brand_w": 130.9
  },
  {
   "id": 57,
@@ -456,7 +568,9 @@
   "sku": "AST04428",
   "price_before": 3058,
   "price_after": 917,
-  "image": "ORB-AST04428.webp"
+  "image": "ORB-AST04428.webp",
+  "brand": "f48b38f6.svg",
+  "brand_w": 104.9
  },
  {
   "id": 58,
@@ -464,7 +578,9 @@
   "sku": "AST03750",
   "price_before": 1773,
   "price_after": 532,
-  "image": "ALTEA-AST03750.webp"
+  "image": "ALTEA-AST03750.webp",
+  "brand": "f48b38f6.svg",
+  "brand_w": 104.9
  },
  {
   "id": 59,
@@ -472,7 +588,9 @@
   "sku": "AST02987",
   "price_before": 3302,
   "price_after": 990,
-  "image": "Edge-Reader-AST02987.webp"
+  "image": "Edge-Reader-AST02987.webp",
+  "brand": "fb2e0ee0.svg",
+  "brand_w": 104.9
  },
  {
   "id": 60,
@@ -480,7 +598,9 @@
   "sku": "CON00090",
   "price_before": 7542,
   "price_after": 2262,
-  "image": "LAGOON-CON00090.webp"
+  "image": "LAGOON-CON00090.webp",
+  "brand": "4236fae7.svg",
+  "brand_w": 140.6
  },
  {
   "id": 61,
@@ -488,7 +608,9 @@
   "sku": "CON00091",
   "price_before": 7885,
   "price_after": 2365,
-  "image": "LAGOON-CON00091.webp"
+  "image": "LAGOON-CON00091.webp",
+  "brand": "4236fae7.svg",
+  "brand_w": 140.6
  },
  {
   "id": 62,
@@ -496,7 +618,9 @@
   "sku": "CON00095",
   "price_before": 6428,
   "price_after": 1928,
-  "image": "ASIA-CON00095.webp"
+  "image": "ASIA-CON00095.webp",
+  "brand": "4236fae7.svg",
+  "brand_w": 140.6
  },
  {
   "id": 63,
@@ -504,7 +628,9 @@
   "sku": "CON00094",
   "price_before": 5271,
   "price_after": 1581,
-  "image": "ASIA-CON00094.webp"
+  "image": "ASIA-CON00094.webp",
+  "brand": "5bb6e843.svg",
+  "brand_w": 140.6
  },
  {
   "id": 64,
@@ -512,7 +638,9 @@
   "sku": "CON00093",
   "price_before": 4242,
   "price_after": 1272,
-  "image": "ASIA-CON00093.webp"
+  "image": "ASIA-CON00093.webp",
+  "brand": "4236fae7.svg",
+  "brand_w": 140.6
  },
  {
   "id": 65,
@@ -520,7 +648,9 @@
   "sku": "CON00078",
   "price_before": 11142,
   "price_after": 3342,
-  "image": "BOGOTA-CON00078.webp"
+  "image": "BOGOTA-CON00078.webp",
+  "brand": "4236fae7.svg",
+  "brand_w": 140.6
  },
  {
   "id": 66,
@@ -528,7 +658,9 @@
   "sku": "ARO00132",
   "price_before": 1053,
   "price_after": 316,
-  "image": "ALOA-ARO00132.webp"
+  "image": "ALOA-ARO00132.webp",
+  "brand": "fb14c3f0.svg",
+  "brand_w": 123.9
  },
  {
   "id": 67,
@@ -536,7 +668,9 @@
   "sku": "ARO00129",
   "price_before": 952,
   "price_after": 285,
-  "image": "LUCA-ARO00129.webp"
+  "image": "LUCA-ARO00129.webp",
+  "brand": "73b4a64a.svg",
+  "brand_w": 123.9
  },
  {
   "id": 68,
@@ -544,7 +678,9 @@
   "sku": "ARO00476",
   "price_before": 2021,
   "price_after": 606,
-  "image": "DENA-ARO00476.webp"
+  "image": "DENA-ARO00476.webp",
+  "brand": "65778a10.svg",
+  "brand_w": 123.9
  },
  {
   "id": 69,
@@ -552,7 +688,9 @@
   "sku": "ARO00608",
   "price_before": 1761,
   "price_after": 528,
-  "image": "ATIL-ARO00608.webp"
+  "image": "ATIL-ARO00608.webp",
+  "brand": "b6a196d0.svg",
+  "brand_w": 123.9
  },
  {
   "id": 70,
@@ -560,7 +698,9 @@
   "sku": "ARO00331",
   "price_before": 1645,
   "price_after": 493,
-  "image": "COHEN-ARO00331.webp"
+  "image": "COHEN-ARO00331.webp",
+  "brand": "fb14c3f0.svg",
+  "brand_w": 123.9
  },
  {
   "id": 71,
@@ -568,7 +708,9 @@
   "sku": "ARO00622",
   "price_before": 1154,
   "price_after": 346,
-  "image": "FOCUS-ARO00622.webp"
+  "image": "FOCUS-ARO00622.webp",
+  "brand": "73b4a64a.svg",
+  "brand_w": 123.9
  },
  {
   "id": 72,
@@ -576,7 +718,9 @@
   "sku": "ARO00623",
   "price_before": 1154,
   "price_after": 346,
-  "image": "FOCUS-ARO00623.webp"
+  "image": "FOCUS-ARO00623.webp",
+  "brand": "65778a10.svg",
+  "brand_w": 123.9
  },
  {
   "id": 73,
@@ -584,7 +728,9 @@
   "sku": "ARO00179",
   "price_before": 1804,
   "price_after": 541,
-  "image": "XTRA-ARO00179.webp"
+  "image": "XTRA-ARO00179.webp",
+  "brand": "fb14c3f0.svg",
+  "brand_w": 123.9
  },
  {
   "id": 74,
@@ -592,7 +738,9 @@
   "sku": "ARO00180",
   "price_before": 664,
   "price_after": 199,
-  "image": "ALOA-ARO00180.webp"
+  "image": "ALOA-ARO00180.webp",
+  "brand": "9bd2bd8f.svg",
+  "brand_w": 123.9
  },
  {
   "id": 75,
@@ -600,7 +748,9 @@
   "sku": "ARO00163",
   "price_before": 1357,
   "price_after": 407,
-  "image": "FICUS-ARO00163.webp"
+  "image": "FICUS-ARO00163.webp",
+  "brand": "e0187ff2.svg",
+  "brand_w": 123.9
  },
  {
   "id": 76,
@@ -608,7 +758,9 @@
   "sku": "LOU00217",
   "price_before": 10153,
   "price_after": 3045,
-  "image": "PH-32-LOU00217.webp"
+  "image": "PH-32-LOU00217.webp",
+  "brand": "636d0e73.svg",
+  "brand_w": 101.1
  },
  {
   "id": 77,
@@ -616,7 +768,9 @@
   "sku": "LOU00016",
   "price_before": 4053,
   "price_after": 1215,
-  "image": "CIRQUE-LOU00016.webp"
+  "image": "CIRQUE-LOU00016.webp",
+  "brand": "636d0e73.svg",
+  "brand_w": 101.1
  },
  {
   "id": 78,
@@ -624,7 +778,9 @@
   "sku": "LOU00006",
   "price_before": 6059,
   "price_after": 1817,
-  "image": "CIRQUE-LOU00006.webp"
+  "image": "CIRQUE-LOU00006.webp",
+  "brand": "636d0e73.svg",
+  "brand_w": 101.1
  },
  {
   "id": 79,
@@ -632,7 +788,9 @@
   "sku": "LOU00247",
   "price_before": 5772,
   "price_after": 1731,
-  "image": "AJ-WALL-LOU00247.webp"
+  "image": "AJ-WALL-LOU00247.webp",
+  "brand": "636d0e73.svg",
+  "brand_w": 101.1
  },
  {
   "id": 80,
@@ -640,7 +798,9 @@
   "sku": "LOU00242",
   "price_before": 5764,
   "price_after": 1729,
-  "image": "AJ-WALL-LOU00242.webp"
+  "image": "AJ-WALL-LOU00242.webp",
+  "brand": "636d0e73.svg",
+  "brand_w": 101.1
  },
  {
   "id": 81,
@@ -648,7 +808,9 @@
   "sku": "LOU00244",
   "price_before": 5772,
   "price_after": 1731,
-  "image": "AJ-WALL-LOU00244.webp"
+  "image": "AJ-WALL-LOU00244.webp",
+  "brand": "636d0e73.svg",
+  "brand_w": 101.1
  },
  {
   "id": 82,
@@ -656,7 +818,9 @@
   "sku": "LOU00245",
   "price_before": 5772,
   "price_after": 1731,
-  "image": "AJ-WALL-LOU00245.webp"
+  "image": "AJ-WALL-LOU00245.webp",
+  "brand": "636d0e73.svg",
+  "brand_w": 101.1
  },
  {
   "id": 83,
@@ -664,7 +828,9 @@
   "sku": "LOU00034",
   "price_before": 18609,
   "price_after": 5582,
-  "image": "PATERA-LOU00034.webp"
+  "image": "PATERA-LOU00034.webp",
+  "brand": "636d0e73.svg",
+  "brand_w": 101.1
  },
  {
   "id": 84,
@@ -672,7 +838,9 @@
   "sku": "LOU00214",
   "price_before": 6059,
   "price_after": 1817,
-  "image": "PH-MINI-LOU00214.webp"
+  "image": "PH-MINI-LOU00214.webp",
+  "brand": "0afba35b.svg",
+  "brand_w": 101.1
  },
  {
   "id": 85,
@@ -680,7 +848,9 @@
   "sku": "LOU00209",
   "price_before": 6059,
   "price_after": 1817,
-  "image": "PH-MINI-LOU00209.webp"
+  "image": "PH-MINI-LOU00209.webp",
+  "brand": "0afba35b.svg",
+  "brand_w": 101.1
  },
  {
   "id": 86,
@@ -688,7 +858,9 @@
   "sku": "LOU00459",
   "price_before": 8351,
   "price_after": 2505,
-  "image": "PH-LOU00459.webp"
+  "image": "PH-LOU00459.webp",
+  "brand": "0afba35b.svg",
+  "brand_w": 101.1
  },
  {
   "id": 87,
@@ -696,7 +868,9 @@
   "sku": "LOU00754",
   "price_before": 8351,
   "price_after": 2505,
-  "image": "PH-LOU00754.webp"
+  "image": "PH-LOU00754.webp",
+  "brand": "0afba35b.svg",
+  "brand_w": 101.1
  },
  {
   "id": 88,
@@ -704,7 +878,9 @@
   "sku": "LOU00750",
   "price_before": 8351,
   "price_after": 2505,
-  "image": "PH-LOU00750.webp"
+  "image": "PH-LOU00750.webp",
+  "brand": "0afba35b.svg",
+  "brand_w": 101.1
  },
  {
   "id": 89,
@@ -713,6 +889,8 @@
   "price_before": 1630,
   "price_after": 489,
   "image": "DICE-PRO33371.webp",
+  "brand": "fec61c10.svg",
+  "brand_w": 155.4,
   "description": "צבעים18בקיים"
  },
  {
@@ -769,7 +947,9 @@
   "sku": "RUB00027",
   "price_before": 4724,
   "price_after": 1417,
-  "image": "JAMES-RUB00027.webp"
+  "image": "JAMES-RUB00027.webp",
+  "brand": "e9f9b5cc.svg",
+  "brand_w": 79.8
  },
  {
   "id": 97,
@@ -777,7 +957,9 @@
   "sku": "N923514",
   "price_before": 1810,
   "price_after": 543,
-  "image": "COGNAC-N923514.webp"
+  "image": "COGNAC-N923514.webp",
+  "brand": "1dfa0c01.svg",
+  "brand_w": 144.0
  },
  {
   "id": 98,
@@ -785,7 +967,9 @@
   "sku": "N923214",
   "price_before": 1752,
   "price_after": 525,
-  "image": "COGNAC-N923214.webp"
+  "image": "COGNAC-N923214.webp",
+  "brand": "91040a71.svg",
+  "brand_w": 144.0
  },
  {
   "id": 99,
@@ -793,7 +977,9 @@
   "sku": "MDL01294",
   "price_before": 3353,
   "price_after": 1005,
-  "image": "SPLIT-MDL01294.webp"
+  "image": "SPLIT-MDL01294.webp",
+  "brand": "056c3b06.svg",
+  "brand_w": 42.6
  },
  {
   "id": 100,
@@ -801,7 +987,9 @@
   "sku": "MDL01293",
   "price_before": 4320,
   "price_after": 1296,
-  "image": "SPLIT-MDL01293.webp"
+  "image": "SPLIT-MDL01293.webp",
+  "brand": "2704d4a9.svg",
+  "brand_w": 42.6
  },
  {
   "id": 101,
@@ -809,7 +997,9 @@
   "sku": "MDL41146",
   "price_before": 1482,
   "price_after": 444,
-  "image": "NUK-MDL41146.webp"
+  "image": "NUK-MDL41146.webp",
+  "brand": "2226a367.svg",
+  "brand_w": 42.6
  },
  {
   "id": 102,
@@ -817,7 +1007,9 @@
   "sku": "NAU05748",
   "price_before": 15801,
   "price_after": 4740,
-  "image": "ILFORD-NAU05748.webp"
+  "image": "ILFORD-NAU05748.webp",
+  "brand": "d99fc38c.svg",
+  "brand_w": 99.2
  },
  {
   "id": 103,
@@ -825,7 +1017,9 @@
   "sku": "NAU05749",
   "price_before": 18058,
   "price_after": 5417,
-  "image": "ILFORD-NAU05749.webp"
+  "image": "ILFORD-NAU05749.webp",
+  "brand": "d99fc38c.svg",
+  "brand_w": 99.2
  },
  {
   "id": 104,
@@ -833,7 +1027,9 @@
   "sku": "TOS05757",
   "price_before": 5236,
   "price_after": 1570,
-  "image": "TORINO-TOS05757.webp"
+  "image": "TORINO-TOS05757.webp",
+  "brand": "735ba2ea.svg",
+  "brand_w": 131.9
  },
  {
   "id": 105,
@@ -841,7 +1037,9 @@
   "sku": "TOS06966",
   "price_before": 2965,
   "price_after": 889,
-  "image": "SWING-TOS06966.webp"
+  "image": "SWING-TOS06966.webp",
+  "brand": "735ba2ea.svg",
+  "brand_w": 131.9
  },
  {
   "id": 106,
@@ -849,7 +1047,9 @@
   "sku": "TOS05759",
   "price_before": 3091,
   "price_after": 927,
-  "image": "TORINO-TOS05759.webp"
+  "image": "TORINO-TOS05759.webp",
+  "brand": "735ba2ea.svg",
+  "brand_w": 131.9
  },
  {
   "id": 107,
@@ -857,7 +1057,9 @@
   "sku": "TOS05758",
   "price_before": 3104,
   "price_after": 931,
-  "image": "TORINO-TOS05758.webp"
+  "image": "TORINO-TOS05758.webp",
+  "brand": "78df6525.svg",
+  "brand_w": 131.9
  },
  {
   "id": 108,
@@ -865,7 +1067,9 @@
   "sku": "TOS05971",
   "price_before": 1791,
   "price_after": 537,
-  "image": "TRAFFIC-TOS05971.webp"
+  "image": "TRAFFIC-TOS05971.webp",
+  "brand": "d045b8de.svg",
+  "brand_w": 131.9
  },
  {
   "id": 109,
@@ -873,7 +1077,9 @@
   "sku": "TOS06971",
   "price_before": 1400,
   "price_after": 420,
-  "image": "TRAFFIC-TOS06971.webp"
+  "image": "TRAFFIC-TOS06971.webp",
+  "brand": "d045b8de.svg",
+  "brand_w": 131.9
  },
  {
   "id": 110,
@@ -881,7 +1087,9 @@
   "sku": "TOS06972",
   "price_before": 1400,
   "price_after": 420,
-  "image": "TRAFFIC-TOS06972.webp"
+  "image": "TRAFFIC-TOS06972.webp",
+  "brand": "d045b8de.svg",
+  "brand_w": 131.9
  },
  {
   "id": 111,
@@ -889,7 +1097,9 @@
   "sku": "TOS05774",
   "price_before": 1804,
   "price_after": 541,
-  "image": "NEWTON-TOS05774.webp"
+  "image": "NEWTON-TOS05774.webp",
+  "brand": "d045b8de.svg",
+  "brand_w": 131.9
  },
  {
   "id": 112,
@@ -897,7 +1107,9 @@
   "sku": "TOS05775",
   "price_before": 2965,
   "price_after": 889,
-  "image": "NEWTON-TOS05775.webp"
+  "image": "NEWTON-TOS05775.webp",
+  "brand": "c3ef0c15.svg",
+  "brand_w": 131.9
  },
  {
   "id": 113,
@@ -905,7 +1117,9 @@
   "sku": "TOS05776",
   "price_before": 3053,
   "price_after": 915,
-  "image": "NEWTON-TOS05776.webp"
+  "image": "NEWTON-TOS05776.webp",
+  "brand": "73264d20.svg",
+  "brand_w": 131.9
  },
  {
   "id": 114,
@@ -913,7 +1127,9 @@
   "sku": "TOS05972",
   "price_before": 1830,
   "price_after": 549,
-  "image": "TRAFFIC-TOS05972.webp"
+  "image": "TRAFFIC-TOS05972.webp",
+  "brand": "73264d20.svg",
+  "brand_w": 131.9
  },
  {
   "id": 115,
@@ -921,7 +1137,9 @@
   "sku": "TOS05973",
   "price_before": 2586,
   "price_after": 775,
-  "image": "TRAFFIC-TOS05973.webp"
+  "image": "TRAFFIC-TOS05973.webp",
+  "brand": "73264d20.svg",
+  "brand_w": 131.9
  },
  {
   "id": 116,
@@ -929,7 +1147,9 @@
   "sku": "N010003",
   "price_before": 760,
   "price_after": 228,
-  "image": "טנור-N010003.webp"
+  "image": "טנור-N010003.webp",
+  "brand": "2b926c82.svg",
+  "brand_w": 131.9
  },
  {
   "id": 117,
@@ -937,7 +1157,9 @@
   "sku": "N0100006",
   "price_before": 1034,
   "price_after": 310,
-  "image": "SONJA-WALL-N0100006.webp"
+  "image": "SONJA-WALL-N0100006.webp",
+  "brand": "2b926c82.svg",
+  "brand_w": 131.9
  },
  {
   "id": 118,
@@ -945,7 +1167,9 @@
   "sku": "CON05576",
   "price_before": 13162,
   "price_after": 3948,
-  "image": "CRYSTAL-CON05576.webp"
+  "image": "CRYSTAL-CON05576.webp",
+  "brand": "2b926c82.svg",
+  "brand_w": 131.9
  },
  {
   "id": 119,
@@ -953,7 +1177,9 @@
   "sku": "CON05577",
   "price_before": 16200,
   "price_after": 4860,
-  "image": "CRYSTAL-CON05577.webp"
+  "image": "CRYSTAL-CON05577.webp",
+  "brand": "2b926c82.svg",
+  "brand_w": 131.9
  },
  {
   "id": 120,
@@ -961,7 +1187,9 @@
   "sku": "LEE00152",
   "price_before": 13073,
   "price_after": 3921,
-  "image": "LEN-FLAIR-LEE00152.webp"
+  "image": "LEN-FLAIR-LEE00152.webp",
+  "brand": "aca0164e.svg",
+  "brand_w": 131.9
  },
  {
   "id": 121,
@@ -969,6 +1197,8 @@
   "sku": "ARO00602",
   "price_before": 1379,
   "price_after": 413,
-  "image": "אלבסאטר-ARO00602.webp"
+  "image": "אלבסאטר-ARO00602.webp",
+  "brand": "aca0164e.svg",
+  "brand_w": 131.9
  }
 ]

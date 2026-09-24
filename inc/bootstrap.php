@@ -11,8 +11,10 @@ defined('DATA_DIR') || define('DATA_DIR', BASE . '/data');
 
 const UPLOAD_DIR = BASE . '/uploads/products';
 const UPLOAD_URL = 'uploads/products';
+// Maker's marks, cut out of the design's tiles so the card can place them itself.
+const BRAND_URL  = 'assets/img/brands';
 
-// Holds the admin hash and customer details; .php so a stray direct request is inert.
+// Holds the admin hash and the page's own settings; .php so a stray direct request is inert.
 define('SETTINGS_FILE', DATA_DIR . '/settings.php');
 define('VIEWS_FILE', DATA_DIR . '/views.php');
 define('LOGINS_FILE', DATA_DIR . '/logins.php');

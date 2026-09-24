@@ -77,12 +77,20 @@ seo_refresh_static();
             data-after="<?= e((string) ($p['price_after'] ?? '')) ?>"
             data-desc="<?= e((string) ($p['description'] ?? '')) ?>"
             data-wa="<?= e(wa_link(product_message($p, $s))) ?>"
+            data-brand="<?= e(!empty($p['brand']) ? BRAND_URL . '/' . rawurlencode($p['brand']) : '') ?>"
             data-img="<?= e($img ? UPLOAD_URL . '/' . rawurlencode($img) : '') ?>"
             aria-label="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? '')) . ' — לפרטים ויצירת קשר') ?>">
       <?php if ($img): ?>
         <img class="card__img" src="<?= e(UPLOAD_URL . '/' . rawurlencode($img)) ?>"
              alt="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? ''))) ?>"
              width="608" height="582" <?= $i < 8 ? '' : 'loading="lazy" ' ?>decoding="async">
+      <?php endif; ?>
+      <?php // The maker's mark was cut out of the tile so the card can hang it
+            // off its own right edge instead of wherever the artboard left it. ?>
+      <?php if (!empty($p['brand'])): ?>
+        <img class="card__brand" src="<?= e($rev(BRAND_URL . '/' . rawurlencode($p['brand']))) ?>"
+             alt="" aria-hidden="true" style="--w: <?= e((string) (float) ($p['brand_w'] ?? 72)) ?>"
+             <?= $i < 8 ? '' : 'loading="lazy" ' ?>decoding="async">
       <?php endif; ?>
       <div class="card__meta">
         <h3 class="card__name"><?= e($p['name'] ?? '') ?></h3>
@@ -132,6 +140,7 @@ $cName   = (string) ($current['name'] ?? '');
 $cSku    = (string) ($current['sku'] ?? '');
 $cImg    = (string) ($current['image'] ?? '');
 $cDesc   = trim((string) ($current['description'] ?? ''));
+$cBrand  = (string) ($current['brand'] ?? '');
 $cBefore = (int) ($current['price_before'] ?? 0);
 $cAfter  = (int) ($current['price_after'] ?? 0);
 $cPct    = $current ? product_discount($current) : null;
@@ -141,7 +150,9 @@ $cPct    = $current ? product_discount($current) : null;
   <div class="pm__media"<?= $current && !$cImg ? ' hidden' : '' ?>>
     <?php // src="" would make the browser fetch the page itself as an image. ?>
     <img class="pm__img"<?= $cImg ? ' src="' . e(UPLOAD_URL . '/' . rawurlencode($cImg)) . '"' : '' ?>
-         alt="<?= e(trim($cName . ' ' . $cSku)) ?>"></div>
+         alt="<?= e(trim($cName . ' ' . $cSku)) ?>">
+    <img class="pm__brand"<?= $cBrand !== '' ? ' src="' . e(BRAND_URL . '/' . rawurlencode($cBrand)) . '"' : '' ?>
+         alt="" aria-hidden="true"<?= $cBrand === '' ? ' hidden' : '' ?>></div>
   <div class="pm__body" tabindex="-1" autofocus>
     <h2 class="pm__name" id="pm-name"><?= e($cName) ?></h2>
     <p class="pm__sku"><?= e($cSku !== '' ? 'מק״ט ' . $cSku : '') ?></p>

@@ -46,6 +46,11 @@
     img.alt = (d.name || '') + (d.sku ? ' ' + d.sku : '');
     img.closest('.pm__media').hidden = !d.img;
 
+    // The maker's mark travels beside the photo rather than inside it.
+    var brand = pm.querySelector('.pm__brand');
+    brand.hidden = !d.brand;
+    if (d.brand) brand.src = d.brand;
+
     var oldEl = pm.querySelector('.pm__old');
     oldEl.hidden = !before;
     if (before) oldEl.querySelector('span').textContent = before;
