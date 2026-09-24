@@ -337,10 +337,9 @@ a { color: inherit; }
 .card:hover .card__go,
 .card:focus-visible .card__go { opacity: 1; transform: scale(1); }
 
-/* A pointer that cannot hover never gets a hover state, so the disc stays out. */
-@media (hover: none) {
-  .card__go { opacity: 1; transform: none; }
-}
+/* The disc is a hover affordance and nothing more - the whole card is the tap
+   target - so on a touch screen, where there is no hover, it simply stays out
+   of the photograph rather than sitting on every card at once. */
 
 @media (prefers-reduced-motion: reduce) {
   .card, .card__go { transition-duration: .01ms; }
@@ -613,12 +612,19 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   }
   .pm[open] { flex-direction: column; }
   .pm::before {
-    content: ''; position: absolute; left: 50%; top: 9px; translate: -50% 0;
-    width: 46px; height: 5px; border-radius: 3px; background: #d5d9dc;
+    content: ''; position: absolute; z-index: 2; left: 50%; top: 9px; translate: -50% 0;
+    width: 46px; height: 5px; border-radius: 3px;
+    background: rgba(255, 255, 255, .85); box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
   }
-  .pm__x { left: 6px; top: 6px; width: 44px; height: 44px; color: #9aa1a7; font-size: 34px; z-index: 2; }
+  .pm__x { left: 8px; top: 8px; width: 38px; height: 38px; z-index: 2;
+           display: grid; place-items: center; font-size: 26px; line-height: 1;
+           color: #fff; background: rgba(0, 0, 0, .38); border-radius: 50%; }
+  /* No padding here: it would leave a white strip above the photo, and the
+     maker's mark, pinned to this pane, would sit in it. The sheet's handle and
+     its close button ride over the picture instead, each carrying enough of a
+     ground of its own to be seen on any of them. */
   .pm__media { flex: none; height: 40vh; min-height: 230px; border: 0;
-               border-bottom: 1px solid #f0f0f0; padding-top: 14px; }
+               border-bottom: 1px solid #f0f0f0; }
   .pm__img { width: 100%; height: 100%; object-fit: cover; }
   .pm__brand { top: 12px; right: 14px; width: 74px; }
   .pm__body { padding: 16px 20px 0; }
