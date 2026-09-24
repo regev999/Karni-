@@ -191,12 +191,14 @@ a { color: inherit; }
 
 /* The maker's mark, lifted out of the tile so every card hangs it off the same
    edge. `--w` carries the mark's own width from the artboard, per product, so a
-   wide wordmark stays wide and a small monogram stays small. */
+   wide wordmark stays wide and a small monogram stays small; --brand-s takes
+   them all down together, the artboard drawing them larger than the card needs. */
 .card__brand {
+  --brand-s: .65;
   position: absolute;
   top: calc(10 * var(--u));
   right: calc(10 * var(--u));
-  width: calc(var(--w, 72) * var(--u));
+  width: calc(var(--w, 72) * var(--brand-s) * var(--u));
   height: auto;
   pointer-events: none;
 }
