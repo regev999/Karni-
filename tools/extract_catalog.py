@@ -32,6 +32,15 @@ INK_DARK = 165                    # mean luma below this wants what sits on it s
 # rather than in the seed, so re-running this does not bring it back.
 SKU_FIXES = {"CON00090LAGO": "CON00090"}
 
+# One note mixes Hebrew, digits and punctuation on a single line, and the PDF
+# stores that in visual order with the runs overlapping - reversing the spans
+# gets the words right and leaves "18" and the asterisk on the wrong side of
+# them. Reconstructing it properly is a bidi algorithm for one product.
+NOTE_FIXES = {"קיים ב-* צבעים18": "*קיים ב-18 צבעים"}
+
+
+HEBREW = re.compile(r"[\u0590-\u05FF]")
+
 
 def slug(name, sku):
     s = unicodedata.normalize("NFKC", f"{name} {sku}").strip()
@@ -40,11 +49,17 @@ def slug(name, sku):
 
 
 def join(spans):
-    """Concatenate fragmented Type3 spans left-to-right; Hebrew runs read right-to-left."""
+    """
+    Concatenate fragmented spans left-to-right; a Hebrew run reads right-to-left.
+
+    Which it is has to be read off the text, not the font: the design sets most
+    of its Hebrew in embedded Type3 subsets whose names say nothing, and keying
+    on "Alef" left those lines assembled backwards.
+    """
     if not spans:
         return ""
     spans = sorted(spans, key=lambda s: s["bbox"][0])
-    if any("Alef" in s["font"] for s in spans):
+    if any(HEBREW.search(s["text"]) for s in spans):
         spans = sorted(spans, key=lambda s: -s["bbox"][0])
     return re.sub(r"\s+", " ", "".join(s["text"] for s in spans)).strip()
 
@@ -52,9 +67,6 @@ def join(spans):
 def money(text):
     digits = re.sub(r"[^\d]", "", text)
     return int(digits) if digits else None
-
-
-HEBREW = re.compile(r"[\u0590-\u05FF]")
 
 
 def captions(page):
@@ -142,6 +154,27 @@ def blocks(page):
         if changed > 40:
             visible.append(p)
 
+    # The design places each photo as a 304x291 image at the tile's own corner,
+    # which is the tile exactly - better than a rectangle derived from where the
+    # caption sits. On the second row the designer nudged four captions to make
+    # room for a colour line, and the derived rectangle then cut 12px of the
+    # page's grey gutter into the top of those cards. Where a slot holds a stale
+    # image under its replacement, the one painted last is the one on top.
+    tiles = []
+    for n, info in enumerate(page.get_image_info()):
+        r = pymupdf.Rect(info["bbox"])
+        if abs(r.width - TILE_W) < 8 and abs(r.height - TILE_H) < 8 and r.y0 > GRID_TOP - 120:
+            tiles.append((n, r))
+    for p in visible:
+        hit = [(n, r) for n, r in tiles
+               if r.x0 - 2 <= p["_left"] <= r.x1 + 2 and r.y0 - 2 <= p["_base"] <= r.y1 + 2]
+        if hit:
+            # The corner is the design's; the size is not. The placements vary
+            # by up to half a point, and a crop that inherits that comes out a
+            # pixel or two off 608x582 and is then stretched back to the card.
+            r = max(hit, key=lambda t: t[0])[1]
+            p["_rect"] = pymupdf.Rect(r.x0, r.y0, r.x0 + TILE_W, r.y0 + TILE_H)
+
     # Row/column, counted from the right: RTL reading order.
     tops = sorted({round(p["_rect"].y0) for p in visible})
     rows, last = [], -1e9
@@ -181,9 +214,16 @@ def caption_to_product(col, spans):
     before = after = None
     notes = []
     for ln in lines[2:]:
-        hebrew = [s for s in ln["spans"] if HEBREW.search(s["text"])]
-        rest = [s for s in ln["spans"] if not HEBREW.search(s["text"])]
-        notes += hebrew
+        heb = [s for s in ln["spans"] if HEBREW.search(s["text"])]
+        rest = ln["spans"]
+        if heb:
+            # A line of the designer's own - a finish, or "available in 18
+            # colours". Taken from the leftmost Hebrew span rightwards, so the
+            # spaces and the hyphen between its words come with it. On one tile
+            # it shares a line with the price, which stays at the left edge.
+            edge = min(s["bbox"][0] for s in heb)
+            notes.append(join([s for s in ln["spans"] if s["bbox"][0] >= edge - 0.5]))
+            rest = [s for s in ln["spans"] if s["bbox"][0] < edge - 0.5]
         if not any("\u20aa" in s["text"] for s in rest):
             continue
         digits = [s for s in rest if re.search(r"\d", s["text"])]
@@ -207,14 +247,17 @@ def caption_to_product(col, spans):
     left = min(s["bbox"][0] for s in spans)      # where this tile actually is
     rect = pymupdf.Rect(left - TEXT_DX, base - TEXT_DY,
                         left - TEXT_DX + TILE_W, base - TEXT_DY + TILE_H)
+    # A fallback only: `blocks` replaces this with the tile's own rectangle
+    # wherever the design gives it one.
     return {
         "name": name,
         "sku": SKU_FIXES.get(sku, sku),
         "price_before": before,
         "price_after": after,
-        "note": join(notes),
+        "note": NOTE_FIXES.get(" ".join(notes).strip(), " ".join(notes).strip()),
         "ink": ink,
         "_rect": rect,
+        "_left": left,
         "_base": base,
         "_col": col,
     }
@@ -329,7 +372,7 @@ def main():
                     "image": fname, "ink": p["ink"],
                     **({"brand_ink": "light"} if art and patch_ink(pix, INK_BRAND) == "light" else {}),
                     **({"brand": marks[art[0]], "brand_w": round(art[1], 1)} if art else {}),
-                    **({"description": p["note"]} if p.get("note") else {})})
+                    **({"note": p["note"]} if p.get("note") else {})})
 
     with open(os.path.join(DATA, "products.seed.php"), "w", encoding="utf-8") as fh:
         fh.write("<?php http_response_code(404); exit; ?>\n")

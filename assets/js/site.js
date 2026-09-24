@@ -41,6 +41,10 @@
     pm.querySelector('.pm__name').textContent = d.name || '';
     pm.querySelector('.pm__sku').textContent = d.sku ? 'מק״ט ' + d.sku : '';
 
+    var note = pm.querySelector('.pm__note');
+    note.textContent = d.note || '';
+    note.hidden = !d.note;
+
     var img = pm.querySelector('.pm__img');
     img.src = d.img || '';
     img.alt = (d.name || '') + (d.sku ? ' ' + d.sku : '');

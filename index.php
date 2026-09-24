@@ -70,12 +70,14 @@ seo_refresh_static();
   <?php else: ?>
   <div class="grid">
     <?php foreach ($products as $i => $p): $img = $p['image'] ?? ''; ?>
-    <a class="card<?= ($p['ink'] ?? '') === 'light' ? ' card--dark' : '' ?><?= ($p['brand_ink'] ?? '') === 'light' ? ' card--mark-light' : '' ?>" href="?p=<?= e(rawurlencode($p['slug'])) ?>"
+    <?php $note = trim((string) ($p['note'] ?? '')); ?>
+    <a class="card<?= ($p['ink'] ?? '') === 'light' ? ' card--dark' : '' ?><?= ($p['brand_ink'] ?? '') === 'light' ? ' card--mark-light' : '' ?><?= $note !== '' ? ' card--noted' : '' ?>" href="?p=<?= e(rawurlencode($p['slug'])) ?>"
             data-slug="<?= e($p['slug']) ?>"
             data-name="<?= e($p['name'] ?? '') ?>" data-sku="<?= e($p['sku'] ?? '') ?>"
             data-before="<?= e((string) ($p['price_before'] ?? '')) ?>"
             data-after="<?= e((string) ($p['price_after'] ?? '')) ?>"
             data-desc="<?= e((string) ($p['description'] ?? '')) ?>"
+            data-note="<?= e($note) ?>"
             data-wa="<?= e(wa_link(product_message($p, $s))) ?>"
             data-brand="<?= e(!empty($p['brand']) ? BRAND_URL . '/' . rawurlencode($p['brand']) : '') ?>"
             data-img="<?= e(upload_url($img)) ?>"
@@ -95,6 +97,10 @@ seo_refresh_static();
       <div class="card__meta">
         <h3 class="card__name"><?= e($p['name'] ?? '') ?></h3>
         <span class="card__sku"><?= e($p['sku'] ?? '') ?></span>
+        <?php // The designer's own line - a finish, or "available in 18 colours".
+              // Two products differ by nothing else, and without it they read as
+              // the same lamp listed twice. ?>
+        <?php if ($note !== ''): ?><span class="card__note"><?= e($note) ?></span><?php endif; ?>
         <?php if (!empty($p['price_before'])): ?>
           <span class="card__old"><i>₪</i><?= e(shekel($p['price_before'])) ?><s aria-hidden="true"></s></span>
         <?php endif; ?>
@@ -141,6 +147,7 @@ $cSku    = (string) ($current['sku'] ?? '');
 $cImg    = (string) ($current['image'] ?? '');
 $cDesc   = trim((string) ($current['description'] ?? ''));
 $cBrand  = (string) ($current['brand'] ?? '');
+$cNote   = trim((string) ($current['note'] ?? ''));
 $cBefore = (int) ($current['price_before'] ?? 0);
 $cAfter  = (int) ($current['price_after'] ?? 0);
 $cPct    = $current ? product_discount($current) : null;
@@ -156,6 +163,7 @@ $cPct    = $current ? product_discount($current) : null;
   <div class="pm__body" tabindex="-1" autofocus>
     <h2 class="pm__name" id="pm-name"><?= e($cName) ?></h2>
     <p class="pm__sku"><?= e($cSku !== '' ? 'מק״ט ' . $cSku : '') ?></p>
+    <p class="pm__note"<?= $cNote === '' ? ' hidden' : '' ?>><?= e($cNote) ?></p>
     <div class="pm__prices">
       <span class="pm__old"<?= $cBefore ? '' : ' hidden' ?>><i>₪</i><span><?= e(shekel($cBefore ?: null)) ?></span><s aria-hidden="true"></s></span>
       <span class="pm__new"<?= $cAfter ? '' : ' hidden' ?>><i>₪</i><span><?= e(shekel($cAfter ?: null)) ?></span></span>

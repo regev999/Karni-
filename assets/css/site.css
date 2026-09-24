@@ -228,7 +228,7 @@ a { color: inherit; }
 }
 .card--mark-light .card__brand { color: #fff; }
 
-.card__name, .card__sku, .card__old, .card__new {
+.card__name, .card__sku, .card__note, .card__old, .card__new {
   position: absolute;
   left: calc(12.1 * var(--u));
   margin: 0;                     /* .card__name is an <h3>: its own margin would shift `top` */
@@ -239,6 +239,11 @@ a { color: inherit; }
 }
 .card__name { top: calc(187.61 * var(--u)); font-size: calc(19 * var(--u)); }
 .card__sku  { top: calc(211.41 * var(--u)); font-size: calc(19 * var(--u)); }
+/* The designer's own line takes the SKU's slot and lifts the two lines above it
+   by one, leaving the prices where they always are. */
+.card__note { top: calc(211.41 * var(--u)); font-size: calc(19 * var(--u)); direction: rtl; }
+.card--noted .card__name { top: calc(164.61 * var(--u)); }
+.card--noted .card__sku  { top: calc(188.41 * var(--u)); }
 .card__old  { top: calc(231.41 * var(--u)); font-size: calc(19 * var(--u)); }
 .card__new  { top: calc(251.4 * var(--u)); font-size: calc(29 * var(--u)); font-weight: 600; }
 .card__old i { font-style: normal; font-size: calc(14 * var(--u)); }
@@ -353,6 +358,7 @@ a { color: inherit; }
 }
 .wa:hover { background: var(--wa-dark); }
 .wa:active { transform: translateY(calc(1 * var(--u))); }
+.wa__label { white-space: nowrap; }   /* a button label never reads as two lines */
 .wa__arrow { direction: ltr; unicode-bidi: isolate; }
 /* The artboard sets the mark in white straight onto the green, no disc behind. */
 .wa__mark { display: grid; place-items: center; }
@@ -457,6 +463,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
             font: 400 calc(36 * var(--u)) / 1.15 Montserrat, Alef, Arial, sans-serif; }
 .pm__sku  { margin: calc(7 * var(--u)) 0 0; color: #8a8a8a;
             font: 400 calc(20 * var(--u)) / 1.2 Montserrat, Alef, Arial, sans-serif; }
+.pm__note { margin: calc(4 * var(--u)) 0 0; font-size: calc(21 * var(--u)); color: var(--ink-soft); }
 
 .pm__prices { display: flex; align-items: baseline; flex-wrap: wrap;
               gap: calc(16 * var(--u)); margin-top: calc(22 * var(--u)); }
@@ -512,16 +519,19 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .hero__bg img { object-position: 78% center; }
   .hero > :not(.hero__bg) { position: relative; z-index: 1; top: auto; right: auto; left: auto;
                             white-space: normal; }
-  .hero__logo { width: min(200px, 52vw); margin-bottom: auto; }
+  /* The photo behind this is a showroom on the left and a pale panel on the
+     right, and on a phone only the panel's width is available: the type is set
+     to clear the dark side rather than to fill the screen. */
+  .hero__logo { width: min(160px, 42vw); margin-bottom: auto; }
   .hero__title span, .hero__sub span { top: auto; right: auto; }
-  .hero__kicker { margin: 26px 0 0; font-size: clamp(19px, 5.4vw, 30px); letter-spacing: .2em; }
-  .hero > .hero__rate { position: static; display: flex; align-items: center; gap: 10px; margin: 10px 0 4px; }
+  .hero__kicker { margin: 22px 0 0; font-size: clamp(16px, 4.3vw, 24px); letter-spacing: .2em; }
+  .hero > .hero__rate { position: static; display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; }
   .hero__rate > * { position: static; }
-  .hero__upto, .hero__off { font-size: clamp(17px, 4.4vw, 26px); letter-spacing: .04em; }
-  .hero__pct { width: clamp(120px, 34vw, 190px); height: auto; }
-  .hero__title { font-size: clamp(38px, 11vw, 62px); line-height: 1.02; margin: 6px 0 12px; }
+  .hero__upto, .hero__off { font-size: clamp(14px, 3.5vw, 21px); letter-spacing: .04em; }
+  .hero__pct { width: clamp(96px, 27vw, 152px); height: auto; }
+  .hero__title { font-size: clamp(31px, 8.8vw, 50px); line-height: 1.02; margin: 6px 0 10px; }
   .hero__title span, .hero__sub span { position: static; letter-spacing: 0; }
-  .hero__sub { font-size: clamp(18px, 4.8vw, 26px); letter-spacing: .12em; line-height: 1.3; }
+  .hero__sub { font-size: clamp(15px, 3.9vw, 21px); letter-spacing: .12em; line-height: 1.3; }
 
   /* --- steps --- */
   .steps { height: auto; padding: 44px 22px 48px; overflow: hidden; }
@@ -564,11 +574,13 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .lead { height: auto; padding: 46px 22px 40px; text-align: right; }
   .lead > :not(.lead__dolly) { position: static; white-space: normal; }
   .lead__dolly { display: none; }             /* its backdrop is painted for the desktop bands */
-  .lead__title { font-size: clamp(28px, 7.6vw, 46px); line-height: 1.15; }
+  /* One line, whatever the screen: the title reads as a sentence, not as two. */
+  .lead__title { font-size: min(6.5vw, 28px); line-height: 1.15; white-space: nowrap; }
   .lead__sub { font-size: clamp(16px, 4.4vw, 24px); margin-top: 8px; }
-  .wa--cta { width: 100%; height: 62px; margin-top: 22px; gap: 12px;
-             padding: 0 8px 0 18px; font-size: clamp(18px, 4.8vw, 24px); }
-  .wa--cta .wa__mark { width: 46px; height: 46px; }
+  .wa--cta { width: 50%; min-width: 196px; height: 46px; margin-top: 20px;
+             justify-content: center; gap: 10px;
+             padding: 0 8px 0 14px; font-size: clamp(15px, 3.9vw, 19px); }
+  .wa--cta .wa__mark { width: 34px; height: 34px; }
   .wa--float { right: 16px; bottom: 16px; width: 62px; height: 62px; }
 
   /* --- footer --- */

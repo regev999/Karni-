@@ -98,7 +98,7 @@
   "ink": "dark",
   "brand": "350a0a07.svg",
   "brand_w": 72.0,
-  "description": "אפור"
+  "note": "אפור"
  },
  {
   "id": 10,
@@ -110,7 +110,7 @@
   "ink": "dark",
   "brand": "3192e104.svg",
   "brand_w": 72.0,
-  "description": "כסוף"
+  "note": "כסוף"
  },
  {
   "id": 11,
@@ -981,7 +981,7 @@
   "ink": "dark",
   "brand": "97fefff7.svg",
   "brand_w": 155.4,
-  "description": "צבעים18בקיים"
+  "note": "*קיים ב-18 צבעים"
  },
  {
   "id": 90,
