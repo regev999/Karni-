@@ -23,7 +23,7 @@ seo_refresh_static();
 <link rel="icon" href="<?= e($rev('assets/img/favicon.svg')) ?>" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/Alef-700-hebrew.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/Alef-400-hebrew.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/img/hero.webp" as="image" type="image/webp" fetchpriority="high">
+<link rel="preload" href="<?= e($rev('assets/img/hero.webp')) ?>" as="image" type="image/webp" fetchpriority="high">
 <link rel="stylesheet" href="<?= e($rev('assets/css/site.css')) ?>">
 <?php seo_jsonld($s, $current, $rev('assets/img/og.jpg')); ?>
 </head>
@@ -32,14 +32,14 @@ seo_refresh_static();
 
 <header class="hero">
   <picture class="hero__bg">
-    <source srcset="assets/img/hero.webp" type="image/webp">
-    <img src="assets/img/hero.jpg" alt="אולם התצוגה של קרני תכלת" fetchpriority="high" width="1440" height="900">
+    <source srcset="<?= e($rev('assets/img/hero.webp')) ?>" type="image/webp">
+    <img src="<?= e($rev('assets/img/hero.jpg')) ?>" alt="אולם התצוגה של קרני תכלת" fetchpriority="high" width="1440" height="900">
   </picture>
   <div class="hero__logo"><?= $logo ?></div>
   <p class="hero__kicker">לרגל שיפוצים</p>
   <div class="hero__rate">
     <p class="hero__upto">עד</p>
-    <img class="hero__pct" src="assets/img/seventy.svg" alt="עד 70% הנחה" width="373" height="280">
+    <img class="hero__pct" src="<?= e($rev('assets/img/seventy.svg')) ?>" alt="עד 70% הנחה" width="373" height="280">
     <p class="hero__off">הנחה</p>
   </div>
   <h1 class="hero__title"><span>מכירה</span><span>מתצוגה</span></h1>
@@ -55,7 +55,7 @@ seo_refresh_static();
     ] as $i => [$title, $lines]): $n = $i + 1; ?>
     <li class="step step--<?= $n ?>">
       <span class="step__disc" aria-hidden="true"></span>
-      <img class="step__num" src="assets/img/step<?= $n ?>.svg" alt="שלב <?= $n ?>" width="650" height="142">
+      <img class="step__num" src="<?= e($rev('assets/img/step' . $n . '.svg')) ?>" alt="שלב <?= $n ?>" width="650" height="142">
       <h2 class="step__title"><?= e($title) ?></h2>
       <?php if ($lines): ?><p class="step__text"><?php foreach ($lines as $l): ?><span><?= e($l) ?></span><?php endforeach; ?></p><?php endif; ?>
     </li>
@@ -106,7 +106,7 @@ seo_refresh_static();
 </section>
 
 <section class="lead" id="lead">
-  <img class="lead__dolly" src="assets/img/dolly.webp" alt="" aria-hidden="true" width="375" height="647">
+  <img class="lead__dolly" src="<?= e($rev('assets/img/dolly.webp')) ?>" alt="" aria-hidden="true" width="375" height="647">
   <h2 class="lead__title">לרכישה שלחו הודעה בווטסאפ</h2>
   <p class="lead__sub">ונציג מטעמנו יחזור אליכם בהקדם</p>
   <a class="wa wa--cta" href="<?= e(wa_link('היי, אני מעוניין/ת בפרטים על המכירה מתצוגה')) ?>"

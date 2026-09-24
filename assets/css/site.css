@@ -338,15 +338,18 @@ a { color: inherit; }
 .wa--pm .wa__mark { width: calc(48 * var(--u)); height: calc(48 * var(--u)); }
 
 /* And the bubble, which the artboard draws once but a page carries with it. */
+/* The artboard draws this one at 129, which on a wide screen scales up into a
+   bubble that shouts over the page. It is a fixed affordance rather than part
+   of the artboard's flow, so it keeps one size at every width. */
 .wa--float {
   position: fixed;
   z-index: 40;
-  right: calc(30 * var(--u));
-  bottom: calc(30 * var(--u));
-  width: calc(129 * var(--u));
-  height: calc(129 * var(--u));
+  right: 24px;
+  bottom: 24px;
+  width: 72px;
+  height: 72px;
   color: #fff;
-  box-shadow: 0 calc(4 * var(--u)) calc(18 * var(--u)) rgba(0, 0, 0, .25);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, .25);
 }
 
 /* The pop-up has a WhatsApp button of its own; two would be one too many. */
