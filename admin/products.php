@@ -178,7 +178,7 @@ flash();
       <tr data-search="<?= e(mb_strtolower(($r['name'] ?? '') . ' ' . ($r['sku'] ?? ''))) ?>">
         <td class="thumb">
           <?php if (!empty($r['image'])): ?>
-            <img src="../<?= e(UPLOAD_URL . '/' . rawurlencode($r['image'])) ?>" alt="" loading="lazy" width="56" height="54">
+            <img src="../<?= e(upload_url($r['image'])) ?>" alt="" loading="lazy" width="56" height="54">
             <input type="hidden" name="p[<?= $i ?>][image]" value="<?= e($r['image']) ?>">
           <?php else: ?>
             <span class="noimg">אין</span>

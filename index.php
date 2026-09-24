@@ -78,10 +78,10 @@ seo_refresh_static();
             data-desc="<?= e((string) ($p['description'] ?? '')) ?>"
             data-wa="<?= e(wa_link(product_message($p, $s))) ?>"
             data-brand="<?= e(!empty($p['brand']) ? BRAND_URL . '/' . rawurlencode($p['brand']) : '') ?>"
-            data-img="<?= e($img ? UPLOAD_URL . '/' . rawurlencode($img) : '') ?>"
+            data-img="<?= e(upload_url($img)) ?>"
             aria-label="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? '')) . ' — לפרטים ויצירת קשר') ?>">
       <?php if ($img): ?>
-        <img class="card__img" src="<?= e(UPLOAD_URL . '/' . rawurlencode($img)) ?>"
+        <img class="card__img" src="<?= e(upload_url($img)) ?>"
              alt="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? ''))) ?>"
              width="608" height="582" <?= $i < 8 ? '' : 'loading="lazy" ' ?>decoding="async">
       <?php endif; ?>
@@ -149,7 +149,7 @@ $cPct    = $current ? product_discount($current) : null;
   <button class="pm__x" type="button" data-close aria-label="סגירת החלון">&times;</button>
   <div class="pm__media"<?= $current && !$cImg ? ' hidden' : '' ?>>
     <?php // src="" would make the browser fetch the page itself as an image. ?>
-    <img class="pm__img"<?= $cImg ? ' src="' . e(UPLOAD_URL . '/' . rawurlencode($cImg)) . '"' : '' ?>
+    <img class="pm__img"<?= $cImg ? ' src="' . e(upload_url($cImg)) . '"' : '' ?>
          alt="<?= e(trim($cName . ' ' . $cSku)) ?>">
     <img class="pm__brand"<?= $cBrand !== '' ? ' src="' . e(BRAND_URL . '/' . rawurlencode($cBrand)) . '"' : '' ?>
          alt="" aria-hidden="true"<?= $cBrand === '' ? ' hidden' : '' ?>></div>

@@ -14,6 +14,24 @@ const UPLOAD_URL = 'uploads/products';
 // Maker's marks, cut out of the design's tiles so the card can place them itself.
 const BRAND_URL  = 'assets/img/brands';
 
+/**
+ * A product photo's address, stamped with the file's own time.
+ *
+ * Replacing a photo in the admin means uploading it under the same name, and
+ * re-cutting the catalogue from a new design file rewrites all of them in
+ * place. Without the stamp a browser that has seen the old one goes on drawing
+ * it, however far the file on disk has moved on.
+ */
+function upload_url(string $file): string
+{
+    if ($file === '') {
+        return '';
+    }
+    $path = UPLOAD_DIR . '/' . $file;
+    return UPLOAD_URL . '/' . rawurlencode($file)
+        . '?v=' . (is_file($path) ? filemtime($path) : '1');
+}
+
 // Holds the admin hash and the page's own settings; .php so a stray direct request is inert.
 define('SETTINGS_FILE', DATA_DIR . '/settings.php');
 define('VIEWS_FILE', DATA_DIR . '/views.php');
