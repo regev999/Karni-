@@ -6,6 +6,7 @@ Dev-time tool. Run once to seed data/products.seed.php and uploads/products/.
 """
 import hashlib, json, os, re, sys, unicodedata
 import pymupdf
+from PIL import Image, ImageChops, ImageFilter, ImageStat
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pdfsvg import hex_of, svg_markup
@@ -23,6 +24,7 @@ TEXT_DX, TEXT_DY = 12.1, 209.2              # text block origin relative to tile
 GRID_TOP, GRID_BOTTOM = 1790.0, 13250.0
 BRAND_STRIP = 70.0                # the band at the top of a tile holding the brand mark
 BRAND_LEFT = 120.0                # and it sits in the tile's right half, never the left
+EMPTY_TILE = 0.6                  # below this a tile carries no photograph (see `has_photo`)
 INK_BRAND = (235, 8, 296, 36)     # the rectangle the maker's mark is hung in
 INK_DARK = 165                    # mean luma below this wants what sits on it set in white
 
@@ -263,6 +265,21 @@ def caption_to_product(col, spans):
     }
 
 
+def has_photo(pix):
+    """
+    Whether this tile holds a product photograph at all.
+
+    Two tiles in the design were never filled: a smooth grey wash, the brand
+    mark, the caption, and no lamp. A gradient survives a heavy blur almost
+    unchanged and a photograph does not, which separates the two cleanly - the
+    empty pair measure 0.34 and 0.38, and the flattest real photo in the
+    catalogue is 0.95.
+    """
+    im = Image.frombytes("RGB", (pix.width, pix.height), pix.samples).convert("L")
+    detail = ImageChops.difference(im, im.filter(ImageFilter.GaussianBlur(im.width / 30)))
+    return ImageStat.Stat(detail).mean[0] >= EMPTY_TILE
+
+
 def patch_ink(pix, box):
     """
     Whether what the page draws over this patch of the photo has to be white.
@@ -354,7 +371,7 @@ def main():
 
     os.makedirs(IMG_DIR, exist_ok=True)
     os.makedirs(DATA, exist_ok=True)
-    seen, total, out = {}, 0, []
+    seen, total, out, empty = {}, 0, [], []
     for i, p in enumerate(products, 1):
         r = p["_rect"]
         base = slug(p["name"], p["sku"]) or f"product-{i}"
@@ -363,6 +380,11 @@ def main():
         fname = f"{base}.webp" if n == 1 else f"{base}-{n}.webp"
         clip = pymupdf.Rect(r.x0 + 0.6, r.y0 + 0.6, r.x1 - 0.6, r.y1 - 0.6)
         pix = page.get_pixmap(clip=clip, matrix=pymupdf.Matrix(SCALE, SCALE))
+        # A product with nothing to show is worse on the page than one product
+        # fewer; upload the photo in the admin and it comes back.
+        if not has_photo(pix):
+            empty.append(f"{p['name']} {p['sku']}")
+            continue
         path = os.path.join(IMG_DIR, fname)
         pix.pil_save(path, format="WEBP", quality=92, method=6)
         total += os.path.getsize(path)
@@ -377,6 +399,8 @@ def main():
     with open(os.path.join(DATA, "products.seed.php"), "w", encoding="utf-8") as fh:
         fh.write("<?php http_response_code(404); exit; ?>\n")
         json.dump(out, fh, ensure_ascii=False, indent=1)
+    if empty:
+        print(f"skipped {len(empty)} with no photo in the design: {', '.join(empty)}")
     print(f"wrote {len(out)} images, {total/1e6:.1f} MB")
 
 

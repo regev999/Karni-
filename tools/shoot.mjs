@@ -12,9 +12,11 @@ const DESIGN = `${OUT}/design.png`;
 // `shift` aligns a section that sits below the product grid, whose height
 // depends on how many rows the catalogue has.
 //
-// Two sections are expected to differ from the artboard rather than match it:
-// `grid`, because the page packs the rows the design leaves half-empty, and
-// `lead`, whose type and button the client asked to be taken down 30%.
+// Three sections are expected to differ from the artboard rather than match it:
+// `grid`, because the page packs the rows the design leaves half-empty; `lead`,
+// whose type and button the client asked to be taken down 30%; and `footer`,
+// whose contact block is held clear of the floating button the artboard draws
+// on the first screen and never in the footer.
 const SECTIONS = [
   ['hero',    0,     900,   0],
   ['steps',   900,   1650,  0],

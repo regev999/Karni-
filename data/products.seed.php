@@ -1049,28 +1049,6 @@
   "brand_w": 79.8
  },
  {
-  "id": 97,
-  "name": "COGNAC",
-  "sku": "N923514",
-  "price_before": 1810,
-  "price_after": 543,
-  "image": "COGNAC-N923514.webp",
-  "ink": "dark",
-  "brand": "9a0b5f45.svg",
-  "brand_w": 144.0
- },
- {
-  "id": 98,
-  "name": "COGNAC",
-  "sku": "N923214",
-  "price_before": 1752,
-  "price_after": 525,
-  "image": "COGNAC-N923214.webp",
-  "ink": "dark",
-  "brand": "e2e7cf87.svg",
-  "brand_w": 144.0
- },
- {
   "id": 99,
   "name": "SPLIT",
   "sku": "MDL01294",
