@@ -8,7 +8,7 @@ import hashlib, json, os, re, sys, unicodedata
 import pymupdf
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from pdfsvg import svg_markup
+from pdfsvg import hex_of, svg_markup
 
 PDF = sys.argv[1] if len(sys.argv) > 1 else "design.pdf"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,6 +23,8 @@ TEXT_DX, TEXT_DY = 12.1, 209.2              # text block origin relative to tile
 GRID_TOP, GRID_BOTTOM = 1790.0, 13250.0
 BRAND_STRIP = 70.0                # the band at the top of a tile holding the brand mark
 BRAND_LEFT = 120.0                # and it sits in the tile's right half, never the left
+INK_BRAND = (235, 8, 296, 36)     # the rectangle the maker's mark is hung in
+INK_DARK = 165                    # mean luma below this wants what sits on it set in white
 
 
 # The design has one typo of its own: the tile beside "LAGOON CON00091" reads
@@ -196,6 +198,11 @@ def caption_to_product(col, spans):
     sku = join(lines[1]["spans"])
     if name == "" or after is None:
         return None
+    # The designer set each caption in one of two colours, #383838 or white,
+    # having looked at that photo. That decision is better than any measurement
+    # of ours, so it is read off the page rather than guessed at.
+    inked = [sp for sp in spans if sp["text"].strip()]
+    ink = "light" if inked and inked[0]["color"] > 0x808080 else "dark"
     base = lines[0]["y"]
     left = min(s["bbox"][0] for s in spans)      # where this tile actually is
     rect = pymupdf.Rect(left - TEXT_DX, base - TEXT_DY,
@@ -206,10 +213,33 @@ def caption_to_product(col, spans):
         "price_before": before,
         "price_after": after,
         "note": join(notes),
+        "ink": ink,
         "_rect": rect,
         "_base": base,
         "_col": col,
     }
+
+
+def patch_ink(pix, box):
+    """
+    Whether what the page draws over this patch of the photo has to be white.
+
+    The caption does not need this - the designer set its colour tile by tile
+    and `caption_to_product` reads that decision straight off the page. The
+    maker's mark does: the artboard leaves every mark dark because it sits
+    wherever that tile's photo happened to be pale, and the page hangs them all
+    off one edge instead, which on a few tiles is a dark corner.
+    """
+    sx, sy = pix.width / TILE_W, pix.height / TILE_H
+    x0, y0, x1, y1 = box
+    total = n = 0
+    step = max(1, int((x1 - x0) * sx / 30))
+    for y in range(int(y0 * sy), min(pix.height, int(y1 * sy)), step):
+        for x in range(int(x0 * sx), min(pix.width, int(x1 * sx)), step):
+            r, g, b = pix.pixel(x, y)[:3]
+            total += (r * 299 + g * 587 + b * 114) // 1000
+            n += 1
+    return "light" if n and total / n < INK_DARK else "dark"
 
 
 def brand_mark(drawings, rect):
@@ -231,7 +261,9 @@ def brand_mark(drawings, rect):
         return None
     box = (min(d["rect"].x0 for d in inside), min(d["rect"].y0 for d in inside),
            max(d["rect"].x1 for d in inside), max(d["rect"].y1 for d in inside))
-    art = svg_markup(inside, box, origin=True)
+    # Set in currentColor so one file serves a light card and a dark one.
+    art = svg_markup(inside, box, origin=True,
+                     recolor={hex_of(d["fill"]): "currentColor" for d in inside if d.get("fill")})
     if art is None:
         return None
     return art, box
@@ -294,7 +326,8 @@ def main():
         art = p.get("_brand")
         out.append({"id": i, "name": p["name"], "sku": p["sku"],
                     "price_before": p["price_before"], "price_after": p["price_after"],
-                    "image": fname,
+                    "image": fname, "ink": p["ink"],
+                    **({"brand_ink": "light"} if art and patch_ink(pix, INK_BRAND) == "light" else {}),
                     **({"brand": marks[art[0]], "brand_w": round(art[1], 1)} if art else {}),
                     **({"description": p["note"]} if p.get("note") else {})})
 

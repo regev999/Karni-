@@ -39,7 +39,9 @@ ok((home.body.match(/<h1[\s>]/g) || []).length === 1, 'exactly one h1');
 ok(home.body.includes('<main>'), 'main landmark');
 ok(/<meta name="robots" content="index, follow/.test(home.body), 'indexable');
 
-const cards = [...home.body.matchAll(/<a class="card" href="\?p=([^"]+)"/g)].map(m => m[1]);
+// The class carries per-product modifiers now (a dark tile's caption, its
+// mark), so match the card by what it is rather than by the whole attribute.
+const cards = [...home.body.matchAll(/<a class="card[^"]*" href="\?p=([^"]+)"/g)].map(m => m[1]);
 ok(cards.length > 100, 'every product is a crawlable link', `${cards.length} links`);
 ok(new Set(cards).size === cards.length, 'product addresses are unique');
 ok((home.body.match(/<h3 class="card__name">/g) || []).length === cards.length,

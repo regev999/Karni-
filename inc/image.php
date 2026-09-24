@@ -170,3 +170,42 @@ function flatten_backdrop(string $path): bool
     imagedestroy($im);
     return (bool) $ok;
 }
+
+/**
+ * Whether what the page draws over a photo has to be set in white.
+ *
+ * The catalogue mixes two kinds of picture: products cut out on white, and
+ * products shot where they hang. Once the photo fills the card, the caption and
+ * the maker's mark land on the picture itself, and on the second kind a dark
+ * one disappears into the room. Each is measured over the rectangle it actually
+ * covers and decided on its own - a photo can be dark behind the words and pale
+ * behind the mark, and often is.
+ */
+const INK_CAPTION = [8, 180, 190, 288];    // in the design's own 304x291 tile
+const INK_BRAND   = [235, 8, 296, 36];
+const INK_DARK    = 165;                   // mean luma below this wants white
+
+function patch_ink(string $path, array $box): string
+{
+    $im = @imagecreatefromstring((string) @file_get_contents($path));
+    if (!$im) {
+        return 'dark';
+    }
+    $w = imagesx($im);
+    $h = imagesy($im);
+    [$bx0, $by0, $bx1, $by1] = $box;
+    $x0 = (int) ($bx0 / 304 * $w); $x1 = min($w, (int) ($bx1 / 304 * $w));
+    $y0 = (int) ($by0 / 291 * $h); $y1 = min($h, (int) ($by1 / 291 * $h));
+
+    $sum = $n = 0;
+    $step = max(1, (int) (($x1 - $x0) / 30));
+    for ($y = $y0; $y < $y1; $y += $step) {
+        for ($x = $x0; $x < $x1; $x += $step) {
+            $c = imagecolorat($im, $x, $y);
+            $sum += luma(($c >> 16) & 255, ($c >> 8) & 255, $c & 255);
+            $n++;
+        }
+    }
+    imagedestroy($im);
+    return $n && $sum / $n < INK_DARK ? 'light' : 'dark';
+}

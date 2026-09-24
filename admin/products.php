@@ -55,13 +55,22 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         } elseif ($action === 'save') {
             $out = [];
             // The rows are keyed by their place in the catalogue, so sorting the
-            // table by views on screen cannot reshuffle the page.
+            // table by views on screen cannot reshuffle the page - and so each
+            // posted row can be laid over the one it came from. Only the fields
+            // the table actually edits travel through the browser; the photo,
+            // the maker's mark and its width stay where they are.
+            //
+            // That is not only tidiness. PHP drops everything past
+            // max_input_vars, 1000 by default, without a word: a catalogue of
+            // this size sending nine fields a row went over the line, and a
+            // save quietly lost the products that fell past it.
             $posted = (array) ($_POST['p'] ?? []);
             ksort($posted, SORT_NUMERIC);
-            foreach ($posted as $p) {
+            foreach ($posted as $i => $p) {
+                $was = $rows[$i] ?? [];
                 if (!empty($p['delete'])) {
-                    if (!empty($p['image']) && is_file(UPLOAD_DIR . '/' . basename($p['image']))) {
-                        @unlink(UPLOAD_DIR . '/' . basename($p['image']));
+                    if (!empty($was['image']) && is_file(UPLOAD_DIR . '/' . basename($was['image']))) {
+                        @unlink(UPLOAD_DIR . '/' . basename($was['image']));
                     }
                     continue;
                 }
@@ -76,14 +85,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     'price_before' => $num($p['price_before'] ?? ''),
                     'price_after'  => $num($p['price_after'] ?? ''),
                     'description'  => mb_substr(trim((string) ($p['description'] ?? '')), 0, 600),
-                    'image'        => basename((string) ($p['image'] ?? '')),
-                ];
-                // The maker's mark rides along untouched: it is not editable
-                // here, and rebuilding the row from the form would drop it.
-                if (($p['brand'] ?? '') !== '') {
-                    $out[array_key_last($out)]['brand']   = basename((string) $p['brand']);
-                    $out[array_key_last($out)]['brand_w'] = (float) ($p['brand_w'] ?? 72);
-                }
+                    'ink'          => ($p['ink'] ?? '') === 'light' ? 'light' : 'dark',
+                ] + $was;
             }
             products_save($out);
             flash('הקטלוג נשמר (' . count($out) . ' מוצרים).');
@@ -166,6 +169,7 @@ flash();
     <thead><tr>
       <th>תמונה</th><th>שם מוצר</th><th>מק״ט</th><th>מחיר לפני</th><th>מחיר אחרי</th>
       <th>תיאור <span class="hint">לגוגל ולחלון המוצר</span></th>
+      <th class="mid">כיתוב <span class="hint">על תמונה כהה</span></th>
       <th class="mid">
         <a href="?sort=<?= $byViews ? '' : 'views' ?>#views" class="sort<?= $byViews ? ' is-on' : '' ?>"
            title="<?= $byViews ? 'חזרה לסדר הדף' : 'מיון מהנצפה ביותר' ?>">צפיות <?= $byViews ? '▾' : '↕' ?></a>
@@ -179,14 +183,8 @@ flash();
         <td class="thumb">
           <?php if (!empty($r['image'])): ?>
             <img src="../<?= e(upload_url($r['image'])) ?>" alt="" loading="lazy" width="56" height="54">
-            <input type="hidden" name="p[<?= $i ?>][image]" value="<?= e($r['image']) ?>">
           <?php else: ?>
             <span class="noimg">אין</span>
-            <input type="hidden" name="p[<?= $i ?>][image]" value="">
-          <?php endif; ?>
-          <?php if (!empty($r['brand'])): ?>
-            <input type="hidden" name="p[<?= $i ?>][brand]" value="<?= e($r['brand']) ?>">
-            <input type="hidden" name="p[<?= $i ?>][brand_w]" value="<?= e((string) ($r['brand_w'] ?? 72)) ?>">
           <?php endif; ?>
         </td>
         <td><input name="p[<?= $i ?>][name]" value="<?= e($r['name'] ?? '') ?>"></td>
@@ -195,6 +193,12 @@ flash();
         <td><input name="p[<?= $i ?>][price_after]"  value="<?= e((string) ($r['price_after'] ?? '')) ?>" size="7" inputmode="numeric"></td>
         <td><textarea name="p[<?= $i ?>][description]" rows="2" maxlength="600"
                       placeholder="2-3 משפטים על גוף התאורה — זה מה שגוגל מציג"><?= e((string) ($r['description'] ?? '')) ?></textarea></td>
+        <td class="mid">
+          <select name="p[<?= $i ?>][ink]" title="צבע השם והמחירים על גבי התמונה">
+            <option value="dark"<?= ($r['ink'] ?? 'dark') === 'dark' ? ' selected' : '' ?>>כהה</option>
+            <option value="light"<?= ($r['ink'] ?? '') === 'light' ? ' selected' : '' ?>>לבן</option>
+          </select>
+        </td>
         <td class="mid views" title="<?= e($views[$r['slug']]['last'] ?? '') ? 'אחרונה: ' . e($views[$r['slug']]['last']) : 'טרם נפתח' ?>"><?= $viewOf($r) ?: '—' ?></td>
         <td class="mid"><input type="checkbox" name="p[<?= $i ?>][delete]" value="1"></td>
       </tr>

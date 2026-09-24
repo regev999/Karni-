@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/image.php';
+
 const IMAGE_TYPES = [
     IMAGETYPE_JPEG => 'jpg', IMAGETYPE_PNG => 'png', IMAGETYPE_GIF => 'gif',
     IMAGETYPE_WEBP => 'webp', IMAGETYPE_AVIF => 'avif',
@@ -90,10 +92,14 @@ function catalog_add_images(array $rows, array $uploads): array
                 @unlink(UPLOAD_DIR . '/' . $old);
             }
             $rows[$index[$key]]['image'] = $file;
+            $rows[$index[$key]]['ink'] = patch_ink(UPLOAD_DIR . '/' . $file, INK_CAPTION);
+            $rows[$index[$key]]['brand_ink'] = patch_ink(UPLOAD_DIR . '/' . $file, INK_BRAND);
             continue;
         }
         $rows[] = ['name' => $name, 'sku' => '', 'price_before' => null,
-                   'price_after' => null, 'image' => $file];
+                   'price_after' => null, 'image' => $file,
+                   'ink' => patch_ink(UPLOAD_DIR . '/' . $file, INK_CAPTION),
+                   'brand_ink' => patch_ink(UPLOAD_DIR . '/' . $file, INK_BRAND)];
         $index[$key] = array_key_last($rows);
     }
     return $rows;

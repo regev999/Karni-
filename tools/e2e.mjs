@@ -78,12 +78,26 @@ ok(merged.some(p => p.name === 'Romeo Moon' && p.price_before === 4802), 'curren
 
 // 5b. Saving the table by hand must not drop what the table does not show.
 const marked = c => c.filter(r => r.brand).length;
+const white = c => c.filter(r => r.ink === 'light').length;
 const beforeSave = marked(merged);
+const beforeWhite = white(merged);
 await page.goto(`${BASE}/admin/products.php`);
 await page.click('form:has(textarea) button[type=submit]');
 await page.waitForURL('**/products.php');
+// PHP drops form fields past max_input_vars without a word, so a catalogue this
+// size is exactly where a save starts losing products silently.
+ok(catalogue().length === merged.length,
+   `a hand save keeps every product (${merged.length})`);
 ok(beforeSave > 0 && marked(catalogue()) === beforeSave,
    `a hand save keeps every maker's mark (${beforeSave})`);
+ok(beforeWhite > 0 && white(catalogue()) === beforeWhite,
+   `and every caption the designer set in white (${beforeWhite})`);
+
+// The caption colour is the one thing about a photo the admin can overrule.
+await page.selectOption('tbody tr:first-child select[name$="[ink]"]', 'light');
+await page.click('form:has(textarea) button[type=submit]');
+await page.waitForURL('**/products.php');
+ok(catalogue()[0].ink === 'light', 'the admin can set a caption to white');
 
 // 6. With no number set, every button falls back to the phone in the footer.
 await page.goto(`${BASE}/`);

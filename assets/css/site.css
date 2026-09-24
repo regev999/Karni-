@@ -177,16 +177,39 @@ a { color: inherit; }
    same rectangle, while the wrapper alone is what moves. */
 .card__meta { position: absolute; inset: 0; pointer-events: none; }
 
-/* The photo sits centred in the upper part of the card, clear of the caption.
-   The box is given explicitly: `width: auto` on a replaced element falls back
-   to the file's own pixel width, not to the left/right offsets. */
+/* A wash in the caption's own colour, under the caption only. The artboard has
+   none - it is a mockup, read at full size on a desk - but the same tiles on a
+   phone in daylight are a different proposition, and on a handful of photos the
+   designer's white lands on a pale wall. --scrim is how much of it there is;
+   at 0 the card is the artboard exactly. */
+.card__meta::before {
+  --scrim: .6;
+  content: "";
+  position: absolute;
+  inset: calc(150 * var(--u)) 0 0 0;
+  background: linear-gradient(to top,
+              rgb(255 255 255 / var(--scrim)) 42%, rgb(255 255 255 / 0));
+}
+.card--dark { color: #fff; }
+.card--dark .card__meta::before {
+  --scrim: .45;
+  background: linear-gradient(to top, rgb(0 0 0 / var(--scrim)) 42%, rgb(0 0 0 / 0));
+}
+
+/* The photo fills the card, as the artboard has it, so a product shot in a room
+   reads as one picture rather than as a grey square floating on white.
+
+   That puts the caption and the maker's mark on the photograph, so each product
+   carries the colour its own needs - measured, when the photo is taken in, over
+   the rectangle each actually covers. The gradient gives the words a ground:
+   over a product cut out on white it is white on white and invisible, and over
+   a lit room it does the work. */
 .card__img {
   position: absolute;
-  left: calc(10 * var(--u));
-  top: calc(10 * var(--u));
-  width: calc(284 * var(--u));
-  height: calc(168 * var(--u));
-  object-fit: contain;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* The maker's mark, lifted out of the tile so every card hangs it off the same
@@ -195,6 +218,7 @@ a { color: inherit; }
    them all down together, the artboard drawing them larger than the card needs. */
 .card__brand {
   --brand-s: .65;
+  color: #1a1a1a;                /* the marks are drawn in currentColor */
   position: absolute;
   top: calc(10 * var(--u));
   right: calc(10 * var(--u));
@@ -202,6 +226,7 @@ a { color: inherit; }
   height: auto;
   pointer-events: none;
 }
+.card--mark-light .card__brand { color: #fff; }
 
 .card__name, .card__sku, .card__old, .card__new {
   position: absolute;

@@ -70,7 +70,7 @@ seo_refresh_static();
   <?php else: ?>
   <div class="grid">
     <?php foreach ($products as $i => $p): $img = $p['image'] ?? ''; ?>
-    <a class="card" href="?p=<?= e(rawurlencode($p['slug'])) ?>"
+    <a class="card<?= ($p['ink'] ?? '') === 'light' ? ' card--dark' : '' ?><?= ($p['brand_ink'] ?? '') === 'light' ? ' card--mark-light' : '' ?>" href="?p=<?= e(rawurlencode($p['slug'])) ?>"
             data-slug="<?= e($p['slug']) ?>"
             data-name="<?= e($p['name'] ?? '') ?>" data-sku="<?= e($p['sku'] ?? '') ?>"
             data-before="<?= e((string) ($p['price_before'] ?? '')) ?>"
