@@ -122,7 +122,8 @@ ok((await page.locator('link[rel=icon]').getAttribute('href')).includes('assets/
 
 // 6. With no number set, every button falls back to the phone in the footer.
 await page.goto(`${BASE}/`);
-ok((await page.locator('.wa--cta').getAttribute('href')).startsWith('tel:'),
+// Two of these now: one under the steps and one above the footer.
+ok((await page.locator('#lead .wa--cta').getAttribute('href')).startsWith('tel:'),
    'with no WhatsApp number the buttons dial the phone instead');
 
 // 7. The number comes from the settings, and the links are built from it.
@@ -134,10 +135,12 @@ ok((await page.locator('code').first().textContent()).includes('wa.me/9725012345
    'a local number is read as an international one');
 
 await page.goto(`${BASE}/`);
-const cta = decodeURIComponent(await page.locator('.wa--cta').getAttribute('href'));
+const cta = decodeURIComponent(await page.locator('#lead .wa--cta').getAttribute('href'));
 ok(cta.startsWith('https://wa.me/972501234567?text='), `the CTA goes to WhatsApp (${cta.slice(0, 38)})`);
-ok(cta.includes('המכירה מתצוגה'), 'the CTA opens WhatsApp with a message already written');
+ok(cta.includes('קרני תכלת'), 'the CTA opens WhatsApp with a message already written');
 ok(await page.locator('.wa--float').isVisible(), 'the floating WhatsApp bubble is on the page');
+const steps = decodeURIComponent(await page.locator('.wa--steps').getAttribute('href'));
+ok(steps === cta, 'the button under the steps opens the same message');
 ok((await page.locator('.lform, .foot form, .send').count()) === 0, 'no lead form is left anywhere');
 
 // 8. The product pop-up.

@@ -64,6 +64,11 @@ seo_refresh_static();
     </li>
     <?php endforeach; ?>
   </ol>
+  <a class="wa wa--cta wa--steps" href="<?= e(wa_link(general_message())) ?>"
+     target="_blank" rel="noopener">
+    <span class="wa__mark" aria-hidden="true"><?= wa_mark() ?></span>
+    <span class="wa__label">לשיחה עם נציג <span class="wa__arrow" aria-hidden="true">&lt;</span></span>
+  </a>
 </section>
 
 <section class="catalog" id="catalog">
@@ -127,7 +132,7 @@ seo_refresh_static();
   <img class="lead__dolly" src="<?= e($rev('assets/img/dolly.webp')) ?>" alt="" aria-hidden="true" width="375" height="647">
   <h2 class="lead__title">לרכישה שלחו הודעה בווטסאפ</h2>
   <p class="lead__sub">ונציג מטעמנו יחזור אליכם בהקדם</p>
-  <a class="wa wa--cta" href="<?= e(wa_link('היי, אני מעוניין/ת בפרטים על המכירה מתצוגה')) ?>"
+  <a class="wa wa--cta" href="<?= e(wa_link(general_message())) ?>"
      target="_blank" rel="noopener">
     <span class="wa__mark" aria-hidden="true"><?= wa_mark() ?></span>
     <span class="wa__label">לשיחה עם נציג <span class="wa__arrow" aria-hidden="true">&lt;</span></span>
@@ -141,9 +146,7 @@ seo_refresh_static();
     <a href="tel:<?= e(preg_replace('/\D/', '', $s['phone'])) ?>"><?= e($s['phone']) ?></a>
     <span><?= e($s['address']) ?></span>
   </address>
-  <?php // Last in the source so the phone's stacked footer ends on it; on the
-        // desktop band it is placed by the stylesheet and the order is moot. ?>
-  <p class="foot__fine">ט.ל.ח</p>
+  <p class="foot__terms"><?= e(sale_terms()) ?></p>
 </footer>
 
 <?php
@@ -187,12 +190,13 @@ $cPct    = $current ? product_discount($current) : null;
         <span class="wa__label">שליחת הודעה בוואטסאפ <span class="wa__arrow" aria-hidden="true">&lt;</span></span>
       </a>
       <p class="pm__or">או חייגו <a href="tel:<?= e(preg_replace('/\D/', '', $s['phone'])) ?>"><?= e($s['phone']) ?></a></p>
-      <p class="pm__fine"><?= e(($cSku !== '' ? 'המק״ט ' . $cSku . ' מצורף להודעה · ' : '') . 'אין חיוב ואין רכישה באתר · ט.ל.ח') ?></p>
+      <p class="pm__fine"><?= e(($cSku !== '' ? 'המק״ט ' . $cSku . ' מצורף להודעה · ' : '') . 'אין חיוב ואין רכישה באתר') ?></p>
+      <p class="pm__terms"><?= e(sale_terms()) ?></p>
     </div>
   </div>
 </dialog>
 
-<a class="wa wa--float" href="<?= e(wa_link('היי, אני מעוניין/ת בפרטים על המכירה מתצוגה')) ?>"
+<a class="wa wa--float" href="<?= e(wa_link(general_message())) ?>"
    target="_blank" rel="noopener" aria-label="שליחת הודעה בוואטסאפ"><?= wa_mark() ?></a>
 
 <script src="<?= e($rev('assets/js/site.js')) ?>" defer></script>

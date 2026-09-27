@@ -108,7 +108,7 @@ a { color: inherit; }
 /* =========================================================================== */
 /* How it works                                                                */
 /* =========================================================================== */
-.steps { position: relative; height: calc(890 * var(--u)); background: #fff; }
+.steps { position: relative; height: calc(990 * var(--u)); background: #fff; --lead-s: .7; }
 .steps__list { margin: 0; padding: 0; list-style: none; }
 .step { position: static; }
 .step > * { position: absolute; margin: 0; }
@@ -135,6 +135,10 @@ a { color: inherit; }
 .step--2 .step__title { top: calc(361.3 * var(--u)); }
 .step--3 .step__title { top: calc(632.9 * var(--u)); }
 .step--2 .step__text  { top: calc(416.05 * var(--u)); }
+
+/* The same button as above the footer, under the third step, so it is in reach
+   before the catalogue starts. */
+.steps .wa--steps { position: absolute; top: calc(830 * var(--u)); right: auto; left: calc(596.8 * var(--u)); }
 
 /* =========================================================================== */
 /* Product grid                                                                */
@@ -290,7 +294,7 @@ a { color: inherit; }
 /* =========================================================================== */
 /* Footer: brand and contact                                                   */
 /* =========================================================================== */
-.foot { position: relative; z-index: 1; height: calc(253.4 * var(--u)); background: var(--dark); color: #fff; }
+.foot { position: relative; z-index: 1; height: calc(293.4 * var(--u)); background: var(--dark); color: #fff; }
 
 .foot__brand { position: absolute; top: calc(126.9 * var(--u)); left: calc(56.1 * var(--u));
                width: calc(316.1 * var(--u)); color: #fff; }
@@ -303,14 +307,14 @@ a { color: inherit; }
 .foot__contact { position: absolute; top: calc(137.5 * var(--u));
                  right: max(calc(51 * var(--u)), 128px);
                  font-style: normal; font-size: calc(33 * var(--u)); text-align: right; }
-/* Under the wordmark, small and quiet: the disclaimer belongs in the footer but
-   not in the same breath as the brand. */
-.foot__fine { position: absolute; bottom: calc(10 * var(--u)); left: calc(56.1 * var(--u));
-              margin: 0; font-size: calc(17 * var(--u)); color: #8b9299; }
-
 .foot__contact a { text-decoration: none; }
 .foot__contact a:hover { text-decoration: underline; }
 .foot__contact span { display: block; }
+
+/* Along the bottom edge, in 40 added to the artboard's footer so it clears the
+   brand and the contact above it. */
+.foot__terms { position: absolute; bottom: calc(18 * var(--u)); left: 0; right: 0; margin: 0;
+               text-align: center; font-size: calc(15 * var(--u)); color: #a7aeb4; }
 
 /* =========================================================================== */
 /* Product card: the affordance that it opens a pop-up                         */
@@ -437,10 +441,16 @@ html.is-locked, html.is-locked body { overflow: hidden; }
 .pm {
   width: calc(1080 * var(--u));
   max-width: calc(100vw - 40px);
-  /* 520 x 497.6 is the product tile's own 304:291. Matching it means the photo
-     fills its half without being cropped, so the window shows what the card
-     showed - including the corner the maker's mark was measured against. */
-  height: calc(497.6 * var(--u));
+  /* 520 x 497.6 is the product tile's own 304:291, so the photo fills its half
+     without being cropped and the window shows what the card showed - including
+     the corner the maker's mark was measured against. A floor rather than a
+     fixed height: a product with a long note or an extra line of small print
+     grows the body past it, and a window that fits its contents is worth the
+     three percent of width the photo then loses. */
+  /* `auto` would fill: a dialog is absolutely positioned with top and bottom
+     both set, and auto then resolves to the space between them. */
+  height: fit-content;
+  min-height: calc(497.6 * var(--u));
   max-height: calc(100vh - 40px);
   padding: 0;
   border: 0;
@@ -520,6 +530,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
 
 .pm__fine { margin: auto 0 0; padding-top: calc(18 * var(--u));
             font-size: calc(15 * var(--u)); color: #a7aeb4; }
+.pm__terms { margin: calc(6 * var(--u)) 0 0; font-size: calc(15 * var(--u)); color: #a7aeb4; }
 
 /* ===========================================================================
    Narrow screens.
@@ -578,6 +589,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .step__title { font-size: clamp(19px, 5vw, 26px); line-height: 1.25; }
   .step__text  { font-size: clamp(15px, 4vw, 19px); line-height: 1.35; margin-top: 4px; }
   .step__text span { display: block; }
+  .steps .wa--steps { position: static; }
 
   /* --- product grid --- */
   .catalog { padding: 36px 0 44px; }
@@ -612,7 +624,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .foot { height: auto; padding: 34px 22px 112px; }
   .foot__brand { position: static; width: min(230px, 62vw); margin: 34px 0 0; }
   .foot__contact { position: static; margin-top: 18px; font-size: 18px; }
-  .foot__fine { position: static; margin-top: 14px; font-size: 14px; }
+  .foot__terms { position: static; margin-top: 18px; text-align: right; font-size: 13px; }
 
   /* --- pop-up becomes a bottom sheet --- */
   .pm {
@@ -668,7 +680,8 @@ html.is-locked, html.is-locked body { overflow: hidden; }
     font-size: 0;
   }
   .pm__or a { font-size: 17px; }
-  .pm__fine { margin: 14px 0 0; padding: 0 0 16px; font-size: 13px; }
+  .pm__fine { margin: 14px 0 0; padding: 0; font-size: 13px; }
+  .pm__terms { margin: 4px 0 0; padding: 0 0 16px; font-size: 13px; }
 }
 
 @media (max-width: 559px) {

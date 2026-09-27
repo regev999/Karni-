@@ -10,20 +10,26 @@ const OUT = 'tools/out';
 const DESIGN = `${OUT}/design.png`;
 
 // `shift` aligns a section that sits below the product grid, whose height
-// depends on how many rows the catalogue has.
+// depends on how many rows the catalogue has. 'anchor' means the build's own
+// band is found on the page and lined up with the artboard's, which survives
+// the page growing anywhere above it or the band itself changing height.
 //
-// Three sections are expected to differ from the artboard rather than match it:
+// Four sections are expected to differ from the artboard rather than match it:
 // `grid`, because the page packs the rows the design leaves half-empty; `lead`,
-// whose type and button the client asked to be taken down 30%; and `footer`,
-// whose contact block is held clear of the floating button the artboard draws
-// on the first screen and never in the footer.
+// whose type and button the client asked to be taken down 30%; `footer`, which
+// is 40 taller than the artboard's to carry the sale's small print, and whose
+// contact block is held clear of the floating button the artboard draws on the
+// first screen and never in the footer; and `steps`, which now ends on a
+// WhatsApp button of its own.
 const SECTIONS = [
   ['hero',    0,     900,   0],
   ['steps',   900,   1650,  0],
-  ['grid1',   1790,  2560,  0],
-  ['grid2',   1790,  3000,  0],
-  ['lead',    13134, 13574, 'bottom'],
-  ['footer',  13574, 13827, 'bottom'],
+  // The page carries a WhatsApp button under the steps that the artboard does
+  // not, which pushes the catalogue down by 100.
+  ['grid1',   1881,  2560,  100],
+  ['grid2',   1881,  3000,  100],
+  ['lead',    13134, 13574, 'anchor', '.lead'],
+  ['footer',  13574, 13827, 'anchor', '.foot'],
 ];
 
 const browser = await chromium.launch({
@@ -79,6 +85,12 @@ await page.evaluate(async () => {
 });
 
 const height = await page.evaluate(() => document.documentElement.scrollHeight);
+// Where the build puts each anchored band, so the diff can line it up with the
+// artboard's rather than guess from the page's total height.
+const tops = await page.evaluate(sels => Object.fromEntries(sels.map(sel => {
+  const el = document.querySelector(sel);
+  return [sel, el ? Math.round(el.getBoundingClientRect().top + scrollY) : null];
+})), [...new Set(SECTIONS.map(s => s[4]).filter(Boolean))]);
 await page.screenshot({ path: `${OUT}/build.png`, fullPage: true, timeout: 180000 });
 await browser.close();
 
@@ -96,10 +108,9 @@ function crop(src, y0, y1) {
   return out;
 }
 
-const delta = build.height - design.height;
 let worst = 0;
-for (const [name, y0, y1, shift] of SECTIONS) {
-  const off = shift === 'bottom' ? delta : (shift || 0);
+for (const [name, y0, y1, shift, anchor] of SECTIONS) {
+  const off = shift === 'anchor' ? tops[anchor] - y0 : (shift || 0);
   if (y1 > design.height || y1 + off > build.height) { console.log(`${name.padEnd(8)} out of range`); continue; }
   const a = crop(design, y0, y1), b = crop(build, y0 + off, y1 + off);
   const diff = new PNG({ width: a.width, height: a.height });
