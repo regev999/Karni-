@@ -97,10 +97,20 @@ function product_discount(array $p): ?int
 }
 
 /** What the WhatsApp message says when it opens, so nobody has to type a SKU. */
+/**
+ * What the floating bubble and the button above the footer open with. It is
+ * written as the customer, since they are the one who sends it, and ends on
+ * an empty line for the product details.
+ */
+function general_message(): string
+{
+    return "היי קרני תכלת, אשמח לעזרה.\nפרטי המוצר/ים: ";
+}
+
 function product_message(?array $p, array $s): string
 {
     if (!$p) {
-        return 'היי, אני מעוניין/ת בפרטים על המכירה מתצוגה';
+        return general_message();
     }
     return 'היי, אני מעוניין/ת ב-' . $p['name']
         . ($p['sku'] !== '' ? ' (מק״ט ' . $p['sku'] . ')' : '')

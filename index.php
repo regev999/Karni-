@@ -127,7 +127,7 @@ seo_refresh_static();
   <img class="lead__dolly" src="<?= e($rev('assets/img/dolly.webp')) ?>" alt="" aria-hidden="true" width="375" height="647">
   <h2 class="lead__title">לרכישה שלחו הודעה בווטסאפ</h2>
   <p class="lead__sub">ונציג מטעמנו יחזור אליכם בהקדם</p>
-  <a class="wa wa--cta" href="<?= e(wa_link('היי, אני מעוניין/ת בפרטים על המכירה מתצוגה')) ?>"
+  <a class="wa wa--cta" href="<?= e(wa_link(general_message())) ?>"
      target="_blank" rel="noopener">
     <span class="wa__mark" aria-hidden="true"><?= wa_mark() ?></span>
     <span class="wa__label">לשיחה עם נציג <span class="wa__arrow" aria-hidden="true">&lt;</span></span>
@@ -189,7 +189,7 @@ $cPct    = $current ? product_discount($current) : null;
   </div>
 </dialog>
 
-<a class="wa wa--float" href="<?= e(wa_link('היי, אני מעוניין/ת בפרטים על המכירה מתצוגה')) ?>"
+<a class="wa wa--float" href="<?= e(wa_link(general_message())) ?>"
    target="_blank" rel="noopener" aria-label="שליחת הודעה בוואטסאפ"><?= wa_mark() ?></a>
 
 <script src="<?= e($rev('assets/js/site.js')) ?>" defer></script>
