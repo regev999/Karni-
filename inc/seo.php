@@ -96,6 +96,12 @@ function product_discount(array $p): ?int
         : null;
 }
 
+/** The small print under the footer and in the pop-up. */
+function sale_terms(): string
+{
+    return 'המבצע בתוקף עד גמר המלאי. החברה רשאית להפסיק את המבצע עם סיום המלאי.';
+}
+
 /** What the floating bubble and the button above the footer open with. */
 function general_message(): string
 {

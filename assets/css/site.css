@@ -290,7 +290,7 @@ a { color: inherit; }
 /* =========================================================================== */
 /* Footer: brand and contact                                                   */
 /* =========================================================================== */
-.foot { position: relative; z-index: 1; height: calc(253.4 * var(--u)); background: var(--dark); color: #fff; }
+.foot { position: relative; z-index: 1; height: calc(293.4 * var(--u)); background: var(--dark); color: #fff; }
 
 .foot__brand { position: absolute; top: calc(126.9 * var(--u)); left: calc(56.1 * var(--u));
                width: calc(316.1 * var(--u)); color: #fff; }
@@ -306,6 +306,11 @@ a { color: inherit; }
 .foot__contact a { text-decoration: none; }
 .foot__contact a:hover { text-decoration: underline; }
 .foot__contact span { display: block; }
+
+/* Along the bottom edge, in 40 added to the artboard's footer so it clears the
+   brand and the contact above it. */
+.foot__terms { position: absolute; bottom: calc(18 * var(--u)); left: 0; right: 0; margin: 0;
+               text-align: center; font-size: calc(15 * var(--u)); color: #a7aeb4; }
 
 /* =========================================================================== */
 /* Product card: the affordance that it opens a pop-up                         */
@@ -515,6 +520,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
 
 .pm__fine { margin: auto 0 0; padding-top: calc(18 * var(--u));
             font-size: calc(15 * var(--u)); color: #a7aeb4; }
+.pm__terms { margin: calc(6 * var(--u)) 0 0; font-size: calc(15 * var(--u)); color: #a7aeb4; }
 
 /* ===========================================================================
    Narrow screens.
@@ -607,6 +613,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .foot { height: auto; padding: 34px 22px 112px; }
   .foot__brand { position: static; width: min(230px, 62vw); margin: 34px 0 0; }
   .foot__contact { position: static; margin-top: 18px; font-size: 18px; }
+  .foot__terms { position: static; margin-top: 18px; text-align: right; font-size: 13px; }
 
   /* --- pop-up becomes a bottom sheet --- */
   .pm {
@@ -662,7 +669,8 @@ html.is-locked, html.is-locked body { overflow: hidden; }
     font-size: 0;
   }
   .pm__or a { font-size: 17px; }
-  .pm__fine { margin: 14px 0 0; padding: 0 0 16px; font-size: 13px; }
+  .pm__fine { margin: 14px 0 0; padding: 0; font-size: 13px; }
+  .pm__terms { margin: 4px 0 0; padding: 0 0 16px; font-size: 13px; }
 }
 
 @media (max-width: 559px) {
