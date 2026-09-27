@@ -303,6 +303,11 @@ a { color: inherit; }
 .foot__contact { position: absolute; top: calc(137.5 * var(--u));
                  right: max(calc(51 * var(--u)), 128px);
                  font-style: normal; font-size: calc(33 * var(--u)); text-align: right; }
+/* Under the wordmark, small and quiet: the disclaimer belongs in the footer but
+   not in the same breath as the brand. */
+.foot__fine { position: absolute; bottom: calc(10 * var(--u)); left: calc(56.1 * var(--u));
+              margin: 0; font-size: calc(17 * var(--u)); color: #8b9299; }
+
 .foot__contact a { text-decoration: none; }
 .foot__contact a:hover { text-decoration: underline; }
 .foot__contact span { display: block; }
@@ -607,6 +612,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .foot { height: auto; padding: 34px 22px 112px; }
   .foot__brand { position: static; width: min(230px, 62vw); margin: 34px 0 0; }
   .foot__contact { position: static; margin-top: 18px; font-size: 18px; }
+  .foot__fine { position: static; margin-top: 14px; font-size: 14px; }
 
   /* --- pop-up becomes a bottom sheet --- */
   .pm {

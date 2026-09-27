@@ -141,6 +141,9 @@ seo_refresh_static();
     <a href="tel:<?= e(preg_replace('/\D/', '', $s['phone'])) ?>"><?= e($s['phone']) ?></a>
     <span><?= e($s['address']) ?></span>
   </address>
+  <?php // Last in the source so the phone's stacked footer ends on it; on the
+        // desktop band it is placed by the stylesheet and the order is moot. ?>
+  <p class="foot__fine">ט.ל.ח</p>
 </footer>
 
 <?php
@@ -184,7 +187,7 @@ $cPct    = $current ? product_discount($current) : null;
         <span class="wa__label">שליחת הודעה בוואטסאפ <span class="wa__arrow" aria-hidden="true">&lt;</span></span>
       </a>
       <p class="pm__or">או חייגו <a href="tel:<?= e(preg_replace('/\D/', '', $s['phone'])) ?>"><?= e($s['phone']) ?></a></p>
-      <p class="pm__fine"><?= e(($cSku !== '' ? 'המק״ט ' . $cSku . ' מצורף להודעה · ' : '') . 'אין חיוב ואין רכישה באתר') ?></p>
+      <p class="pm__fine"><?= e(($cSku !== '' ? 'המק״ט ' . $cSku . ' מצורף להודעה · ' : '') . 'אין חיוב ואין רכישה באתר · ט.ל.ח') ?></p>
     </div>
   </div>
 </dialog>

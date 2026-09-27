@@ -79,7 +79,7 @@
     // message, so the person sending it types nothing.
     pm.querySelector('.wa--pm').href = d.wa || '';
     pm.querySelector('.pm__fine').textContent =
-      (d.sku ? 'המק״ט ' + d.sku + ' מצורף להודעה · ' : '') + 'אין חיוב ואין רכישה באתר';
+      (d.sku ? 'המק״ט ' + d.sku + ' מצורף להודעה · ' : '') + 'אין חיוב ואין רכישה באתר · ט.ל.ח';
   }
 
   // One count per product per browser session: enough to tell which products
