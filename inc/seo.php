@@ -96,11 +96,23 @@ function product_discount(array $p): ?int
         : null;
 }
 
+/** The small print under the footer and in the pop-up. */
+function sale_terms(): string
+{
+    return 'המבצע בתוקף עד גמר המלאי. החברה רשאית להפסיק את המבצע עם סיום המלאי.';
+}
+
+/** What the floating bubble and the button above the footer open with. */
+function general_message(): string
+{
+    return 'הגעתם לקרני תכלת, נשמח לעזור. אנא השאירו את פרטי המוצר/ים ונציג יחזור אליכם בהקדם.';
+}
+
 /** What the WhatsApp message says when it opens, so nobody has to type a SKU. */
 function product_message(?array $p, array $s): string
 {
     if (!$p) {
-        return 'היי, אני מעוניין/ת בפרטים על המכירה מתצוגה';
+        return general_message();
     }
     return 'היי, אני מעוניין/ת ב-' . $p['name']
         . ($p['sku'] !== '' ? ' (מק״ט ' . $p['sku'] . ')' : '')
