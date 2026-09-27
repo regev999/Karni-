@@ -64,6 +64,11 @@ seo_refresh_static();
     </li>
     <?php endforeach; ?>
   </ol>
+  <a class="wa wa--cta wa--steps" href="<?= e(wa_link(general_message())) ?>"
+     target="_blank" rel="noopener">
+    <span class="wa__mark" aria-hidden="true"><?= wa_mark() ?></span>
+    <span class="wa__label">לשיחה עם נציג <span class="wa__arrow" aria-hidden="true">&lt;</span></span>
+  </a>
 </section>
 
 <section class="catalog" id="catalog">

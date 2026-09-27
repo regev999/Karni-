@@ -108,7 +108,7 @@ a { color: inherit; }
 /* =========================================================================== */
 /* How it works                                                                */
 /* =========================================================================== */
-.steps { position: relative; height: calc(890 * var(--u)); background: #fff; }
+.steps { position: relative; height: calc(990 * var(--u)); background: #fff; --lead-s: .7; }
 .steps__list { margin: 0; padding: 0; list-style: none; }
 .step { position: static; }
 .step > * { position: absolute; margin: 0; }
@@ -135,6 +135,10 @@ a { color: inherit; }
 .step--2 .step__title { top: calc(361.3 * var(--u)); }
 .step--3 .step__title { top: calc(632.9 * var(--u)); }
 .step--2 .step__text  { top: calc(416.05 * var(--u)); }
+
+/* The same button as above the footer, under the third step, so it is in reach
+   before the catalogue starts. */
+.steps .wa--steps { position: absolute; top: calc(830 * var(--u)); right: auto; left: calc(596.8 * var(--u)); }
 
 /* =========================================================================== */
 /* Product grid                                                                */
@@ -579,6 +583,7 @@ html.is-locked, html.is-locked body { overflow: hidden; }
   .step__title { font-size: clamp(19px, 5vw, 26px); line-height: 1.25; }
   .step__text  { font-size: clamp(15px, 4vw, 19px); line-height: 1.35; margin-top: 4px; }
   .step__text span { display: block; }
+  .steps .wa--steps { position: static; }
 
   /* --- product grid --- */
   .catalog { padding: 36px 0 44px; }
