@@ -261,12 +261,14 @@ a { color: inherit; }
 .card__old i { font-style: normal; font-size: calc(14 * var(--u)); }
 .card__new i { font-style: normal; font-size: calc(16 * var(--u)); }
 
-/* The struck-through "before" price: one fixed red stroke, as in the design. */
+/* The struck-through "before" price: the design's red stroke, run from the first
+   digit to just past the last, so 2,969 and 13,710 are crossed out alike. The
+   artboard's stroke was a fixed 48.65 wide - four digits run together. */
 .card__old s {
   position: absolute;
   left: calc(12.83 * var(--u));
+  right: calc(-4.5 * var(--u));
   top: calc(8.05 * var(--u));
-  width: calc(48.65 * var(--u));
   height: calc(12.12 * var(--u));
   background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48.65 12.12'%3E%3Cpath d='M48.65 0 0 12.12' stroke='%23ff0000' stroke-width='1' fill='none'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
 }

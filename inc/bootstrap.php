@@ -79,10 +79,13 @@ function e(?string $s): string
     return htmlspecialchars((string) $s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-/** Format a price the way the design does: whole shekels, no separators. */
+/**
+ * Format a price in whole shekels, thousands set off by a comma: 2,969 and
+ * 13,710. The design ran them together; the client asked for the comma.
+ */
 function shekel(int|float|null $n): string
 {
-    return $n === null ? '' : (string) (int) round((float) $n);
+    return $n === null ? '' : number_format((int) round((float) $n));
 }
 
 /**

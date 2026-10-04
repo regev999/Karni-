@@ -19,7 +19,9 @@
   var lastCard = null;
   var syncing = false;          // true while the history drives the dialog
 
-  function money(n) { return '₪' + n; }
+  // Thousands set off by a comma, as shekel() does on the server.
+  function amount(n) { return n.toLocaleString('en-US'); }
+  function money(n) { return '₪' + amount(n); }
 
   function cardFor(slug) {
     if (!slug) return null;
@@ -58,11 +60,11 @@
 
     var oldEl = pm.querySelector('.pm__old');
     oldEl.hidden = !before;
-    if (before) oldEl.querySelector('span').textContent = before;
+    if (before) oldEl.querySelector('span').textContent = amount(before);
 
     var newEl = pm.querySelector('.pm__new');
     newEl.hidden = !after;
-    if (after) newEl.querySelector('span').textContent = after;
+    if (after) newEl.querySelector('span').textContent = amount(after);
 
     var save = pm.querySelector('.pm__save');
     save.hidden = !(before && after && before > after);
