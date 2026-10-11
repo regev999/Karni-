@@ -247,10 +247,12 @@ function catalog_apply_sheet(array $rows, array $sheet): array
 
 function catalog_stats(array $rows): array
 {
-    $withImage = $withPrice = 0;
+    $withImage = $withPrice = $soldOut = 0;
     foreach ($rows as $r) {
         if (!empty($r['image'])) { $withImage++; }
         if (!empty($r['price_after'])) { $withPrice++; }
+        if (!empty($r['sold_out'])) { $soldOut++; }
     }
-    return ['total' => count($rows), 'images' => $withImage, 'prices' => $withPrice];
+    return ['total' => count($rows), 'images' => $withImage, 'prices' => $withPrice,
+            'sold_out' => $soldOut];
 }

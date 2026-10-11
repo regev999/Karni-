@@ -2,7 +2,8 @@
   'use strict';
 
   var pm = document.getElementById('product-modal');
-  var cards = [].slice.call(document.querySelectorAll('.card'));
+  // A sold-out card is a plain box, not a link, and opens nothing.
+  var cards = [].slice.call(document.querySelectorAll('a.card'));
 
   // A plain left click is ours; ctrl/cmd/shift-click and the middle button stay
   // the browser's, because every card is a real link to its own address.

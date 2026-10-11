@@ -75,7 +75,8 @@ function product_by_slug(string $slug): ?array
     }
     foreach (products_indexed() as $p) {
         if ($p['slug'] === $slug) {
-            return $p;
+            // Sold out: no pop-up, so its address is the catalogue page again.
+            return empty($p['sold_out']) ? $p : null;
         }
     }
     return null;
@@ -283,8 +284,10 @@ function seo_jsonld(array $s, ?array $product, string $ogRev): void
         // Google's pattern for a listing page: positions and links here, the
         // full Product on each item's own page.
         $items = [];
-        foreach ($rows as $i => $p) {
-            $items[] = ['@type' => 'ListItem', 'position' => $i + 1, 'url' => product_url($p)];
+        foreach ($rows as $p) {
+            if (empty($p['sold_out'])) {
+                $items[] = ['@type' => 'ListItem', 'position' => count($items) + 1, 'url' => product_url($p)];
+            }
         }
         $graph[] = [
             '@type'           => 'ItemList',
@@ -352,6 +355,9 @@ function seo_refresh_static(): void
     $xml .= '  <url><loc>' . e(abs_url()) . '</loc><lastmod>' . $stamp
           . '</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>' . "\n";
     foreach (products_indexed() as $p) {
+        if (!empty($p['sold_out'])) {
+            continue;
+        }
         $xml .= '  <url><loc>' . e(product_url($p)) . '</loc><lastmod>' . $stamp
               . '</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>' . "\n";
     }

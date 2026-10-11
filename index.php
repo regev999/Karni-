@@ -79,6 +79,13 @@ seo_refresh_static();
   <div class="grid">
     <?php foreach ($products as $i => $p): $img = $p['image'] ?? ''; ?>
     <?php $note = trim((string) ($p['note'] ?? '')); ?>
+    <?php $out = !empty($p['sold_out']); ?>
+    <?php if ($out): ?>
+    <?php // Sold out: still in the grid, but not a link - there is no pop-up to
+          // open and nothing left to ask about. The photo is greyed down to a
+          // pale ground, so the caption is dark whatever the photo called for. ?>
+    <div class="card card--out<?= $note !== '' ? ' card--noted' : '' ?>">
+    <?php else: ?>
     <a class="card<?= ($p['ink'] ?? '') === 'light' ? ' card--dark' : '' ?><?= ($p['brand_ink'] ?? '') === 'light' ? ' card--mark-light' : '' ?><?= $note !== '' ? ' card--noted' : '' ?>" href="?p=<?= e(rawurlencode($p['slug'])) ?>"
             data-slug="<?= e($p['slug']) ?>"
             data-name="<?= e($p['name'] ?? '') ?>" data-sku="<?= e($p['sku'] ?? '') ?>"
@@ -91,6 +98,7 @@ seo_refresh_static();
             data-brand-ink="<?= e((string) ($p['brand_ink'] ?? '')) ?>"
             data-img="<?= e(upload_url($img)) ?>"
             aria-label="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? '')) . ' — לפרטים ויצירת קשר') ?>">
+    <?php endif; ?>
       <?php if ($img): ?>
         <img class="card__img" src="<?= e(upload_url($img)) ?>"
              alt="<?= e(trim(($p['name'] ?? '') . ' ' . ($p['sku'] ?? ''))) ?>"
@@ -117,12 +125,16 @@ seo_refresh_static();
           <span class="card__new"><i>₪</i><?= e(shekel($p['price_after'])) ?></span>
         <?php endif; ?>
       </div>
+      <?php if ($out): ?>
+      <span class="card__out">אזל מהמלאי</span>
+      <?php else: ?>
       <span class="card__go" aria-hidden="true">
         <svg viewBox="1299.3 12496.2 67.6 43.2" width="16" height="10">
           <path d="M1348.50 12503.27 C1349.31 12502.53 1350.12 12501.47 1351.04 12500.88 C1358.32 12496.16 1366.88 12505.17 1360.22 12513.10 C1353.29 12521.34 1343.56 12528.69 1336.39 12536.89 C1333.12 12539.40 1329.29 12539.17 1326.17 12536.54 C1319.29 12528.44 1309.05 12521.07 1302.52 12512.92 C1300.15 12509.98 1299.30 12506.65 1301.32 12503.23 C1303.25 12499.96 1307.55 12498.86 1310.95 12500.42 C1312.47 12501.12 1316.64 12505.33 1318.19 12506.79 C1322.72 12511.08 1326.93 12515.75 1331.45 12520.05 C1337.18 12514.52 1342.58 12508.60 1348.50 12503.27" fill="currentColor"/>
         </svg>
       </span>
-    </a>
+      <?php endif; ?>
+    <?= $out ? '</div>' : '</a>' ?>
     <?php endforeach; ?>
   </div>
   <?php endif; ?>

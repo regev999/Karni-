@@ -28,6 +28,13 @@
     });
   }
 
+  // Grey the row as soon as its box is ticked, so it is clear what saving will do.
+  document.querySelectorAll('input[name$="[sold_out]"]').forEach(function (box) {
+    box.addEventListener('change', function () {
+      box.closest('tr').classList.toggle('is-out', box.checked);
+    });
+  });
+
   var filter = document.getElementById('filter');
   if (filter) {
     filter.addEventListener('input', function () {

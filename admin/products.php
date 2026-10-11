@@ -92,7 +92,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     continue;
                 }
                 $num = static fn($v) => trim((string) $v) === '' ? null : (int) round((float) $v);
-                $out[] = [
+                $row = [
                     'name'         => $name,
                     'sku'          => trim((string) ($p['sku'] ?? '')),
                     'price_before' => $num($p['price_before'] ?? ''),
@@ -100,6 +100,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     'description'  => mb_substr(trim((string) ($p['description'] ?? '')), 0, 600),
                     'ink'          => ($p['ink'] ?? '') === 'light' ? 'light' : 'dark',
                 ] + $was;
+                // An unticked box sends nothing, so the flag is rebuilt from the
+                // post rather than left to $was; only a sold-out row carries it.
+                unset($row['sold_out']);
+                if (!empty($p['sold_out'])) {
+                    $row['sold_out'] = true;
+                }
+                $out[] = $row;
             }
             products_save($out);
             flash('הקטלוג נשמר (' . count($out) . ' מוצרים).');
@@ -141,7 +148,7 @@ $d = static fn(string $k): string => e((string) ($draft[$k] ?? ''));
 layout_head('מוצרים');
 flash();
 ?>
-<h1>מוצרים <span class="muted">(<?= $stats['total'] ?> בקטלוג · <?= $stats['images'] ?> עם תמונה · <?= $stats['prices'] ?> עם מחיר)</span></h1>
+<h1>מוצרים <span class="muted">(<?= $stats['total'] ?> בקטלוג · <?= $stats['images'] ?> עם תמונה · <?= $stats['prices'] ?> עם מחיר<?= $stats['sold_out'] ? ' · ' . $stats['sold_out'] . ' אזלו' : '' ?>)</span></h1>
 
 <div class="cols">
   <form class="card drop" method="post" enctype="multipart/form-data" id="imgform">
@@ -233,11 +240,12 @@ flash();
            title="<?= $byViews ? 'חזרה לסדר הדף' : 'מיון מהנצפה ביותר' ?>">צפיות <?= $byViews ? '▾' : '↕' ?></a>
         <span class="hint">פתיחות הפופ-אפ</span>
       </th>
+      <th class="mid">אזל <span class="hint">לא נפתח בדף</span></th>
       <th>מחיקה</th>
     </tr></thead>
     <tbody>
     <?php foreach ($rows as $i => $r): ?>
-      <tr data-search="<?= e(mb_strtolower(($r['name'] ?? '') . ' ' . ($r['sku'] ?? ''))) ?>">
+      <tr data-search="<?= e(mb_strtolower(($r['name'] ?? '') . ' ' . ($r['sku'] ?? ''))) ?>"<?= !empty($r['sold_out']) ? ' class="is-out"' : '' ?>>
         <td class="thumb">
           <?php if (!empty($r['image'])): ?>
             <img src="../<?= e(upload_url($r['image'])) ?>" alt="" loading="lazy" width="56" height="54">
@@ -258,6 +266,7 @@ flash();
           </select>
         </td>
         <td class="mid views" title="<?= e($views[$r['slug']]['last'] ?? '') ? 'אחרונה: ' . e($views[$r['slug']]['last']) : 'טרם נפתח' ?>"><?= $viewOf($r) ?: '—' ?></td>
+        <td class="mid"><input type="checkbox" name="p[<?= $i ?>][sold_out]" value="1" title="אזל מהמלאי"<?= !empty($r['sold_out']) ? ' checked' : '' ?>></td>
         <td class="mid"><input type="checkbox" name="p[<?= $i ?>][delete]" value="1"></td>
       </tr>
     <?php endforeach; ?>

@@ -106,7 +106,7 @@ const white = c => c.filter(r => r.ink === 'light').length;
 const beforeSave = marked(merged);
 const beforeWhite = white(merged);
 await page.goto(`${BASE}/admin/products.php`);
-await page.click('form:has(textarea) button[type=submit]');
+await page.click('form:has(.grid-table) button[type=submit]');
 await page.waitForURL('**/products.php');
 // PHP drops form fields past max_input_vars without a word, so a catalogue this
 // size is exactly where a save starts losing products silently.
@@ -119,9 +119,44 @@ ok(beforeWhite > 0 && white(catalogue()) === beforeWhite,
 
 // The caption colour is the one thing about a photo the admin can overrule.
 await page.selectOption('tbody tr:first-child select[name$="[ink]"]', 'light');
-await page.click('form:has(textarea) button[type=submit]');
+await page.click('form:has(.grid-table) button[type=submit]');
 await page.waitForURL('**/products.php');
 ok(catalogue()[0].ink === 'light', 'the admin can set a caption to white');
+
+// 5b'. Sold out: still on the page, but not a link, and its pop-up never opens.
+await page.goto(`${BASE}/`);
+const outSlug = await page.locator('.card').first().getAttribute('data-slug');
+await page.goto(`${BASE}/admin/products.php`);
+await page.check('tbody tr:first-child input[name$="[sold_out]"]');
+await page.click('form:has(.grid-table) button[type=submit]');
+await page.waitForURL('**/products.php');
+ok(catalogue()[0].sold_out === true && catalogue().filter(p => p.sold_out).length === 1,
+   'the admin can mark a product sold out');
+ok(await page.locator('h1', { hasText: '1 אזלו' }).isVisible(), 'and the header counts it');
+
+await page.goto(`${BASE}/`);
+const outCard = page.locator('.card').first();
+ok(await outCard.evaluate(el => el.tagName === 'DIV' && !el.hasAttribute('href')), 'a sold-out card is not a link');
+ok((await outCard.locator('.card__out').textContent()) === 'אזל מהמלאי', 'it says it is sold out');
+await outCard.click();
+await page.waitForTimeout(400);
+ok(!(await page.locator('#product-modal').isVisible()) && !page.url().includes('?p='),
+   'clicking it opens nothing');
+await page.goto(`${BASE}/?p=${encodeURIComponent(outSlug)}`);
+await page.waitForTimeout(400);
+ok(!(await page.locator('#product-modal').isVisible()), 'its old address does not open the pop-up either');
+ok((await page.locator('link[rel=canonical]').getAttribute('href')).endsWith('/'),
+   'and points search engines at the catalogue page');
+ok(!(await (await page.request.get(`${BASE}/sitemap.xml`)).text()).includes(`p=${encodeURIComponent(outSlug)}<`),
+   'it leaves the sitemap');
+
+await page.goto(`${BASE}/admin/products.php`);
+await page.uncheck('tbody tr:first-child input[name$="[sold_out]"]');
+await page.click('form:has(.grid-table) button[type=submit]');
+await page.waitForURL('**/products.php');
+ok(!('sold_out' in catalogue()[0]), 'unticking puts it back on sale');
+await page.goto(`${BASE}/`);
+ok(await page.locator('.card').first().evaluate(el => el.tagName === 'A'), 'and its card is a link again');
 
 // 5c. The site icon is uploaded, served, and removable.
 await page.goto(`${BASE}/admin/settings.php`);

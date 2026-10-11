@@ -358,6 +358,28 @@ a { color: inherit; }
    target - so on a touch screen, where there is no hover, it simply stays out
    of the photograph rather than sitting on every card at once. */
 
+/* Sold out: left in the grid - a clearance that is moving is part of the
+   pitch - but greyed back, with nothing to hover and nothing to open. */
+.card--out { cursor: default; }
+.card--out:hover {
+  box-shadow: 0 calc(1 * var(--u)) calc(5 * var(--u)) rgba(0, 0, 0, .09);
+  transform: none;
+}
+.card--out .card__img { filter: grayscale(1); opacity: .45; }
+.card--out .card__brand, .card--out .card__meta { opacity: .6; }
+.card__out {
+  position: absolute;
+  top: calc(12 * var(--u));
+  left: calc(12 * var(--u));
+  padding: calc(4 * var(--u)) calc(14 * var(--u));
+  border-radius: 999px;
+  background: var(--ink-soft);
+  color: #fff;
+  font: 700 max(11px, calc(17 * var(--u))) / var(--alef-lh) Alef, Arial, sans-serif;
+  direction: rtl;
+  white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .card, .card__go { transition-duration: .01ms; }
   .card:hover, .card:focus-visible { transform: none; }

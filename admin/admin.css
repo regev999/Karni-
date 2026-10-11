@@ -104,6 +104,8 @@ input:focus { outline: 2px solid var(--cyan); outline-offset: -1px; border-color
 .grid-table .mid { text-align: center; }
 .grid-table .nowrap { white-space: nowrap; font-size: 13px; color: #7b8895; }
 .thumb img { width: 56px; height: 54px; object-fit: contain; background: #f6f6f6; border-radius: 6px; }
+.grid-table tr.is-out .thumb img { filter: grayscale(1); opacity: .45; }
+.grid-table tr.is-out input:not([type=checkbox]), .grid-table tr.is-out textarea { color: #9aa5af; }
 .noimg { display: inline-block; width: 56px; height: 54px; line-height: 54px; text-align: center;
          background: #f6f6f6; border-radius: 6px; color: #aab4bd; font-size: 12px; }
 .wa { margin-inline-start: 8px; font-size: 12px; color: #1a8f4c; }
