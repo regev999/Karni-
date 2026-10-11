@@ -367,17 +367,16 @@ a { color: inherit; }
 }
 .card--out .card__img { filter: grayscale(1); opacity: .45; }
 .card--out .card__brand, .card--out .card__meta { opacity: .6; }
+/* The stamp, over the middle of the photo: 87-217 across clears the widest
+   maker's mark (from 193, but only 35 deep) and the tallest (from 228), and
+   34-163 down ends above the caption even when a note lifts it to 164. */
 .card__out {
   position: absolute;
-  top: calc(12 * var(--u));
-  left: calc(12 * var(--u));
-  padding: calc(4 * var(--u)) calc(14 * var(--u));
-  border-radius: 999px;
-  background: var(--ink-soft);
-  color: #fff;
-  font: 700 max(11px, calc(17 * var(--u))) / var(--alef-lh) Alef, Arial, sans-serif;
-  direction: rtl;
-  white-space: nowrap;
+  top: calc(34 * var(--u));
+  left: calc(87 * var(--u));
+  width: calc(130 * var(--u));
+  height: auto;
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

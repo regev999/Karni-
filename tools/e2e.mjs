@@ -137,7 +137,9 @@ ok(await page.locator('h1', { hasText: '1 אזלו' }).isVisible(), 'and the hea
 await page.goto(`${BASE}/`);
 const outCard = page.locator('.card').first();
 ok(await outCard.evaluate(el => el.tagName === 'DIV' && !el.hasAttribute('href')), 'a sold-out card is not a link');
-ok((await outCard.locator('.card__out').textContent()) === 'אזל מהמלאי', 'it says it is sold out');
+const stamp = outCard.locator('img.card__out');
+ok((await stamp.getAttribute('alt')) === 'אזל מהמלאי'
+   && await stamp.evaluate(img => img.complete && img.naturalWidth > 0), 'it carries the sold-out stamp');
 await outCard.click();
 await page.waitForTimeout(400);
 ok(!(await page.locator('#product-modal').isVisible()) && !page.url().includes('?p='),

@@ -126,7 +126,8 @@ seo_refresh_static();
         <?php endif; ?>
       </div>
       <?php if ($out): ?>
-      <span class="card__out">אזל מהמלאי</span>
+      <img class="card__out" src="<?= e($rev('assets/img/sold-out.webp')) ?>" alt="אזל מהמלאי"
+           width="291" height="289" <?= $i < 8 ? '' : 'loading="lazy" ' ?>decoding="async">
       <?php else: ?>
       <span class="card__go" aria-hidden="true">
         <svg viewBox="1299.3 12496.2 67.6 43.2" width="16" height="10">
