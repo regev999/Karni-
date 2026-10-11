@@ -65,6 +65,30 @@ ok(afterImg.some(p => p.name === 'Brand New Lamp'), 'new product named from the 
 const kelvin = afterImg.find(p => p.name === 'KELVIN');
 ok(kelvin && kelvin.image === 'KELVIN.jpg', 'existing KELVIN photo replaced, not duplicated');
 
+// 4b. One product typed into the form, photo and all.
+await page.fill('#single input[name=name]', 'Single Lamp');
+await page.fill('#single input[name=sku]', 'SGL001');
+await page.fill('#single input[name=price_before]', '₪1,990');
+await page.fill('#single input[name=price_after]', '590');
+await page.fill('#single input[name=note]', 'שחור');
+await page.setInputFiles('#single input[name=image]', '/tmp/claude-0/t/KELVIN.jpg');
+await page.click('#single button[type=submit]');
+await page.waitForURL('**/products.php');
+const single = catalogue().at(-1);
+ok(single.name === 'Single Lamp' && single.sku === 'SGL001' && single.note === 'שחור',
+   'a single product is added at the end of the catalogue');
+ok(single.price_before === 1990 && single.price_after === 590, 'its prices are cleaned like the sheet\'s');
+ok(single.image === 'Single-Lamp-SGL001.jpg', `its photo is stored under its own name (${single.image})`);
+
+// The same SKU twice is refused, and what was typed comes back.
+await page.fill('#single input[name=name]', 'Single Lamp again');
+await page.fill('#single input[name=sku]', 'SGL001');
+await page.setInputFiles('#single input[name=image]', '/tmp/claude-0/t/KELVIN.jpg');
+await page.click('#single button[type=submit]');
+await page.waitForURL('**/products.php');
+ok(catalogue().filter(p => p.sku === 'SGL001').length === 1, 'a duplicate SKU is refused');
+ok(await page.inputValue('#single input[name=name]') === 'Single Lamp again', 'and the form keeps what was typed');
+
 // 5. Upload the spreadsheet.
 await page.setInputFiles('input[name=sheet]', '/tmp/claude-0/t/catalog.xlsx');
 await page.click('form:has(input[value=sheet]) button[type=submit]');

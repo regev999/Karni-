@@ -62,6 +62,16 @@ input:focus { outline: 2px solid var(--cyan); outline-offset: -1px; border-color
 .filelist { margin: 0 0 12px; font-size: 13px; color: #5a6672; max-height: 120px; overflow: auto; }
 .drop.is-over { outline: 3px dashed var(--cyan); outline-offset: 4px; }
 
+.cols + .single { margin-top: 20px; }
+.single__fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 18px; align-items: end; }
+.single__wide { grid-column: 1 / -1; }
+.single select, .single textarea {
+  display: block; width: 100%; margin-top: 6px; padding: 9px 11px;
+  border: 1px solid var(--line); border-radius: 8px; font: inherit; font-weight: 400; background: #fff;
+}
+.single textarea { resize: vertical; line-height: 1.4; }
+.single select:focus, .single textarea:focus { outline: 2px solid var(--cyan); outline-offset: -1px; border-color: var(--cyan); }
+
 .note { padding: 10px 14px; border-radius: 10px; margin: 0 0 12px; background: #e6f7ef; color: #14603f; }
 .note--bad { background: #fdecea; color: #8a231d; }
 .note--warn { background: #fff6e0; color: #6b4c05; }

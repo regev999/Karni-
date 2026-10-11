@@ -40,6 +40,19 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 flash($f, 'bad');
             }
 
+        } elseif ($action === 'single') {
+            $p = array_map('strval', array_intersect_key($_POST, array_flip(
+                ['name', 'sku', 'price_before', 'price_after', 'note', 'description', 'where'])));
+            try {
+                products_save(catalog_add_one($rows, $p, (array) ($_FILES['image'] ?? []),
+                                              ($p['where'] ?? '') === 'start'));
+            } catch (Throwable $e) {
+                // Kept for the form, so a duplicate SKU costs one field, not seven.
+                $_SESSION['single_draft'] = $p;
+                throw $e;
+            }
+            flash('המוצר ' . trim($p['name'] ?? '') . ' נוסף ל' . (($p['where'] ?? '') === 'start' ? 'תחילת' : 'סוף') . ' הקטלוג.');
+
         } elseif ($action === 'sheet') {
             $f = $_FILES['sheet'] ?? null;
             if (($f['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
@@ -120,6 +133,11 @@ if ($byViews) {
     uasort($rows, static fn($a, $b) => $viewOf($b) <=> $viewOf($a));
 }
 
+session_start_once();
+$draft = (array) ($_SESSION['single_draft'] ?? []);
+unset($_SESSION['single_draft']);
+$d = static fn(string $k): string => e((string) ($draft[$k] ?? ''));
+
 layout_head('מוצרים');
 flash();
 ?>
@@ -154,6 +172,46 @@ flash();
     <button class="btn" type="submit">קליטה</button>
   </form>
 </div>
+
+<form class="card single" method="post" enctype="multipart/form-data" id="single">
+  <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+  <input type="hidden" name="action" value="single">
+  <h2>הוספת מוצר בודד</h2>
+  <p class="muted">מוצר אחד עם כל הפרטים והתמונה, בלי קובץ אקסל. צבע הכיתוב נקבע לפי התמונה,
+     ואפשר לשנות אותו אחר כך בטבלה.</p>
+  <div class="single__fields">
+    <label>שם מוצר *
+      <input name="name" value="<?= $d('name') ?>" required maxlength="120">
+    </label>
+    <label>מק״ט
+      <input name="sku" value="<?= $d('sku') ?>" maxlength="40">
+    </label>
+    <label>מחיר לפני הנחה
+      <input name="price_before" value="<?= $d('price_before') ?>" inputmode="numeric" placeholder="₪">
+    </label>
+    <label>מחיר אחרי הנחה
+      <input name="price_after" value="<?= $d('price_after') ?>" inputmode="numeric" placeholder="₪">
+    </label>
+    <label>שורת הערה <small>אופציונלי — מתחת למק״ט, למשל צבע או גימור</small>
+      <input name="note" value="<?= $d('note') ?>" maxlength="80">
+    </label>
+    <label>מיקום בדף
+      <select name="where">
+        <option value="end">בסוף הקטלוג</option>
+        <option value="start"<?= ($draft['where'] ?? '') === 'start' ? ' selected' : '' ?>>בתחילת הקטלוג</option>
+      </select>
+    </label>
+    <label class="single__wide">תיאור <small>אופציונלי — לגוגל ולחלון המוצר, עד 600 תווים</small>
+      <textarea name="description" rows="3" maxlength="600"
+                placeholder="2-3 משפטים על גוף התאורה — זה מה שגוגל מציג"><?= $d('description') ?></textarea>
+    </label>
+  </div>
+  <label class="filebtn">בחירת תמונה *
+    <input type="file" name="image" accept="image/*">
+  </label>
+  <p class="filelist" data-for="image"></p>
+  <button class="btn" type="submit">הוספת המוצר</button>
+</form>
 
 <?php if ($rows): ?>
 <form method="post" class="card">

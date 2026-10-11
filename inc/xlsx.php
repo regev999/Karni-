@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/catalog.php';
+
 /**
  * Minimal reader for the spreadsheet formats the catalogue arrives in.
  * .xlsx is a zip of XML, so ZipArchive + SimpleXML is enough - no Composer needed.
@@ -216,12 +218,6 @@ function sheet_to_products(array $rows): array
         $map = ['name' => 0, 'sku' => 1, 'price_before' => 2, 'price_after' => 3];
     }
 
-    $money = static function (string $v): ?int {
-        $v = preg_replace('/[^\d.,]/u', '', $v);
-        $v = str_replace(',', '', $v);
-        return $v === '' ? null : (int) round((float) $v);
-    };
-
     $out = [];
     foreach (array_slice($rows, $start) as $row) {
         $get = static fn(string $k): string => isset($map[$k]) ? (string) ($row[$map[$k]] ?? '') : '';
@@ -233,8 +229,8 @@ function sheet_to_products(array $rows): array
         $out[] = [
             'name'         => $name,
             'sku'          => $sku,
-            'price_before' => $money($get('price_before')),
-            'price_after'  => $money($get('price_after')),
+            'price_before' => parse_price($get('price_before')),
+            'price_after'  => parse_price($get('price_after')),
             'description'  => mb_substr(trim($get('description')), 0, 600),
         ];
     }

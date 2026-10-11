@@ -16,6 +16,14 @@ function match_key(string $s): string
     return preg_replace('/[\s_\-.,"\x{05F4}\x{05F3}\']+/u', '', $s) ?? $s;
 }
 
+/** A price as typed: currency signs and thousands commas are dropped. */
+function parse_price(string $v): ?int
+{
+    $v = preg_replace('/[^\d.,]/u', '', $v);
+    $v = str_replace(',', '', $v);
+    return $v === '' ? null : (int) round((float) $v);
+}
+
 /** Turn an uploaded filename into a product name: strip extension and tidy separators. */
 function name_from_filename(string $filename): string
 {
@@ -38,10 +46,10 @@ function safe_filename(string $filename, string $ext): string
 }
 
 /**
- * Store one uploaded image and attach it to the product named by the file.
- * Returns [name, storedFilename] or throws.
+ * Check one uploaded image and store it under a name built from $stem.
+ * Returns the stored filename or throws.
  */
-function ingest_image(array $file): array
+function store_image(array $file, string $stem): string
 {
     if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
         throw new RuntimeException('העלאה נכשלה (' . (int) ($file['error'] ?? -1) . ')');
@@ -56,13 +64,12 @@ function ingest_image(array $file): array
     @mkdir(UPLOAD_DIR, 0775, true);
 
     $ext  = IMAGE_TYPES[$info[2]];
-    $name = name_from_filename((string) $file['name']);
-    $dest = safe_filename((string) $file['name'], $ext);
+    $dest = safe_filename($stem . '.' . $ext, $ext);
 
     // Never silently overwrite a different product's photo.
     $i = 1;
     while (is_file(UPLOAD_DIR . '/' . $dest) && $i < 500) {
-        $dest = safe_filename(pathinfo((string) $file['name'], PATHINFO_FILENAME) . '-' . (++$i), $ext);
+        $dest = safe_filename($stem . '-' . (++$i) . '.' . $ext, $ext);
     }
     if (!move_uploaded_file($file['tmp_name'], UPLOAD_DIR . '/' . $dest)) {
         throw new RuntimeException('שמירת הקובץ נכשלה');
@@ -71,7 +78,56 @@ function ingest_image(array $file): array
     // Photos go up as they are. Whitening the grey studio sweep behind some of
     // them is available as `php tools/flatten.php`, run deliberately over a
     // folder, rather than as something that happens to every upload.
-    return [$name, $dest];
+    return $dest;
+}
+
+/**
+ * Store one uploaded image and attach it to the product named by the file.
+ * Returns [name, storedFilename] or throws.
+ */
+function ingest_image(array $file): array
+{
+    $original = (string) ($file['name'] ?? '');
+    return [name_from_filename($original), store_image($file, pathinfo($original, PATHINFO_FILENAME))];
+}
+
+/**
+ * One product typed into the admin form, photo and all, placed at the start
+ * or the end of the catalogue. Names repeat in this catalogue (two KTribe
+ * Tables), SKUs do not, so the SKU is what a duplicate is caught by.
+ */
+function catalog_add_one(array $rows, array $p, array $file, bool $first): array
+{
+    $name = trim((string) ($p['name'] ?? ''));
+    $sku  = trim((string) ($p['sku'] ?? ''));
+    if ($name === '') {
+        throw new RuntimeException('חסר שם מוצר.');
+    }
+    if ($sku !== '') {
+        foreach ($rows as $r) {
+            if (match_key((string) ($r['sku'] ?? '')) === match_key($sku)) {
+                throw new RuntimeException("המק״ט $sku כבר קיים בקטלוג ({$r['name']}). אפשר לערוך אותו בטבלה למטה.");
+            }
+        }
+    }
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+        // A card without a photo reads as a fault on the page.
+        throw new RuntimeException('חסרה תמונת מוצר.');
+    }
+
+    $image = store_image($file, trim("$name $sku"));
+    $row = [
+        'name'         => $name,
+        'sku'          => $sku,
+        'price_before' => parse_price((string) ($p['price_before'] ?? '')),
+        'price_after'  => parse_price((string) ($p['price_after'] ?? '')),
+        'description'  => mb_substr(trim((string) ($p['description'] ?? '')), 0, 600),
+        'note'         => mb_substr(trim((string) ($p['note'] ?? '')), 0, 80),
+        'image'        => $image,
+        'ink'          => patch_ink(UPLOAD_DIR . '/' . $image, INK_CAPTION),
+        'brand_ink'    => patch_ink(UPLOAD_DIR . '/' . $image, INK_BRAND),
+    ];
+    return $first ? array_merge([$row], $rows) : [...$rows, $row];
 }
 
 /** What a site icon may be. No SVG: it is the one upload the page links into
